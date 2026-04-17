@@ -13,14 +13,9 @@ export function ArtistGrid() {
             rel="noopener noreferrer"
             className="group block relative"
           >
-            {/* Portrait card — tilted on hover */}
             <div
-              className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-lg)] transition-transform duration-500"
-              style={{
-                backgroundColor: 'var(--color-surface-2)',
-                transitionTimingFunction: 'var(--ease-out-quart)',
-                transform: i % 2 === 0 ? 'rotate(-0.5deg)' : 'rotate(0.5deg)',
-              }}
+              className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-lg)]"
+              style={{ backgroundColor: 'var(--color-surface-2)' }}
             >
               {a.photo && (
                 <Image

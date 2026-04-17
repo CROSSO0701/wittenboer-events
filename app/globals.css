@@ -12,11 +12,11 @@
      COLOR — stage-red primary (event energy), teal brand, warm cream
      ======================================================= */
 
-  /* PRIMARY — stage red, reads like event lighting */
-  --color-primary:        oklch(58% 0.21 30);    /* stage red/scarlet */
-  --color-primary-hover:  oklch(52% 0.22 28);
-  --color-primary-soft:   oklch(94% 0.05 30);    /* warm peach wash */
-  --color-primary-deep:   oklch(35% 0.17 30);
+  /* PRIMARY — deep bordeaux / stage-light rood */
+  --color-primary:        oklch(52% 0.19 22);    /* deep ruby */
+  --color-primary-hover:  oklch(46% 0.20 20);
+  --color-primary-soft:   oklch(94% 0.05 22);
+  --color-primary-deep:   oklch(32% 0.16 22);
 
   /* BRAND — WE logo teal (used on logo, occasional accent only) */
   --color-brand-teal:     oklch(51% 0.09 205);
@@ -142,7 +142,7 @@ body {
 h1, h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
   line-height: 0.95;
   text-wrap: balance;
   text-transform: uppercase;

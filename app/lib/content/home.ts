@@ -5,7 +5,7 @@ export const home = {
     headingItalic: 'en een show die knalt.',
     lead:
       'Van de eerste belronde tot de laatste pallet terug in de bus — wij regelen het. Festivals, bedrijfsborrels, tuinfeesten, drive-in shows. Bel ons en we komen langs.',
-    primaryCta: { label: 'Plan een belrondje', href: '/contact' },
+    primaryCta: { label: 'Bel ons', href: 'tel:+31627172876' },
     secondaryCta: { label: 'Bekijk wat we doen', href: '/aanbod' },
     photo: {
       src: '/photos/project-park-lounge.jpg',

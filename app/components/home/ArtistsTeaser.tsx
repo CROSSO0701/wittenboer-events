@@ -37,11 +37,7 @@ export function ArtistsTeaser() {
               >
                 <div
                   className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-lg)]"
-                  style={{
-                    backgroundColor: 'var(--color-surface-2)',
-                    transform: i % 2 === 0 ? 'rotate(-0.8deg)' : 'rotate(0.8deg)',
-                    transition: 'transform 400ms var(--ease-out-quart)',
-                  }}
+                  style={{ backgroundColor: 'var(--color-surface-2)' }}
                 >
                   {a.photo && (
                     <Image
