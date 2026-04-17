@@ -6,6 +6,21 @@ type Status = 'idle' | 'submitting' | 'success' | 'error'
 
 type FieldErrors = Partial<Record<'name' | 'email' | 'message', string>>
 
+const LABEL_STYLE = {
+  fontFamily: 'var(--font-body)',
+  color: 'var(--color-fg-secondary)',
+  fontSize: '13px',
+  fontWeight: 600,
+  letterSpacing: '0.04em',
+} as const
+
+const INPUT_STYLE = {
+  fontFamily: 'var(--font-body)',
+  color: 'var(--color-fg)',
+  fontSize: '16px',
+  fontWeight: 400,
+} as const
+
 export function ContactForm() {
   const [status, setStatus] = useState<Status>('idle')
   const [errors, setErrors] = useState<FieldErrors>({})
@@ -51,14 +66,38 @@ export function ContactForm() {
         className="rounded-[var(--radius-xl)] border p-8"
         style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-primary-soft)' }}
       >
-        <p className="mono mb-3" style={{ color: 'var(--color-primary-deep)' }}>
+        <p
+          className="mb-3"
+          style={{
+            color: 'var(--color-primary-deep)',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+          }}
+        >
           Bericht ontvangen
         </p>
-        <h3 style={{ fontSize: 'var(--text-display-sm)', fontWeight: 600, color: 'var(--color-primary-deep)' }}>
+        <h3
+          style={{
+            fontSize: 'clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem)',
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            color: 'var(--color-primary-deep)',
+            lineHeight: 1.2,
+          }}
+        >
           Dankjewel. Wij nemen binnen twee werkdagen contact op.
         </h3>
-        <p className="mt-3" style={{ color: 'var(--color-fg-secondary)' }}>
-          Spoed? Bel direct naar <a className="underline" href="tel:+31627172876">06 27 17 28 76</a>.
+        <p
+          className="mt-3"
+          style={{ color: 'var(--color-fg-secondary)', fontSize: '15px' }}
+        >
+          Spoed? Bel direct naar{' '}
+          <a className="underline" href="tel:+31627172876" style={{ color: 'var(--color-primary)' }}>
+            06 27 17 28 76
+          </a>
+          .
         </p>
       </div>
     )
@@ -75,7 +114,11 @@ export function ContactForm() {
         <p
           role="alert"
           className="text-[14px] px-4 py-3 rounded-md"
-          style={{ backgroundColor: 'color-mix(in oklch, oklch(55% 0.18 25) 10%, transparent)', color: 'oklch(40% 0.18 25)' }}
+          style={{
+            backgroundColor: 'color-mix(in oklch, oklch(55% 0.18 25) 10%, transparent)',
+            color: 'oklch(40% 0.18 25)',
+            fontFamily: 'var(--font-body)',
+          }}
         >
           {formError}
         </p>
@@ -84,11 +127,13 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="relative inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[14px] text-[15px] font-medium tracking-tight overflow-hidden disabled:cursor-not-allowed"
+        className="relative inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-[15px] overflow-hidden disabled:cursor-not-allowed mt-2"
         style={{
           backgroundColor: 'var(--color-primary)',
           color: 'var(--color-fg-on-dark)',
+          fontWeight: 600,
           opacity: status === 'submitting' ? 0.75 : 1,
+          fontFamily: 'var(--font-body)',
         }}
       >
         <span className="relative z-10 inline-flex items-center gap-2">
@@ -101,11 +146,7 @@ export function ContactForm() {
           )}
         </span>
         {status === 'submitting' && (
-          <span
-            aria-hidden
-            className="absolute inset-0 shimmer"
-            style={{ backgroundColor: 'transparent' }}
-          />
+          <span aria-hidden className="absolute inset-0 shimmer" style={{ backgroundColor: 'transparent' }} />
         )}
       </button>
     </form>
@@ -129,7 +170,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="mono" style={{ color: 'var(--color-fg-muted)' }}>
+      <label htmlFor={id} style={LABEL_STYLE}>
         {label}
         {required && <span style={{ color: 'var(--color-primary)' }}> *</span>}
       </label>
@@ -139,14 +180,17 @@ function Field({
         type={type}
         required={required}
         aria-invalid={error ? true : undefined}
-        className="h-11 px-0 bg-transparent text-[16px] focus:outline-none transition-colors"
+        className="h-11 px-0 bg-transparent focus:outline-none transition-colors"
         style={{
-          borderBottom: `0.5px solid ${error ? 'oklch(55% 0.18 25)' : 'var(--color-border-strong)'}`,
-          color: 'var(--color-fg)',
+          ...INPUT_STYLE,
+          borderBottom: `1px solid ${error ? 'oklch(55% 0.18 25)' : 'var(--color-border-strong)'}`,
         }}
       />
       {error && (
-        <p className="text-[13px]" style={{ color: 'oklch(45% 0.18 25)' }}>
+        <p
+          className="text-[13px]"
+          style={{ color: 'oklch(45% 0.18 25)', fontFamily: 'var(--font-body)' }}
+        >
           {error}
         </p>
       )}
@@ -169,7 +213,7 @@ function TextareaField({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="mono" style={{ color: 'var(--color-fg-muted)' }}>
+      <label htmlFor={id} style={LABEL_STYLE}>
         {label}
         {required && <span style={{ color: 'var(--color-primary)' }}> *</span>}
       </label>
@@ -179,14 +223,17 @@ function TextareaField({
         rows={5}
         required={required}
         aria-invalid={error ? true : undefined}
-        className="px-0 py-2 bg-transparent text-[16px] resize-y min-h-[120px] focus:outline-none transition-colors"
+        className="px-0 py-2 bg-transparent resize-y min-h-[120px] focus:outline-none transition-colors"
         style={{
-          borderBottom: `0.5px solid ${error ? 'oklch(55% 0.18 25)' : 'var(--color-border-strong)'}`,
-          color: 'var(--color-fg)',
+          ...INPUT_STYLE,
+          borderBottom: `1px solid ${error ? 'oklch(55% 0.18 25)' : 'var(--color-border-strong)'}`,
         }}
       />
       {error && (
-        <p className="text-[13px]" style={{ color: 'oklch(45% 0.18 25)' }}>
+        <p
+          className="text-[13px]"
+          style={{ color: 'oklch(45% 0.18 25)', fontFamily: 'var(--font-body)' }}
+        >
           {error}
         </p>
       )}
