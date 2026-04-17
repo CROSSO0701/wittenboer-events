@@ -7,7 +7,7 @@ import { contact } from '../lib/content/contact'
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Bel, app of mail Wittenboer Events in Sint-Michielsgestel. Persoonlijk contact met Marnix — we denken graag vroeg mee.',
+    'Bel, app of mail Wittenboer Events in Sint-Michielsgestel. Persoonlijk contact met Marnix. We denken graag vroeg mee.',
 }
 
 const CHANNELS = [
@@ -48,8 +48,8 @@ export default function ContactPage() {
                   className="text-[17px] md:text-[19px] mb-12"
                   style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
                 >
-                  Elke productie begint met een goed gesprek. Bel, app of stuur een bericht —
-                  binnen twee werkdagen hoor je van ons.
+                  Elke productie begint met een goed gesprek. Bel, app of stuur een bericht.
+                  Binnen twee werkdagen hoor je van ons.
                 </p>
 
                 <ul className="flex flex-col">

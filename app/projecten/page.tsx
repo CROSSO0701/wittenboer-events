@@ -32,7 +32,7 @@ export default function ProjectenPage() {
                 className="text-[17px] md:text-[19px]"
                 style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
               >
-                Elk project is een andere puzzel. Hier twee verhalen — hoe we ze aanvlogen, wat
+                Elk project is een andere puzzel. Hier twee verhalen. Hoe we ze aanvlogen, wat
                 we bouwden, en wat het publiek (en de buurt) ervan vond.
               </p>
             </div>

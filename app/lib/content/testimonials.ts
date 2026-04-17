@@ -7,7 +7,7 @@ export type Testimonial = {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      'Ik ben zeer tevreden over de diensten van Wittenboer Events en de professionele hulp van Marnix bij het organiseren van ons festival. Hij nam het werk volledig uit mijn handen — van A tot Z.',
+      'Ik ben zeer tevreden over de diensten van Wittenboer Events en de professionele hulp van Marnix bij het organiseren van ons festival. Hij nam het werk volledig uit mijn handen, van A tot Z.',
     author: 'Thomas de Groot',
     role: 'Oprichter Park Lounge',
   },
@@ -19,7 +19,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     quote:
-      'Wittenboer Events en Marnix Wittenboer zijn voor ons de automatische keuze — van licht en geluid tot artiestenbegeleiding en logistiek. Altijd professioneel, altijd meedenkend. Wij worden volledig ontzorgd.',
+      'Wittenboer Events en Marnix Wittenboer zijn voor ons de automatische keuze. Van licht en geluid tot artiestenbegeleiding en logistiek. Altijd professioneel, altijd meedenkend. Wij worden volledig ontzorgd.',
     author: 'Berk Music',
     role: 'Platenlabel & management',
   },

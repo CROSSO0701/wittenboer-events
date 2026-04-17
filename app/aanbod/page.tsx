@@ -31,7 +31,7 @@ export default function AanbodPage() {
                 className="text-[17px] md:text-[19px]"
                 style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
               >
-                Zes diensten die los staan, maar sterker zijn samen. Kies wat je nodig hebt —
+                Zes diensten die los staan, maar sterker zijn samen. Kies wat je nodig hebt,
                 of laat ons het hele plaatje doen.
               </p>
             </div>

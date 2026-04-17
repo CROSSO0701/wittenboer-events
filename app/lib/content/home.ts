@@ -4,12 +4,12 @@ export const home = {
     heading: 'Licht, geluid',
     headingItalic: 'en een show die knalt.',
     lead:
-      'Van de eerste belronde tot de laatste pallet terug in de bus — wij regelen het. Festivals, bedrijfsborrels, tuinfeesten, drive-in shows. Bel ons en we komen langs.',
+      'Van de eerste belronde tot de laatste pallet terug in de bus. Wij regelen het. Festivals, bedrijfsborrels, tuinfeesten, drive-in shows. Bel ons en we komen langs.',
     primaryCta: { label: 'Bel ons', href: 'tel:+31627172876' },
     secondaryCta: { label: 'Bekijk wat we doen', href: '/aanbod' },
     photo: {
       src: '/photos/project-park-lounge.jpg',
-      alt: 'Wittenboer Events — licht en geluid op een festivalpodium',
+      alt: 'Wittenboer Events licht en geluid op een festivalpodium',
     },
   },
   trustedBy: {
@@ -29,7 +29,7 @@ export const home = {
     label: 'Wat we doen',
     heading: 'Alles voor jouw evenement, in één bus.',
     lead:
-      'Geluid, licht, stroom, artiesten — los of compleet. Kies wat je nodig hebt, of laat ons het hele plaatje doen.',
+      'Geluid, licht, stroom, artiesten. Los of compleet. Kies wat je nodig hebt, of laat ons het hele plaatje doen.',
     ctaLabel: 'Bekijk alles',
   },
   approach: {
@@ -58,10 +58,10 @@ export const home = {
   },
   featuredWork: {
     label: 'Uitgelicht',
-    headingLead: 'Park Lounge Schijndel —',
-    headingEmph: 'festival in een woonwijk, nul klachten.',
+    headingLead: 'Park Lounge Schijndel.',
+    headingEmph: 'Festival in een woonwijk, nul klachten.',
     body:
-      'Een festival in een woonwijk — vaak synoniem met gezeur. Deze keer niet. Gerichte arrays, continue meting, dicht contact met de buurt. Wat je wilde horen was er, wat de buren niet wilden horen bleef binnen.',
+      'Een festival in een woonwijk is vaak synoniem met gezeur. Deze keer niet. Gerichte arrays, continue meting, dicht contact met de buurt. Wat je wilde horen was er, wat de buren niet wilden horen bleef binnen.',
     photo: '/photos/park-lounge-2.jpg',
     ctaLabel: 'Bekijk alle projecten',
     ctaHref: '/projecten',
@@ -70,6 +70,6 @@ export const home = {
     label: 'Zin in?',
     heading: 'Bel, app, of loop binnen.',
     lead:
-      'Elk evenement is anders. We denken graag vroeg mee — hoe eerder je belt, hoe strakker het wordt.',
+      'Elk evenement is anders. We denken graag vroeg mee. Hoe eerder je belt, hoe strakker het wordt.',
   },
 }

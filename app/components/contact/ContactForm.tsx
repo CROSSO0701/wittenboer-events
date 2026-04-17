@@ -55,7 +55,7 @@ export function ContactForm() {
           Bericht ontvangen
         </p>
         <h3 style={{ fontSize: 'var(--text-display-sm)', fontWeight: 600, color: 'var(--color-primary-deep)' }}>
-          Dankjewel — wij nemen binnen twee werkdagen contact op.
+          Dankjewel. Wij nemen binnen twee werkdagen contact op.
         </h3>
         <p className="mt-3" style={{ color: 'var(--color-fg-secondary)' }}>
           Spoed? Bel direct naar <a className="underline" href="tel:+31627172876">06 27 17 28 76</a>.

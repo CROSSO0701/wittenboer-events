@@ -2,23 +2,15 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { MobileMenu } from './MobileMenu'
 import { NAV_LINKS } from './nav-links'
 
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   const enterMenu = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current)
@@ -31,21 +23,17 @@ export function Nav() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-40 transition-[background-color,backdrop-filter,border-color] duration-300"
+        className="fixed top-0 left-0 right-0 z-40"
         style={{
-          backgroundColor: scrolled
-            ? 'color-mix(in oklch, var(--color-bg) 88%, transparent)'
-            : 'transparent',
-          backdropFilter: scrolled ? 'saturate(140%) blur(16px)' : undefined,
-          WebkitBackdropFilter: scrolled ? 'saturate(140%) blur(16px)' : undefined,
-          borderBottom: scrolled ? '0.5px solid var(--color-border)' : '0.5px solid transparent',
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid var(--color-border)',
         }}
       >
         <nav
           aria-label="Hoofdnavigatie"
           className="container-inset flex h-20 items-center justify-between"
         >
-          <Link href="/" className="flex items-center" aria-label="Wittenboer Events — home">
+          <Link href="/" className="flex items-center" aria-label="Wittenboer Events home">
             <Image
               src="/logo/we-full.png"
               alt="Wittenboer Events"
@@ -98,7 +86,6 @@ export function Nav() {
                   />
                 </Link>
 
-                {/* Dropdown panel */}
                 {l.children && (
                   <AnimatePresence>
                     {openDropdown === l.label && (
@@ -113,7 +100,7 @@ export function Nav() {
                           className="w-[340px] rounded-[var(--radius-lg)] p-2"
                           style={{
                             backgroundColor: 'var(--color-bg)',
-                            border: '0.5px solid var(--color-border)',
+                            border: '1px solid var(--color-border)',
                             boxShadow: '0 24px 48px -20px color-mix(in oklch, var(--color-fg) 20%, transparent)',
                           }}
                         >
@@ -148,7 +135,7 @@ export function Nav() {
               </li>
             ))}
 
-            <li className="pl-3 ml-1" style={{ borderLeft: '1px solid color-mix(in oklch, var(--color-border) 50%, transparent)' }}>
+            <li className="pl-4 ml-2" style={{ borderLeft: '1px solid var(--color-border)' }}>
               <a
                 href="tel:+31627172876"
                 className="inline-flex items-center gap-2 py-2 px-4 rounded-full transition-colors"
@@ -157,12 +144,13 @@ export function Nav() {
                   color: 'var(--color-fg-on-dark)',
                   fontSize: '14px',
                   fontWeight: 500,
+                  letterSpacing: '0.02em',
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
-                06 · 27 17 28 76
+                06 27 17 28 76
               </a>
             </li>
           </ul>

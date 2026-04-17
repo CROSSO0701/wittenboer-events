@@ -129,7 +129,7 @@ export function ProjectStory({ project, reverse = false }: Props) {
               className="mt-4"
               style={{ color: 'var(--color-fg-muted)', fontSize: '13px', fontWeight: 500 }}
             >
-              — {project.testimonial.author}, {project.testimonial.role}
+              {project.testimonial.author}, {project.testimonial.role}
             </figcaption>
           </figure>
         </div>

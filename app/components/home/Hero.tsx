@@ -17,13 +17,12 @@ export function Hero() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
-  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%'])
 
   return (
     <section
       ref={ref}
       className="relative overflow-hidden"
-      style={{ minHeight: '100dvh', backgroundColor: 'var(--color-surface-dark)' }}
+      style={{ backgroundColor: 'var(--color-surface-dark)' }}
     >
       <motion.div style={{ scale }} className="absolute inset-0 z-0">
         <Image
@@ -36,12 +35,13 @@ export function Hero() {
         />
       </motion.div>
 
+      {/* Slate-family overlay for legibility */}
       <div
         aria-hidden
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, color-mix(in oklch, var(--color-surface-dark) 70%, transparent) 0%, color-mix(in oklch, var(--color-surface-dark) 32%, transparent) 45%, color-mix(in oklch, var(--color-surface-dark) 92%, transparent) 100%)',
+            'linear-gradient(180deg, rgba(26,36,44,0.70) 0%, rgba(26,36,44,0.30) 40%, rgba(26,36,44,0.88) 100%)',
         }}
       />
 
@@ -50,46 +50,36 @@ export function Hero() {
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'radial-gradient(110% 80% at 25% 70%, color-mix(in oklch, var(--color-surface-dark) 65%, transparent) 0%, transparent 60%)',
+            'radial-gradient(100% 70% at 15% 70%, rgba(26,36,44,0.55) 0%, transparent 65%)',
         }}
       />
 
-      <div
-        aria-hidden
-        className="absolute inset-0 z-10 pointer-events-none opacity-[0.07] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
-        }}
-      />
-
-      <motion.div
-        style={{ y: textY }}
-        className="relative z-20 container-inset pt-28 md:pt-40 pb-14 md:pb-20 min-h-[100dvh] flex flex-col justify-between gap-12 md:gap-16"
-      >
+      <div className="relative z-20 container-inset pt-36 md:pt-48 pb-20 md:pb-24 flex flex-col gap-14 md:gap-20">
+        {/* Kicker */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
           className="flex items-center gap-2.5"
-          style={{ color: 'var(--color-tertiary)', fontSize: '14px', fontWeight: 500, letterSpacing: '0.04em', textTransform: 'uppercase' }}
+          style={{ color: 'var(--color-tertiary)', fontSize: '13px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}
         >
           <span
             aria-hidden
-            className="live-dot inline-block h-2 w-2 rounded-full"
+            className="inline-block h-1.5 w-1.5 rounded-full"
             style={{ backgroundColor: 'var(--color-primary)' }}
           />
           {hero.kicker}
         </motion.div>
 
-        <div className="flex flex-col gap-10 max-w-[1100px] mt-auto">
+        {/* Main headline */}
+        <div className="flex flex-col gap-10 max-w-[1200px]">
           <motion.h1
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             style={{
-              fontSize: 'clamp(2.75rem, 1.6rem + 7vw, 9.5rem)',
-              lineHeight: 0.92,
+              fontSize: 'clamp(2.75rem, 1.4rem + 7.5vw, 9rem)',
+              lineHeight: 0.95,
               letterSpacing: '0.01em',
               fontWeight: 400,
               color: 'var(--color-fg-on-dark)',
@@ -112,7 +102,7 @@ export function Hero() {
             <p
               style={{
                 maxInlineSize: '52ch',
-                fontSize: 'clamp(1rem, 0.9rem + 0.4vw, 1.25rem)',
+                fontSize: 'clamp(1rem, 0.9rem + 0.35vw, 1.2rem)',
                 color: 'var(--color-fg-on-dark-muted)',
                 lineHeight: 1.55,
               }}
@@ -130,10 +120,10 @@ export function Hero() {
               </MagneticButton>
               <a
                 href={hero.secondaryCta.href}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[15px] transition-colors duration-200"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[15px] transition-colors duration-200 hover:[background-color:rgba(255,255,255,0.08)]"
                 style={{
-                  color: 'var(--color-tertiary)',
-                  border: '1px solid color-mix(in oklch, var(--color-tertiary) 55%, transparent)',
+                  color: 'var(--color-fg-on-dark)',
+                  border: '1px solid rgba(255,255,255,0.35)',
                   fontWeight: 500,
                 }}
               >
@@ -143,22 +133,22 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Metrics strip replacing simple caption */}
+        {/* Metrics strip */}
         <motion.dl
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="grid grid-cols-3 gap-6 pt-8"
-          style={{ borderTop: '1px solid color-mix(in oklch, var(--color-tertiary) 30%, transparent)' }}
+          className="grid grid-cols-3 gap-4 md:gap-10 pt-8 md:pt-10"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.18)' }}
         >
           {HERO_METRICS.map((m, i) => (
             <div key={m.k} className={i === 1 ? 'text-center' : i === 2 ? 'text-right' : ''}>
               <dt
                 style={{
                   color: 'var(--color-tertiary)',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  letterSpacing: '0.06em',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                 }}
               >
@@ -170,10 +160,10 @@ export function Hero() {
                   color: 'var(--color-fg-on-dark)',
                   fontFamily: 'var(--font-display)',
                   fontWeight: 400,
-                  fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 3.75rem)',
-                  letterSpacing: '0.01em',
+                  fontSize: 'clamp(1.75rem, 1.2rem + 2.4vw, 3.5rem)',
+                  letterSpacing: '0.02em',
                   lineHeight: 1,
-                  marginTop: '6px',
+                  marginTop: '8px',
                 }}
               >
                 {m.v}
@@ -181,7 +171,7 @@ export function Hero() {
             </div>
           ))}
         </motion.dl>
-      </motion.div>
+      </div>
     </section>
   )
 }

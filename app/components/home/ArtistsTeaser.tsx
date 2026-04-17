@@ -22,7 +22,7 @@ export function ArtistsTeaser() {
             </h2>
           </div>
           <p className="max-w-[42ch] text-[17px]" style={{ color: 'var(--color-fg-secondary)' }}>
-            Wij draaien al jaren tapes voor Nederlandse zangers. Kies een artiest — we regelen de techniek eromheen.
+            Wij draaien al jaren tapes voor Nederlandse zangers. Kies een artiest, wij regelen de techniek eromheen.
           </p>
         </div>
 

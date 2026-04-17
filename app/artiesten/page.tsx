@@ -7,7 +7,7 @@ import { ContactCTA } from '../components/home/ContactCTA'
 export const metadata: Metadata = {
   title: 'Artiesten',
   description:
-    'Vast boekingsnetwerk: Jan Biggel, Ferry de Lits, Lars Brans en meer. Wij boeken, begeleiden en verzorgen de techniek — alles onder één aanspreekpunt.',
+    'Vast boekingsnetwerk: Jan Biggel, Ferry de Lits, Lars Brans en meer. Wij boeken, begeleiden en verzorgen de techniek onder één aanspreekpunt.',
 }
 
 export default function ArtiestenPage() {
@@ -31,7 +31,7 @@ export default function ArtiestenPage() {
                 className="text-[17px] md:text-[19px]"
                 style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
               >
-                Een vast netwerk van Nederlandse zangers waarmee we regelmatig werken. Van live-acts tot radiozangers —
+                Een vast netwerk van Nederlandse zangers waarmee we regelmatig werken. Van live-acts tot radiozangers,
                 geboekt met passende techniek en backstage-coördinatie. Klik door voor de officiële boekingspagina.
               </p>
             </div>

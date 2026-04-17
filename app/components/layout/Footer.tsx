@@ -44,7 +44,7 @@ export function Footer() {
             </p>
             <p className="max-w-[46ch] text-[15px]" style={{ color: 'var(--color-fg-on-dark-muted)', lineHeight: 1.55 }}>
               Complete technische productie voor evenementen van elke schaal. Eén aanspreekpunt,
-              A-merk materiaal, persoonlijk contact — sinds 2014.
+              A-merk materiaal, persoonlijk contact, sinds 2014.
             </p>
           </div>
 

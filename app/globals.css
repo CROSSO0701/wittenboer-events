@@ -9,54 +9,56 @@
 
 @theme {
   /* =======================================================
-     COLOR — Brand palette (user-specified)
-     Primary   #157A8C  deep teal (brand)
-     Secondary #546A72  slate blue-gray
-     Tertiary  #D9C5B2  warm beige/sand
-     Neutral   #636466  medium gray
+     COLOR — Strict brand palette
+     Primary   #157A8C  deep teal
+     Secondary #546A72  slate blue-gray (used for dark sections)
+     Tertiary  #D9C5B2  warm beige (ACCENT only)
+     Neutral   #636466  medium gray (neutral surfaces/borders)
      ======================================================= */
 
-  /* PRIMARY — deep teal (brand) */
+  /* PRIMARY — deep teal */
   --color-primary:        #157A8C;
-  --color-primary-hover:  #10657A;
+  --color-primary-hover:  #0F6374;
   --color-primary-soft:   #E3F0F3;
   --color-primary-deep:   #0B4A57;
 
-  /* SECONDARY — slate blue-gray */
+  /* SECONDARY — slate blue-gray (carries the dark sections) */
   --color-secondary:      #546A72;
   --color-secondary-deep: #3B4D54;
+  --color-secondary-darker: #2A3840;
   --color-secondary-soft: #E1E6E8;
 
-  /* TERTIARY — warm beige/sand (the warmth) */
+  /* TERTIARY — warm beige (accent, small doses) */
   --color-tertiary:       #D9C5B2;
   --color-tertiary-deep:  #B8A088;
   --color-tertiary-soft:  #F3EAE0;
 
-  /* NEUTRAL — true medium gray for scale */
+  /* NEUTRAL — true gray scale for base surfaces */
   --color-neutral:        #636466;
   --color-neutral-deep:   #3E3F42;
   --color-neutral-soft:   #E6E6E7;
+  --color-neutral-softer: #F2F2F3;
 
-  /* Surfaces — warm off-white building on tertiary */
-  --color-bg:             #F5EEE4;   /* tertiary-family off-white */
-  --color-surface-1:      #F3EAE0;   /* tertiary-soft */
-  --color-surface-2:      #E8DCCE;   /* deeper beige */
+  /* Surfaces — light neutral gray base (NOT beige) */
+  --color-bg:             #F5F5F6;   /* neutral off-white */
+  --color-surface-1:      #EDEEEF;   /* deeper neutral */
+  --color-surface-2:      #E2E3E5;   /* card surface */
 
-  /* Dark surfaces — deep teal/slate */
-  --color-surface-dark:   #1A2530;   /* deep slate */
-  --color-surface-dark-1: #243241;
+  /* Dark surfaces — slate secondary family */
+  --color-surface-dark:   #2A3840;   /* deep slate */
+  --color-surface-dark-1: #3B4D54;   /* secondary-deep */
 
-  /* Foreground — on light */
+  /* Foreground */
   --color-fg:             #1E2A2F;
   --color-fg-secondary:   #3E3F42;
   --color-fg-muted:       #636466;
-  --color-fg-on-dark:     #F3EAE0;   /* tertiary tinted white */
-  --color-fg-on-dark-muted: #B8A088;
+  --color-fg-on-dark:     #F5F5F6;
+  --color-fg-on-dark-muted: #B0BEC4;
 
-  /* Borders */
-  --color-border:         #E6DED2;
-  --color-border-strong:  #C9BAA8;
-  --color-border-on-dark: #3E4F5A;
+  /* Borders — neutral gray */
+  --color-border:         #DCDEE0;
+  --color-border-strong:  #B6B9BC;
+  --color-border-on-dark: #4A5C65;
 
   /* =======================================================
      TYPOGRAPHY — Anton billboard display + Figtree body

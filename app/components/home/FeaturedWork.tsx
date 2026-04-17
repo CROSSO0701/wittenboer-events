@@ -89,7 +89,7 @@ export function FeaturedWork() {
               &ldquo;{t.quote}&rdquo;
             </blockquote>
             <figcaption className="mt-4 text-[14px]" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-              — {t.author}, {t.role}
+              {t.author}, {t.role}
             </figcaption>
           </figure>
         </div>

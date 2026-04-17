@@ -2,18 +2,18 @@ export const about = {
   label: 'Over ons',
   heading: 'Meedenken is onze standaard.',
   lead:
-    'Wittenboer Events is de eenmanszaak van Marnix Wittenboer in Sint-Michielsgestel. Sinds 2014 verzorgen we de complete technische productie van evenementen — van een bedrijfsborrel tot meerdaagse festivals met vijfduizend bezoekers. Eén aanspreekpunt, één verantwoordelijke, end-to-end.',
+    'Wittenboer Events is de eenmanszaak van Marnix Wittenboer in Sint-Michielsgestel. Sinds 2014 verzorgen we de complete technische productie van evenementen. Van een bedrijfsborrel tot meerdaagse festivals met vijfduizend bezoekers. Eén aanspreekpunt, één verantwoordelijke, van begin tot eind.',
   body:
-    'Wat ons onderscheidt is niet het materiaal — A-merk apparatuur is wat iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek. We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de leverancier terug als een stekker niet klopt. Je hoort ons pas als er iets is, en meestal is er dan al een oplossing.',
+    'Wat ons onderscheidt is niet het materiaal. A-merk apparatuur is wat iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek. We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de leverancier terug als een stekker niet klopt. Je hoort ons pas als er iets is, en meestal is er dan al een oplossing.',
   portrait: {
     src: '/photos/portrait-marnix.jpg',
     alt: 'Marnix Wittenboer op locatie',
   },
   whyUs: [
     {
-      title: 'Complete A–Z productie',
+      title: 'Complete A tot Z productie',
       body:
-        'Licht, geluid, stroom, artiesten, backstage — alles via één partij. Geen losse offertes stapelen, geen coördinatieproblemen op de dag zelf.',
+        'Licht, geluid, stroom, artiesten, backstage. Alles via één partij. Geen losse offertes stapelen, geen coördinatieproblemen op de dag zelf.',
     },
     {
       title: 'A-merk materiaal',
@@ -23,7 +23,7 @@ export const about = {
     {
       title: 'Meedenken op voorhand',
       body:
-        'We komen langs op de locatie, meten na en stellen alternatieven voor. Het plan dat je krijgt is al door een technisch oog gehaald — niet alleen door een verkoper.',
+        'We komen langs op de locatie, meten na en stellen alternatieven voor. Het plan dat je krijgt is al door een technisch oog gehaald, niet alleen door een verkoper.',
     },
     {
       title: 'Persoonlijk contact',
