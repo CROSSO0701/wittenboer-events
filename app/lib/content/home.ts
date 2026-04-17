@@ -8,7 +8,7 @@ export const home = {
     primaryCta: { label: 'Plan een gesprek', href: '#contact' },
     secondaryCta: { label: 'Bekijk aanbod', href: '/aanbod' },
     photo: {
-      src: '/photos/hero.jpg',
+      src: '/photos/project-park-lounge.jpg',
       alt: 'Wittenboer Events — licht en geluid op een festivalpodium',
     },
   },
@@ -62,7 +62,7 @@ export const home = {
     headingEmph: 'nul klachten, honderden tevreden gezichten.',
     body:
       'Een festival in een woonwijk, vaak synoniem met gezeur. Deze keer niet. Gerichte arrays, continue meting, dicht contact met de buurt. Wat je wilt horen was er, wat de buren niet wilden horen bleef binnen.',
-    photo: '/photos/work-1.jpg',
+    photo: '/photos/project-park-lounge.jpg',
     ctaLabel: 'Bekijk alle projecten',
     ctaHref: '/projecten',
   },

@@ -6,7 +6,7 @@ export const about = {
   body:
     'Wat ons onderscheidt is niet het materiaal — A-merk apparatuur is wat iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek. We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de leverancier terug als een stekker niet klopt. Je hoort ons pas als er iets is, en meestal is er dan al een oplossing.',
   portrait: {
-    src: 'https://picsum.photos/seed/marnix-wittenboer/800/1000',
+    src: '/photos/portrait-marnix.jpg',
     alt: 'Marnix Wittenboer op locatie',
   },
   whyUs: [

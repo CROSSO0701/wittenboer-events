@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect } from 'react'
@@ -39,13 +40,15 @@ export function MobileMenu({ open, onClose }: Props) {
           className="fixed inset-0 z-50"
           style={{ backgroundColor: 'var(--color-surface-dark)' }}
         >
-          <div className="container-inset flex h-16 items-center justify-between">
-            <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[13px] font-bold tracking-tight"
-              style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-fg-on-dark)' }}
-            >
-              WE
-            </span>
+          <div className="container-inset flex h-20 items-center justify-between">
+            <Image
+              src="/logo/we-mark.png"
+              alt="Wittenboer Events"
+              width={64}
+              height={64}
+              className="h-10 w-10 object-contain"
+              style={{ filter: 'brightness(1.4)' }}
+            />
             <button
               type="button"
               onClick={onClose}

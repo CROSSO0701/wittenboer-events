@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { contact } from '../../lib/content/contact'
 import { NAV_LINKS } from './nav-links'
@@ -11,25 +12,34 @@ export function Footer() {
       }}
     >
       <div className="container-inset pt-20 md:pt-24 pb-10">
-        {/* Big wordmark */}
-        <div className="mb-14 md:mb-20">
-          <p className="mono mb-4" style={{ color: 'var(--color-primary-soft)' }}>
-            Licht · Geluid · Productie · Sinds 2014
-          </p>
-          <h3
-            style={{
-              fontSize: 'clamp(2.5rem, 1.8rem + 5vw, 6.5rem)',
-              fontWeight: 600,
-              letterSpacing: '-0.045em',
-              lineHeight: 0.92,
-              color: 'var(--color-fg-on-dark)',
-            }}
-          >
-            Wittenboer<br />
-            <span style={{ color: 'var(--color-primary-soft)', fontStyle: 'italic', fontWeight: 400 }}>
-              Events.
-            </span>
-          </h3>
+        {/* Big wordmark with logo mark */}
+        <div className="mb-14 md:mb-20 flex items-start gap-6 md:gap-10 flex-wrap">
+          <Image
+            src="/logo/we-mark.png"
+            alt=""
+            width={280}
+            height={280}
+            className="h-24 md:h-32 w-auto shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="mono mb-4" style={{ color: 'var(--color-primary-soft)' }}>
+              Licht · Geluid · Productie · Sinds 2014
+            </p>
+            <h3
+              style={{
+                fontSize: 'clamp(2.5rem, 1.8rem + 5vw, 6.5rem)',
+                fontWeight: 600,
+                letterSpacing: '-0.045em',
+                lineHeight: 0.92,
+                color: 'var(--color-fg-on-dark)',
+              }}
+            >
+              wittenboer<br />
+              <span style={{ color: 'var(--color-primary-soft)', fontStyle: 'italic', fontWeight: 400 }}>
+                events.
+              </span>
+            </h3>
+          </div>
         </div>
 
         <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr_1fr]">

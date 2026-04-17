@@ -20,7 +20,7 @@ export const services: Service[] = [
       'In-ear monitoring en wedge-monitoring',
       'Meet- en richtmicrofoons voor klachtgevoelige locaties',
     ],
-    image: '/photos/service-sound.jpg',
+    image: '/photos/studio-023.jpg',
   },
   {
     slug: 'licht',
@@ -34,7 +34,7 @@ export const services: Service[] = [
       'Programmeerbare consoles (grandMA, Hog)',
       'Synchronisatie met video en geluid',
     ],
-    image: '/photos/service-light.jpg',
+    image: '/photos/park-lounge-2.jpg',
   },
   {
     slug: 'tapeshows',

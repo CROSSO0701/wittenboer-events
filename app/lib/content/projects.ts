@@ -29,7 +29,7 @@ export const projects: Project[] = [
       'Geluidsmetingen en buurtbewaking',
     ],
     partners: ['Coreworks Steigerbouw', 'Roxxi'],
-    photo: '/photos/work-1.jpg',
+    photo: '/photos/project-park-lounge.jpg',
     testimonial: {
       quote:
         'Ik ben zeer tevreden over de diensten van Wittenboer Events en de professionele hulp van Marnix bij het organiseren van ons festival. Hij nam het werk volledig uit mijn handen — van A tot Z. Zeker een aanrader voor toekomstige evenementen.',
@@ -50,7 +50,7 @@ export const projects: Project[] = [
       'Backstage-coördinatie',
       'Speciale installaties (fontein, danskooien)',
     ],
-    photo: '/photos/work-2.jpg',
+    photo: '/photos/project-megapark.jpg',
     testimonial: {
       quote:
         'Ik was onder de indruk van de professionele houding van het team, met name Marnix die de complete lichtshow verzorgde. Ze maakten het proces zo eenvoudig voor ons dat wij ons konden concentreren op het runnen van het evenement zelf.',
