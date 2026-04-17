@@ -69,7 +69,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
           className="flex items-center gap-2.5"
-          style={{ color: 'var(--color-accent)', fontSize: '14px', fontWeight: 500, letterSpacing: '0.02em' }}
+          style={{ color: 'var(--color-tertiary)', fontSize: '14px', fontWeight: 500, letterSpacing: '0.02em' }}
         >
           <span
             aria-hidden

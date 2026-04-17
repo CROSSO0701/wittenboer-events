@@ -9,45 +9,54 @@
 
 @theme {
   /* =======================================================
-     COLOR — stage-red primary (event energy), teal brand, warm cream
+     COLOR — Brand palette (user-specified)
+     Primary   #157A8C  deep teal (brand)
+     Secondary #546A72  slate blue-gray
+     Tertiary  #D9C5B2  warm beige/sand
+     Neutral   #636466  medium gray
      ======================================================= */
 
-  /* PRIMARY — deep bordeaux / stage-light rood */
-  --color-primary:        oklch(52% 0.19 22);    /* deep ruby */
-  --color-primary-hover:  oklch(46% 0.20 20);
-  --color-primary-soft:   oklch(94% 0.05 22);
-  --color-primary-deep:   oklch(32% 0.16 22);
+  /* PRIMARY — deep teal (brand) */
+  --color-primary:        #157A8C;
+  --color-primary-hover:  #10657A;
+  --color-primary-soft:   #E3F0F3;
+  --color-primary-deep:   #0B4A57;
 
-  /* BRAND — WE logo teal (used on logo, occasional accent only) */
-  --color-brand-teal:     oklch(51% 0.09 205);
-  --color-brand-teal-deep: oklch(35% 0.07 205);
-  --color-brand-teal-soft: oklch(94% 0.02 200);
+  /* SECONDARY — slate blue-gray */
+  --color-secondary:      #546A72;
+  --color-secondary-deep: #3B4D54;
+  --color-secondary-soft: #E1E6E8;
 
-  /* ACCENT — warm amber for festival glow */
-  --color-accent:         oklch(78% 0.16 75);    /* amber */
-  --color-accent-deep:    oklch(60% 0.18 60);    /* burnt orange */
-  --color-accent-soft:    oklch(96% 0.05 80);    /* cream amber */
+  /* TERTIARY — warm beige/sand (the warmth) */
+  --color-tertiary:       #D9C5B2;
+  --color-tertiary-deep:  #B8A088;
+  --color-tertiary-soft:  #F3EAE0;
 
-  /* Warm cream surfaces */
-  --color-bg:             oklch(97% 0.018 80);   /* warm cream bg */
-  --color-surface-1:      oklch(94% 0.025 78);   /* deeper cream */
-  --color-surface-2:      oklch(90% 0.030 75);   /* sandy cream */
+  /* NEUTRAL — true medium gray for scale */
+  --color-neutral:        #636466;
+  --color-neutral-deep:   #3E3F42;
+  --color-neutral-soft:   #E6E6E7;
 
-  /* Dark surfaces — warm charcoal */
-  --color-surface-dark:   oklch(17% 0.022 50);
-  --color-surface-dark-1: oklch(22% 0.025 50);
+  /* Surfaces — warm off-white building on tertiary */
+  --color-bg:             #FAF7F3;   /* warm off-white */
+  --color-surface-1:      #F3EAE0;   /* tertiary-soft */
+  --color-surface-2:      #E8DCCE;   /* deeper beige */
 
-  /* Foreground — warm dark */
-  --color-fg:             oklch(20% 0.025 55);
-  --color-fg-secondary:   oklch(42% 0.02 55);
-  --color-fg-muted:       oklch(58% 0.015 55);
-  --color-fg-on-dark:     oklch(96% 0.015 75);
-  --color-fg-on-dark-muted: oklch(72% 0.02 70);
+  /* Dark surfaces — deep teal/slate */
+  --color-surface-dark:   #1A2530;   /* deep slate */
+  --color-surface-dark-1: #243241;
 
-  /* Borders — warm */
-  --color-border:         oklch(85% 0.022 70);
-  --color-border-strong:  oklch(72% 0.025 65);
-  --color-border-on-dark: oklch(34% 0.03 55);
+  /* Foreground — on light */
+  --color-fg:             #1E2A2F;
+  --color-fg-secondary:   #3E3F42;
+  --color-fg-muted:       #636466;
+  --color-fg-on-dark:     #F3EAE0;   /* tertiary tinted white */
+  --color-fg-on-dark-muted: #B8A088;
+
+  /* Borders */
+  --color-border:         #E6DED2;
+  --color-border-strong:  #C9BAA8;
+  --color-border-on-dark: #3E4F5A;
 
   /* =======================================================
      TYPOGRAPHY — Anton billboard display + Figtree body
