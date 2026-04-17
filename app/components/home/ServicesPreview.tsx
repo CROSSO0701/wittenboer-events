@@ -5,241 +5,127 @@ import { services } from '../../lib/content/services'
 import { StaggerReveal, RevealItem } from '../shared/StaggerReveal'
 
 export function ServicesPreview() {
-  const bySlug = (slug: string) => services.find((s) => s.slug === slug)!
-  const geluid = bySlug('geluid')
-  const licht = bySlug('licht')
-  const tape = bySlug('tapeshows')
-  const stroom = bySlug('stroomvoorziening')
-  const artiesten = bySlug('artiestenbegeleiding')
-  const productie = bySlug('productiebegeleiding')
-
   return (
-    <section id="diensten" className="py-24 md:py-32 relative">
+    <section id="diensten" className="py-20 md:py-28 relative" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="container-inset">
-        <div className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
-              {home.services.label} · 06
+            <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
+              {home.services.label}
             </p>
-            <h2 className="max-w-[16ch]">{home.services.heading}</h2>
+            <h2 className="max-w-[14ch]" style={{ fontSize: 'clamp(2.5rem, 1.6rem + 4vw, 5rem)' }}>
+              {home.services.heading}
+            </h2>
           </div>
-          <p className="max-w-[44ch]" style={{ color: 'var(--color-fg-secondary)' }}>
+          <p className="max-w-[44ch] text-[17px]" style={{ color: 'var(--color-fg-secondary)' }}>
             {home.services.lead}
           </p>
         </div>
 
-        <StaggerReveal className="grid gap-4 md:grid-cols-12 md:auto-rows-[minmax(180px,auto)]">
-          {/* 01 — Geluid, large hero card */}
-          <RevealItem className="md:col-span-7 md:row-span-2">
-            <Link
-              href={`/aanbod/${geluid.slug}`}
-              className="group relative block h-full min-h-[420px] overflow-hidden rounded-[var(--radius-xl)] transition-colors"
-              style={{ backgroundColor: 'var(--color-surface-dark)' }}
-            >
-              {geluid.image && (
-                <Image
-                  src={geluid.image}
-                  alt={geluid.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 55vw"
-                  className="object-cover opacity-90 transition-transform duration-[900ms] group-hover:scale-[1.04]"
-                  style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
-                />
-              )}
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(180deg, transparent 20%, color-mix(in oklch, var(--color-surface-dark) 85%, transparent))',
-                }}
-              />
-              <div className="relative z-10 flex h-full flex-col justify-between p-8 md:p-10" style={{ color: 'var(--color-fg-on-dark)' }}>
-                <div className="flex items-start justify-between gap-4">
-                  <p className="mono" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-                    01 · Dienst
-                  </p>
-                  <span
-                    className="mono px-2 py-1"
+        <StaggerReveal className="grid gap-4 md:grid-cols-12 md:auto-rows-[minmax(200px,auto)]">
+          {services.map((s, i) => {
+            const spans = [
+              'md:col-span-7 md:row-span-2',   // Geluid — hero
+              'md:col-span-5',                  // Licht
+              'md:col-span-5',                  // Tapeshows
+              'md:col-span-4',                  // Stroom
+              'md:col-span-4',                  // Artiesten
+              'md:col-span-4',                  // Productie
+            ]
+            const isHero = i === 0
+            const hasImage = !!s.image
+
+            return (
+              <RevealItem key={s.slug} className={spans[i] || 'md:col-span-4'}>
+                <Link
+                  href={`/aanbod/${s.slug}`}
+                  className={`group relative block h-full overflow-hidden rounded-[var(--radius-xl)] transition-all duration-500 hover:-translate-y-1 ${
+                    isHero ? 'min-h-[420px]' : 'min-h-[200px]'
+                  }`}
+                  style={{
+                    backgroundColor: hasImage
+                      ? 'var(--color-surface-dark)'
+                      : 'var(--color-surface-1)',
+                    border: hasImage ? 'none' : '1px solid var(--color-border)',
+                    transitionTimingFunction: 'var(--ease-out-quart)',
+                  }}
+                >
+                  {hasImage && (
+                    <>
+                      <Image
+                        src={s.image!}
+                        alt={s.title}
+                        fill
+                        sizes={isHero ? '(max-width: 768px) 100vw, 55vw' : '(max-width: 768px) 100vw, 40vw'}
+                        className="object-cover opacity-85 transition-transform duration-[900ms] group-hover:scale-[1.05]"
+                        style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'linear-gradient(180deg, transparent 20%, color-mix(in oklch, var(--color-surface-dark) 88%, transparent))',
+                        }}
+                      />
+                    </>
+                  )}
+
+                  <div
+                    className={`relative z-10 flex h-full flex-col ${
+                      isHero ? 'justify-end p-7 md:p-9' : 'justify-between p-6'
+                    }`}
                     style={{
-                      border: '0.5px solid color-mix(in oklch, var(--color-primary-soft) 40%, transparent)',
-                      color: 'var(--color-primary-soft)',
+                      color: hasImage ? 'var(--color-fg-on-dark)' : 'var(--color-fg)',
                     }}
                   >
-                    L-Acoustics · d&b
-                  </span>
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      color: 'var(--color-fg-on-dark)',
-                      fontWeight: 600,
-                      fontSize: 'clamp(2rem, 1.5rem + 2vw, 3.25rem)',
-                      letterSpacing: '-0.03em',
-                      lineHeight: 1,
-                    }}
-                  >
-                    {geluid.title}
-                  </h3>
-                  <p className="mt-4 max-w-[42ch]" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-                    {geluid.lead}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          </RevealItem>
-
-          {/* 02 — Licht */}
-          <RevealItem className="md:col-span-5">
-            <Link
-              href={`/aanbod/${licht.slug}`}
-              className="group relative flex h-full min-h-[200px] flex-col justify-between overflow-hidden rounded-[var(--radius-xl)] p-6 md:p-7 transition-colors hover:[background-color:var(--color-surface-1)]"
-              style={{ border: '0.5px solid var(--color-border)' }}
-            >
-              <div className="flex items-start justify-between">
-                <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-                  02 · Dienst
-                </p>
-                <span className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-                  grandMA · Hog
-                </span>
-              </div>
-              <div>
-                <h3 style={{ fontSize: 'var(--text-display-sm)', fontWeight: 600, letterSpacing: '-0.025em' }}>{licht.title}</h3>
-                <p className="mt-2 text-[15px]" style={{ color: 'var(--color-fg-secondary)' }}>
-                  {licht.lead}
-                </p>
-              </div>
-            </Link>
-          </RevealItem>
-
-          {/* 03 — Artiestenbegeleiding */}
-          <RevealItem className="md:col-span-5">
-            <Link
-              href={`/aanbod/${artiesten.slug}`}
-              className="group relative flex h-full min-h-[200px] flex-col justify-between overflow-hidden rounded-[var(--radius-xl)] p-6 md:p-7 transition-transform hover:-translate-y-0.5"
-              style={{
-                backgroundColor: 'var(--color-primary-soft)',
-                border: '0.5px solid color-mix(in oklch, var(--color-primary) 25%, transparent)',
-                transitionTimingFunction: 'var(--ease-out-quart)',
-                transitionDuration: 'var(--dur-base)',
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <p className="mono" style={{ color: 'var(--color-primary-deep)' }}>
-                  03 · Dienst
-                </p>
-                <span className="mono" style={{ color: 'var(--color-primary-deep)', opacity: 0.7 }}>
-                  Ned. top-artiesten
-                </span>
-              </div>
-              <div>
-                <h3 style={{ fontSize: 'var(--text-display-sm)', fontWeight: 600, color: 'var(--color-primary-deep)', letterSpacing: '-0.025em' }}>
-                  {artiesten.title}
-                </h3>
-                <p className="mt-2 text-[15px]" style={{ color: 'var(--color-fg-secondary)' }}>
-                  {artiesten.lead}
-                </p>
-              </div>
-            </Link>
-          </RevealItem>
-
-          {/* 04 — Tapeshows */}
-          <RevealItem className="md:col-span-4">
-            <Link
-              href={`/aanbod/${tape.slug}`}
-              className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-[var(--radius-xl)] p-6 transition-colors hover:[background-color:var(--color-surface-1)]"
-              style={{ border: '0.5px solid var(--color-border)' }}
-            >
-              <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-                04 · Dienst
-              </p>
-              <div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.025em' }}>{tape.title}</h3>
-                <p className="mt-2 text-[14px]" style={{ color: 'var(--color-fg-secondary)' }}>
-                  {tape.lead}
-                </p>
-              </div>
-            </Link>
-          </RevealItem>
-
-          {/* 05 — Stroomvoorziening */}
-          <RevealItem className="md:col-span-4">
-            <Link
-              href={`/aanbod/${stroom.slug}`}
-              className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-[var(--radius-xl)] p-6 transition-colors hover:[background-color:var(--color-surface-1)]"
-              style={{ border: '0.5px solid var(--color-border)' }}
-            >
-              <div className="flex items-start justify-between">
-                <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-                  05 · Dienst
-                </p>
-                <span className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-                  25–500 kVA
-                </span>
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.025em' }}>{stroom.title}</h3>
-                <p className="mt-2 text-[14px]" style={{ color: 'var(--color-fg-secondary)' }}>
-                  {stroom.lead}
-                </p>
-              </div>
-            </Link>
-          </RevealItem>
-
-          {/* 06 — Productiebegeleiding */}
-          <RevealItem className="md:col-span-4">
-            <Link
-              href={`/aanbod/${productie.slug}`}
-              className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-[var(--radius-xl)] p-6 transition-colors"
-              style={{
-                backgroundColor: 'var(--color-surface-dark-1)',
-                color: 'var(--color-fg-on-dark)',
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <p className="mono" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-                  06 · Dienst
-                </p>
-                <span className="mono" style={{ color: 'var(--color-primary-soft)' }}>
-                  A→Z
-                </span>
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.025em', color: 'var(--color-fg-on-dark)' }}>
-                  {productie.title}
-                </h3>
-                <p className="mt-2 text-[14px]" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-                  {productie.lead}
-                </p>
-              </div>
-            </Link>
-          </RevealItem>
+                    <div className="flex items-start justify-between gap-3">
+                      <h3
+                        className="uppercase"
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontWeight: 400,
+                          fontSize: isHero ? 'clamp(2.5rem, 2rem + 2vw, 4.5rem)' : 'clamp(1.5rem, 1.2rem + 1vw, 2.25rem)',
+                          letterSpacing: isHero ? '-0.005em' : '0em',
+                          lineHeight: 0.95,
+                          color: hasImage ? 'var(--color-fg-on-dark)' : 'var(--color-fg)',
+                          marginTop: isHero ? 'auto' : 0,
+                        }}
+                      >
+                        {s.title}
+                      </h3>
+                      {!isHero && (
+                        <span
+                          aria-hidden
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 shrink-0"
+                          style={{
+                            backgroundColor: 'var(--color-primary)',
+                            color: 'var(--color-fg-on-dark)',
+                          }}
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M7 17L17 7" />
+                            <path d="M8 7h9v9" />
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={isHero ? 'mt-4 max-w-[46ch]' : 'mt-2'}
+                      style={{
+                        fontSize: isHero ? '16px' : '14px',
+                        color: hasImage ? 'var(--color-fg-on-dark-muted)' : 'var(--color-fg-secondary)',
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      {s.lead}
+                    </p>
+                  </div>
+                </Link>
+              </RevealItem>
+            )
+          })}
         </StaggerReveal>
-
-        <div className="mt-10 flex justify-end">
-          <Link
-            href="/aanbod"
-            className="inline-flex items-center gap-2 group"
-            style={{ color: 'var(--color-fg)' }}
-          >
-            <span>{home.services.ctaLabel}</span>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              className="transition-transform group-hover:translate-x-1"
-              style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
-            >
-              <path d="M5 12h14" />
-              <path d="M13 6l6 6-6 6" />
-            </svg>
-          </Link>
-        </div>
       </div>
     </section>
   )

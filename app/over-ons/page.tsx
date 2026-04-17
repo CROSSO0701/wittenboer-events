@@ -16,15 +16,23 @@ export default function OverOnsPage() {
     <>
       <Nav />
       <main>
-        <section className="pt-24 md:pt-32 pb-20 md:pb-28">
+        <section className="pt-32 md:pt-40 pb-20 md:pb-28">
           <div className="container-inset">
-            <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+            <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
               {about.label}
             </p>
-            <h1 className="max-w-[20ch] mb-10">{about.heading}</h1>
+            <h1
+              className="max-w-[15ch] mb-10"
+              style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+            >
+              {about.heading}
+            </h1>
 
-            <div className="grid gap-12 md:grid-cols-[1fr_1.3fr] md:items-start">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)]" style={{ backgroundColor: 'var(--color-surface-2)' }}>
+            <div className="grid gap-10 md:gap-14 md:grid-cols-[1fr_1.3fr] md:items-start">
+              <div
+                className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)]"
+                style={{ backgroundColor: 'var(--color-surface-2)' }}
+              >
                 <Image
                   src={about.portrait.src}
                   alt={about.portrait.alt}
@@ -33,19 +41,21 @@ export default function OverOnsPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex flex-col gap-6">
-                <p className="text-[var(--text-lg)]" style={{ color: 'var(--color-fg-secondary)' }}>
+              <div className="flex flex-col gap-5">
+                <p className="text-[17px] md:text-[19px]" style={{ color: 'var(--color-fg-secondary)', lineHeight: 1.55 }}>
                   {about.lead}
                 </p>
-                <p style={{ color: 'var(--color-fg-secondary)' }}>{about.body}</p>
+                <p className="text-[16px]" style={{ color: 'var(--color-fg-secondary)', lineHeight: 1.6 }}>
+                  {about.body}
+                </p>
                 <figure
-                  className="mt-4 pl-5 py-2"
-                  style={{ borderLeft: '0.5px solid var(--color-primary)' }}
+                  className="mt-4 pl-5 py-3"
+                  style={{ borderLeft: '2px solid var(--color-primary)' }}
                 >
-                  <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
+                  <p style={{ color: 'var(--color-fg)', fontSize: '17px', fontWeight: 600 }}>
                     Marnix Wittenboer
                   </p>
-                  <p className="mt-1" style={{ color: 'var(--color-fg)' }}>
+                  <p style={{ color: 'var(--color-fg-muted)', fontSize: '14px', marginTop: '2px' }}>
                     Oprichter · Technicus · Aanspreekpunt
                   </p>
                 </figure>
@@ -56,60 +66,72 @@ export default function OverOnsPage() {
 
         <section className="py-20 md:py-28" style={{ backgroundColor: 'var(--color-surface-1)' }}>
           <div className="container-inset">
-            <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+            <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
               Waarom wij
             </p>
-            <h2 className="max-w-[18ch] mb-14">Vijf redenen waarom klanten terugkomen.</h2>
+            <h2
+              className="max-w-[16ch] mb-14"
+              style={{ fontSize: 'clamp(2.5rem, 1.6rem + 4vw, 5rem)' }}
+            >
+              Vijf redenen om terug te komen.
+            </h2>
 
-            <StaggerReveal className="grid gap-0 md:grid-cols-2">
+            <StaggerReveal className="grid gap-x-10 gap-y-10 md:grid-cols-2">
               {about.whyUs.map((w, i) => (
-                <RevealItem
-                  key={w.title}
-                  className={`py-8 md:py-10 md:px-8 md:first:pl-0 ${i % 2 === 1 ? 'md:border-l' : ''}`}
-                >
-                  <div
-                    style={{
-                      borderTop: i > 1 ? '0.5px solid var(--color-border)' : undefined,
-                      paddingTop: i > 1 ? '1.5rem' : undefined,
-                    }}
-                  >
-                    <div className="flex items-baseline gap-4 mb-3">
-                      <span className="mono" style={{ color: 'var(--color-primary)' }}>
-                        0{i + 1}
-                      </span>
-                      <h3 style={{ fontSize: 'var(--text-display-sm)', fontWeight: 600 }}>{w.title}</h3>
+                <RevealItem key={w.title}>
+                  <div className="flex items-start gap-5">
+                    <span
+                      aria-hidden
+                      className="inline-flex h-12 w-12 items-center justify-center rounded-full shrink-0"
+                      style={{
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'var(--color-fg-on-dark)',
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 400,
+                        fontSize: '18px',
+                      }}
+                    >
+                      0{i + 1}
+                    </span>
+                    <div>
+                      <h3 style={{ fontSize: 'clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem)', fontWeight: 700, letterSpacing: '-0.025em' }}>
+                        {w.title}
+                      </h3>
+                      <p className="mt-2 text-[15.5px]" style={{ color: 'var(--color-fg-secondary)', lineHeight: 1.6 }}>
+                        {w.body}
+                      </p>
                     </div>
-                    <p style={{ color: 'var(--color-fg-secondary)' }}>{w.body}</p>
                   </div>
                 </RevealItem>
               ))}
             </StaggerReveal>
-
-            <style>{`
-              @media (min-width: 768px) {
-                section .md\\:border-l { border-left: 0.5px solid var(--color-border); }
-              }
-            `}</style>
           </div>
         </section>
 
-        <section className="py-24 md:py-32" style={{ backgroundColor: 'var(--color-surface-dark)', color: 'var(--color-fg-on-dark)' }}>
-          <div className="container-inset text-center">
-            <h2 className="max-w-[22ch] mx-auto" style={{ color: 'var(--color-fg-on-dark)' }}>
+        <section className="py-20 md:py-28" style={{ backgroundColor: 'var(--color-surface-dark)', color: 'var(--color-fg-on-dark)' }}>
+          <div className="container-inset text-center max-w-3xl mx-auto">
+            <h2
+              className="uppercase mx-auto"
+              style={{
+                color: 'var(--color-fg-on-dark)',
+                fontSize: 'clamp(2.5rem, 1.6rem + 4vw, 5rem)',
+                lineHeight: 0.95,
+              }}
+            >
               {about.closing.heading}
             </h2>
-            <div className="mt-8 inline-flex">
+            <div className="mt-10 inline-flex">
               <Link
                 href={about.closing.href}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-[14px] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-4 rounded-full text-[16px] transition-colors"
                 style={{
                   backgroundColor: 'var(--color-primary)',
                   color: 'var(--color-fg-on-dark)',
-                  fontWeight: 500,
+                  fontWeight: 600,
                 }}
               >
                 {about.closing.cta}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M5 12h14" />
                   <path d="M13 6l6 6-6 6" />
                 </svg>

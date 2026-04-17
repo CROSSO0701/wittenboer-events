@@ -15,20 +15,24 @@ export default function ArtiestenPage() {
     <>
       <Nav />
       <main>
-        <section className="pt-24 md:pt-32 pb-16 md:pb-20">
+        <section className="pt-32 md:pt-40 pb-16 md:pb-20">
           <div className="container-inset">
-            <div className="mb-14 max-w-3xl">
-              <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+            <div className="mb-14 md:mb-16 max-w-3xl">
+              <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
                 Artiesten
               </p>
-              <h1 className="max-w-[20ch] mb-6">Vast netwerk, persoonlijk geboekt.</h1>
-              <p
-                className="text-[var(--text-lg)]"
-                style={{ color: 'var(--color-fg-secondary)', maxInlineSize: 'var(--measure-lead)' }}
+              <h1
+                className="max-w-[16ch] mb-6"
+                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
               >
-                Een selectie artiesten waarmee we regelmatig werken. Van feestelijke live-acts
-                tot radiozangers — altijd geboekt met passende techniek en backstage-coördinatie.
-                Klik door voor de officiële boekingspagina van de artiest.
+                Wij boeken, wij kennen ze.
+              </h1>
+              <p
+                className="text-[17px] md:text-[19px]"
+                style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
+              >
+                Een vast netwerk van Nederlandse zangers waarmee we regelmatig werken. Van live-acts tot radiozangers —
+                geboekt met passende techniek en backstage-coördinatie. Klik door voor de officiële boekingspagina.
               </p>
             </div>
 

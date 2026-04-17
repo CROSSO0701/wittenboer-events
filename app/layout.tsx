@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
-import { Fraunces, Figtree, JetBrains_Mono } from 'next/font/google'
+import { Anton, Figtree, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const fraunces = Fraunces({
+const anton = Anton({
   subsets: ['latin'],
-  style: ['normal', 'italic'],
+  weight: ['400'],
   variable: '--font-display',
   display: 'swap',
-  axes: ['SOFT', 'opsz'],
 })
 
 const figtree = Figtree({
@@ -31,13 +30,12 @@ export const metadata: Metadata = {
     template: '%s — Wittenboer Events',
   },
   description:
-    'Van drive-in show tot volledige productie. Professioneel licht, geluid, stroomvoorziening en artiestenbegeleiding door Marnix Wittenboer. Gevestigd in Sint-Michielsgestel.',
+    'Van drive-in show tot volledige productie. Licht, geluid, stroom en artiesten — door Marnix Wittenboer in Sint-Michielsgestel.',
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    title: 'Wittenboer Events — licht, geluid en productie',
-    description:
-      'Professioneel licht, geluid, stroomvoorziening en artiestenbegeleiding. Van festival tot bedrijfsevenement.',
+    title: 'Wittenboer Events',
+    description: 'Licht, geluid, stroom en artiesten voor evenementen van elke schaal.',
     siteName: 'Wittenboer Events',
   },
   robots: { index: true, follow: true },
@@ -46,7 +44,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${fraunces.variable} ${figtree.variable} ${jetbrains.variable}`}>
+    <html lang="nl" className={`${anton.variable} ${figtree.variable} ${jetbrains.variable}`}>
       <body style={{ fontFamily: 'var(--font-body)' }}>{children}</body>
     </html>
   )

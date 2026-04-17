@@ -16,16 +16,21 @@ export default function ProjectenPage() {
     <>
       <Nav />
       <main>
-        <section className="pt-24 md:pt-32 pb-8">
+        <section className="pt-32 md:pt-40 pb-12">
           <div className="container-inset">
             <div className="max-w-3xl">
-              <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+              <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
                 Projecten
               </p>
-              <h1 className="max-w-[18ch] mb-6">Twee projecten, concrete resultaten.</h1>
+              <h1
+                className="max-w-[16ch] mb-6"
+                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+              >
+                Werk waar we trots op zijn.
+              </h1>
               <p
-                className="text-[var(--text-lg)]"
-                style={{ color: 'var(--color-fg-secondary)', maxInlineSize: 'var(--measure-lead)' }}
+                className="text-[17px] md:text-[19px]"
+                style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
               >
                 Elk project is een andere puzzel. Hier twee verhalen — hoe we ze aanvlogen, wat
                 we bouwden, en wat het publiek (en de buurt) ervan vond.

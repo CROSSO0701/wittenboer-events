@@ -4,107 +4,80 @@ import { StaggerReveal, RevealItem } from '../shared/StaggerReveal'
 export function ApproachStrip() {
   const { approach } = home
   return (
-    <section
-      className="py-24 md:py-36 relative"
-      style={{ backgroundColor: 'var(--color-bg)' }}
-    >
+    <section className="py-20 md:py-28" style={{ backgroundColor: 'var(--color-surface-1)' }}>
       <div className="container-inset">
-        <div className="mb-16 md:mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+            <p className="mb-3" style={{ color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600 }}>
               {approach.label}
             </p>
-            <h2 className="max-w-[18ch]">{approach.heading}</h2>
+            <h2 className="max-w-[16ch]" style={{ fontSize: 'clamp(2.25rem, 1.4rem + 3.5vw, 4.5rem)' }}>
+              {approach.heading}
+            </h2>
           </div>
-          <p className="max-w-[40ch] mono" style={{ color: 'var(--color-fg-secondary)' }}>
-            Draaiboek · Ontwerp · Uitvoering → Eén aanspreekpunt, drie duidelijke fases.
-          </p>
         </div>
 
-        {/* Staggered columns with different heights + connecting line */}
-        <StaggerReveal className="relative grid md:grid-cols-3 gap-8 md:gap-0">
-          {/* Horizontal connector line — desktop */}
+        {/* Flat 3-col, aligned baseline, connector line */}
+        <div className="relative">
           <div
             aria-hidden
-            className="hidden md:block absolute top-[72px] left-0 right-0 h-px z-0"
-            style={{ background: 'linear-gradient(90deg, var(--color-border) 0%, var(--color-primary) 50%, var(--color-border) 100%)' }}
+            className="hidden md:block absolute top-9 left-8 right-8 h-0.5 z-0 rounded-full"
+            style={{
+              background:
+                'linear-gradient(90deg, var(--color-border-strong) 0%, var(--color-primary) 50%, var(--color-border-strong) 100%)',
+            }}
           />
 
-          {approach.steps.map((s, i) => (
-            <RevealItem
-              key={s.number}
-              className="relative z-10"
-            >
-              <div
-                className={`relative px-0 md:px-8 md:first:pl-0 md:last:pr-0 ${
-                  i === 1 ? 'md:translate-y-10' : i === 2 ? 'md:translate-y-20' : ''
-                }`}
-              >
-                {/* Dot on connector */}
-                <div className="hidden md:flex items-center gap-4 mb-6 relative">
-                  <span
-                    aria-hidden
-                    className="inline-block h-3 w-3 rounded-full"
+          <StaggerReveal className="relative grid md:grid-cols-3 gap-10 md:gap-6 z-10">
+            {approach.steps.map((s) => (
+              <RevealItem key={s.number}>
+                <div className="relative md:px-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <span
+                      aria-hidden
+                      className="inline-flex h-[72px] w-[72px] items-center justify-center rounded-full shrink-0"
+                      style={{
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'var(--color-fg-on-dark)',
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 400,
+                        fontSize: '28px',
+                        letterSpacing: '-0.01em',
+                        boxShadow: '0 0 0 6px var(--color-surface-1)',
+                      }}
+                    >
+                      {s.number}
+                    </span>
+                  </div>
+
+                  <h3
+                    className="uppercase"
                     style={{
-                      backgroundColor: 'var(--color-primary)',
-                      boxShadow: '0 0 0 6px var(--color-bg), 0 0 0 7px var(--color-primary)',
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 400,
+                      fontSize: 'clamp(2rem, 1.4rem + 2vw, 3.25rem)',
+                      letterSpacing: '-0.005em',
+                      lineHeight: 0.95,
+                      color: 'var(--color-fg)',
                     }}
-                  />
-                  <span
-                    className="mono"
-                    style={{ color: 'var(--color-primary)' }}
                   >
-                    {s.number} · Fase
-                  </span>
+                    {s.title}
+                  </h3>
+                  <p
+                    className="mt-3 text-[16px]"
+                    style={{
+                      color: 'var(--color-fg-secondary)',
+                      maxInlineSize: '32ch',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {s.body}
+                  </p>
                 </div>
-
-                {/* Mobile dot */}
-                <div className="flex md:hidden items-center gap-3 mb-5">
-                  <span
-                    aria-hidden
-                    className="inline-block h-2 w-2 rounded-full"
-                    style={{ backgroundColor: 'var(--color-primary)' }}
-                  />
-                  <span className="mono" style={{ color: 'var(--color-primary)' }}>
-                    {s.number} · Fase
-                  </span>
-                </div>
-
-                <h3
-                  style={{
-                    fontSize: 'clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem)',
-                    fontWeight: 600,
-                    letterSpacing: '-0.03em',
-                    lineHeight: 1,
-                    color: 'var(--color-fg)',
-                  }}
-                >
-                  {s.title}
-                </h3>
-                <p
-                  className="mt-4"
-                  style={{
-                    color: 'var(--color-fg-secondary)',
-                    maxInlineSize: '30ch',
-                  }}
-                >
-                  {s.body}
-                </p>
-
-                {/* Micro-duration badge */}
-                <span
-                  className="mono inline-block mt-5 px-2.5 py-1 rounded-[var(--radius-sm)]"
-                  style={{
-                    backgroundColor: 'var(--color-surface-2)',
-                    color: 'var(--color-fg-secondary)',
-                  }}
-                >
-                  {i === 0 ? '≤ 2 werkdagen' : i === 1 ? '1–3 weken' : 'Event-dag'}
-                </span>
-              </div>
-            </RevealItem>
-          ))}
-        </StaggerReveal>
+              </RevealItem>
+            ))}
+          </StaggerReveal>
+        </div>
       </div>
     </section>
   )

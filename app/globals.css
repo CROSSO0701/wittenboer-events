@@ -9,45 +9,51 @@
 
 @theme {
   /* =======================================================
-     COLOR — teal + warm amber accent + cream neutrals
+     COLOR — stage-red primary (event energy), teal brand, warm cream
      ======================================================= */
 
-  --color-primary:        oklch(51% 0.09 205);   /* WE logo teal */
-  --color-primary-hover:  oklch(45% 0.10 205);
-  --color-primary-soft:   oklch(95% 0.03 200);   /* warm teal wash */
-  --color-primary-deep:   oklch(30% 0.06 205);
+  /* PRIMARY — stage red, reads like event lighting */
+  --color-primary:        oklch(58% 0.21 30);    /* stage red/scarlet */
+  --color-primary-hover:  oklch(52% 0.22 28);
+  --color-primary-soft:   oklch(94% 0.05 30);    /* warm peach wash */
+  --color-primary-deep:   oklch(35% 0.17 30);
 
-  /* Amber secondary accent — warmth from festival lights */
-  --color-accent:         oklch(75% 0.15 68);    /* warm amber */
-  --color-accent-deep:    oklch(55% 0.18 55);    /* burnt orange */
-  --color-accent-soft:    oklch(96% 0.04 75);    /* cream amber */
+  /* BRAND — WE logo teal (used on logo, occasional accent only) */
+  --color-brand-teal:     oklch(51% 0.09 205);
+  --color-brand-teal-deep: oklch(35% 0.07 205);
+  --color-brand-teal-soft: oklch(94% 0.02 200);
 
-  /* Warm cream surfaces (NOT cool gray) */
-  --color-bg:             oklch(98.5% 0.008 85); /* warm off-white */
-  --color-surface-1:      oklch(96% 0.012 80);   /* cream */
-  --color-surface-2:      oklch(92% 0.018 80);   /* deeper cream */
+  /* ACCENT — warm amber for festival glow */
+  --color-accent:         oklch(78% 0.16 75);    /* amber */
+  --color-accent-deep:    oklch(60% 0.18 60);    /* burnt orange */
+  --color-accent-soft:    oklch(96% 0.05 80);    /* cream amber */
 
-  /* Dark surfaces — warm charcoal, not cold */
-  --color-surface-dark:   oklch(18% 0.02 55);    /* warm dark */
-  --color-surface-dark-1: oklch(22% 0.02 55);
+  /* Warm cream surfaces */
+  --color-bg:             oklch(97% 0.018 80);   /* warm cream bg */
+  --color-surface-1:      oklch(94% 0.025 78);   /* deeper cream */
+  --color-surface-2:      oklch(90% 0.030 75);   /* sandy cream */
+
+  /* Dark surfaces — warm charcoal */
+  --color-surface-dark:   oklch(17% 0.022 50);
+  --color-surface-dark-1: oklch(22% 0.025 50);
 
   /* Foreground — warm dark */
-  --color-fg:             oklch(20% 0.02 60);
-  --color-fg-secondary:   oklch(42% 0.015 60);
-  --color-fg-muted:       oklch(58% 0.012 60);
-  --color-fg-on-dark:     oklch(96% 0.01 75);
-  --color-fg-on-dark-muted: oklch(72% 0.015 70);
+  --color-fg:             oklch(20% 0.025 55);
+  --color-fg-secondary:   oklch(42% 0.02 55);
+  --color-fg-muted:       oklch(58% 0.015 55);
+  --color-fg-on-dark:     oklch(96% 0.015 75);
+  --color-fg-on-dark-muted: oklch(72% 0.02 70);
 
   /* Borders — warm */
-  --color-border:         oklch(88% 0.015 70);
-  --color-border-strong:  oklch(74% 0.018 65);
-  --color-border-on-dark: oklch(34% 0.025 60);
+  --color-border:         oklch(85% 0.022 70);
+  --color-border-strong:  oklch(72% 0.025 65);
+  --color-border-on-dark: oklch(34% 0.03 55);
 
   /* =======================================================
-     TYPOGRAPHY — Fraunces display + Figtree body
+     TYPOGRAPHY — Anton billboard display + Figtree body
      ======================================================= */
 
-  --font-display: var(--font-display), "Fraunces", ui-serif, Georgia, serif;
+  --font-display: var(--font-display), "Anton", "Impact", ui-sans-serif, sans-serif;
   --font-body:    var(--font-body), "Figtree", ui-sans-serif, system-ui, sans-serif;
   --font-mono:    var(--font-mono), ui-monospace, Menlo, monospace;
 
@@ -133,24 +139,29 @@ body {
   text-wrap: pretty;
 }
 
-h1, h2, h3, h4 {
+h1, h2 {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-variation-settings: "opsz" 144, "SOFT" 50;
-  letter-spacing: -0.022em;
-  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 0.95;
+  text-wrap: balance;
+  text-transform: uppercase;
+  color: var(--color-fg);
+}
+
+h3, h4 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
   text-wrap: balance;
   color: var(--color-fg);
 }
 
-h1 { font-size: var(--text-display-xl); font-weight: 500; }
-h2 { font-size: var(--text-display-lg); font-weight: 500; }
-h3 { font-size: var(--text-display-md); font-weight: 600; }
-h4 { font-size: var(--text-display-sm); font-weight: 600; }
-
-em, i {
-  font-variation-settings: "opsz" 144, "SOFT" 100;
-}
+h1 { font-size: var(--text-display-xl); }
+h2 { font-size: var(--text-display-lg); }
+h3 { font-size: var(--text-display-md); }
+h4 { font-size: var(--text-display-sm); }
 
 p {
   max-inline-size: var(--measure-body);

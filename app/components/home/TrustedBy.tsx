@@ -5,17 +5,17 @@ export function TrustedBy() {
   const items = [...names, ...names]
   return (
     <section
-      className="py-14 md:py-16 border-y relative"
+      className="py-12 md:py-14 border-y"
       style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface-1)' }}
     >
       <div className="container-inset mb-6 flex items-center gap-3">
         <span
           aria-hidden
-          className="h-px w-8"
+          className="h-0.5 w-8 rounded-full"
           style={{ backgroundColor: 'var(--color-primary)' }}
         />
-        <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
-          {label} · Selectie klanten
+        <p style={{ color: 'var(--color-fg-secondary)', fontSize: '14px', fontWeight: 500 }}>
+          {label}
         </p>
       </div>
 
@@ -24,18 +24,21 @@ export function TrustedBy() {
           {items.map((n, i) => (
             <span
               key={`${n}-${i}`}
-              className="flex items-center gap-[var(--space-3xl)] whitespace-nowrap"
+              className="flex items-center gap-[var(--space-3xl)] whitespace-nowrap uppercase"
               style={{
                 color: 'var(--color-fg)',
-                fontSize: 'clamp(1.75rem, 1.4rem + 2vw, 3.25rem)',
-                fontWeight: 500,
-                letterSpacing: '-0.03em',
-                fontStyle: i % 3 === 1 ? 'italic' : 'normal',
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(2rem, 1.5rem + 2vw, 3.5rem)',
+                fontWeight: 400,
+                letterSpacing: '-0.005em',
               }}
             >
               <span>{n}</span>
-              <span aria-hidden style={{ color: 'var(--color-primary)', fontSize: '0.6em' }}>
-                ●
+              <span
+                aria-hidden
+                style={{ color: 'var(--color-primary)', fontSize: '0.5em' }}
+              >
+                ✦
               </span>
             </span>
           ))}
