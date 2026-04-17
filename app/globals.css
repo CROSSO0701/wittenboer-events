@@ -1,50 +1,55 @@
 /*
-  Wittenboer Events — design tokens (v2, real brand)
-  Teal primary from the WE logo (#0d7788 calibrated in OKLCH).
-  Cool near-black neutrals, no pure black.
-  Outfit for display/body, JetBrains Mono for captions.
+  Wittenboer Events — design tokens (v3, warm event-industry)
+  Teal primary #0d7788 from the WE logo.
+  Warm cream neutrals (not cold gray) to match the event/entertainment vibe.
+  Fraunces for display (serif with character), Figtree for body (warm rounded sans).
 */
 
 @import "tailwindcss";
 
 @theme {
   /* =======================================================
-     COLOR — teal primary, one accent, cool neutrals
+     COLOR — teal + warm amber accent + cream neutrals
      ======================================================= */
 
   --color-primary:        oklch(51% 0.09 205);   /* WE logo teal */
   --color-primary-hover:  oklch(45% 0.10 205);
-  --color-primary-soft:   oklch(95% 0.025 205);  /* tint wash for badges */
-  --color-primary-deep:   oklch(30% 0.06 205);   /* deep teal for dark text emphasis */
+  --color-primary-soft:   oklch(95% 0.03 200);   /* warm teal wash */
+  --color-primary-deep:   oklch(30% 0.06 205);
 
-  /* Light surfaces (slightly cool off-white) */
-  --color-bg:             oklch(99% 0.003 235);
-  --color-surface-1:      oklch(97% 0.005 235);
-  --color-surface-2:      oklch(94% 0.006 235);
+  /* Amber secondary accent — warmth from festival lights */
+  --color-accent:         oklch(75% 0.15 68);    /* warm amber */
+  --color-accent-deep:    oklch(55% 0.18 55);    /* burnt orange */
+  --color-accent-soft:    oklch(96% 0.04 75);    /* cream amber */
 
-  /* Dark surfaces (deep teal-charcoal, never #000) */
-  --color-surface-dark:   oklch(16% 0.025 220);
-  --color-surface-dark-1: oklch(20% 0.025 220);
+  /* Warm cream surfaces (NOT cool gray) */
+  --color-bg:             oklch(98.5% 0.008 85); /* warm off-white */
+  --color-surface-1:      oklch(96% 0.012 80);   /* cream */
+  --color-surface-2:      oklch(92% 0.018 80);   /* deeper cream */
 
-  /* Foreground / type */
-  --color-fg:             oklch(17% 0.015 235);
-  --color-fg-secondary:   oklch(40% 0.012 235);
-  --color-fg-muted:       oklch(58% 0.008 235);
-  --color-fg-on-dark:     oklch(96% 0.006 235);
-  --color-fg-on-dark-muted: oklch(72% 0.012 235);
+  /* Dark surfaces — warm charcoal, not cold */
+  --color-surface-dark:   oklch(18% 0.02 55);    /* warm dark */
+  --color-surface-dark-1: oklch(22% 0.02 55);
 
-  /* Borders */
-  --color-border:         oklch(88% 0.010 235);
-  --color-border-strong:  oklch(74% 0.012 235);
-  --color-border-on-dark: oklch(32% 0.020 220);
+  /* Foreground — warm dark */
+  --color-fg:             oklch(20% 0.02 60);
+  --color-fg-secondary:   oklch(42% 0.015 60);
+  --color-fg-muted:       oklch(58% 0.012 60);
+  --color-fg-on-dark:     oklch(96% 0.01 75);
+  --color-fg-on-dark-muted: oklch(72% 0.015 70);
+
+  /* Borders — warm */
+  --color-border:         oklch(88% 0.015 70);
+  --color-border-strong:  oklch(74% 0.018 65);
+  --color-border-on-dark: oklch(34% 0.025 60);
 
   /* =======================================================
-     TYPOGRAPHY — Outfit (display/body), JetBrains Mono
+     TYPOGRAPHY — Fraunces display + Figtree body
      ======================================================= */
 
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-body:    "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-display: var(--font-display), "Fraunces", ui-serif, Georgia, serif;
+  --font-body:    var(--font-body), "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-mono), ui-monospace, Menlo, monospace;
 
   /* Fluid display scale */
   --text-display-xl: clamp(2.75rem, 2rem + 4vw, 5.75rem);
@@ -130,17 +135,22 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  font-weight: 500;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  letter-spacing: -0.022em;
   line-height: 1.02;
   text-wrap: balance;
   color: var(--color-fg);
 }
 
-h1 { font-size: var(--text-display-xl); font-weight: 600; }
-h2 { font-size: var(--text-display-lg); font-weight: 600; }
+h1 { font-size: var(--text-display-xl); font-weight: 500; }
+h2 { font-size: var(--text-display-lg); font-weight: 500; }
 h3 { font-size: var(--text-display-md); font-weight: 600; }
 h4 { font-size: var(--text-display-sm); font-weight: 600; }
+
+em, i {
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
 
 p {
   max-inline-size: var(--measure-body);

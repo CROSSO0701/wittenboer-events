@@ -1,18 +1,26 @@
 import type { Metadata } from 'next'
-import { Outfit, JetBrains_Mono } from 'next/font/google'
+import { Fraunces, Figtree, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const outfit = Outfit({
+const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-outfit',
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+  display: 'swap',
+  axes: ['SOFT', 'opsz'],
+})
+
+const figtree = Figtree({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
   display: 'swap',
 })
 
 const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-jetbrains',
+  weight: ['400', '500'],
+  variable: '--font-mono',
   display: 'swap',
 })
 
@@ -38,8 +46,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${outfit.variable} ${jetbrains.variable}`}>
-      <body style={{ fontFamily: 'var(--font-outfit)' }}>{children}</body>
+    <html lang="nl" className={`${fraunces.variable} ${figtree.variable} ${jetbrains.variable}`}>
+      <body style={{ fontFamily: 'var(--font-body)' }}>{children}</body>
     </html>
   )
 }
