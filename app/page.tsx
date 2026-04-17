@@ -5,6 +5,8 @@ import { TrustedBy } from './components/home/TrustedBy'
 import { ServicesPreview } from './components/home/ServicesPreview'
 import { ApproachStrip } from './components/home/ApproachStrip'
 import { FeaturedWork } from './components/home/FeaturedWork'
+import { ArtistsTeaser } from './components/home/ArtistsTeaser'
+import { EquipmentStrip } from './components/home/EquipmentStrip'
 import { ContactCTA } from './components/home/ContactCTA'
 
 export default function Page() {
@@ -17,6 +19,8 @@ export default function Page() {
         <ServicesPreview />
         <ApproachStrip />
         <FeaturedWork />
+        <ArtistsTeaser />
+        <EquipmentStrip />
         <ContactCTA />
       </main>
       <Footer />
