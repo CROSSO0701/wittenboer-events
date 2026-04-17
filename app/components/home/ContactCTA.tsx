@@ -47,7 +47,7 @@ export function ContactCTA() {
               href={c.href}
               target={c.href.startsWith('http') ? '_blank' : undefined}
               rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="group relative flex flex-col justify-between gap-10 p-7 md:p-8 rounded-[var(--radius-xl)] transition-all duration-500 hover:-translate-y-1"
+              className="group relative flex flex-col justify-between gap-6 md:gap-10 p-5 md:p-8 rounded-[var(--radius-xl)] transition-all duration-500 hover:-translate-y-1"
               style={{
                 backgroundColor: 'color-mix(in oklch, var(--color-surface-dark-1) 80%, transparent)',
                 border: '1px solid var(--color-border-on-dark)',

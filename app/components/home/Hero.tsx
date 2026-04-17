@@ -6,6 +6,12 @@ import { useRef } from 'react'
 import { home } from '../../lib/content/home'
 import { MagneticButton } from '../shared/MagneticButton'
 
+const HERO_METRICS = [
+  { k: 'Sinds', v: '2014' },
+  { k: 'Producties', v: '400+' },
+  { k: 'Klachten buren', v: 'Nul' },
+]
+
 export function Hero() {
   const { hero } = home
   const ref = useRef<HTMLDivElement>(null)
@@ -30,27 +36,24 @@ export function Hero() {
         />
       </motion.div>
 
-      {/* Dark veil */}
       <div
         aria-hidden
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, color-mix(in oklch, var(--color-surface-dark) 72%, transparent) 0%, color-mix(in oklch, var(--color-surface-dark) 35%, transparent) 45%, color-mix(in oklch, var(--color-surface-dark) 90%, transparent) 100%)',
+            'linear-gradient(180deg, color-mix(in oklch, var(--color-surface-dark) 70%, transparent) 0%, color-mix(in oklch, var(--color-surface-dark) 32%, transparent) 45%, color-mix(in oklch, var(--color-surface-dark) 92%, transparent) 100%)',
         }}
       />
 
-      {/* Radial tint for text legibility */}
       <div
         aria-hidden
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'radial-gradient(110% 80% at 25% 70%, color-mix(in oklch, var(--color-surface-dark) 70%, transparent) 0%, transparent 60%)',
+            'radial-gradient(110% 80% at 25% 70%, color-mix(in oklch, var(--color-surface-dark) 65%, transparent) 0%, transparent 60%)',
         }}
       />
 
-      {/* Grain */}
       <div
         aria-hidden
         className="absolute inset-0 z-10 pointer-events-none opacity-[0.07] mix-blend-overlay"
@@ -62,14 +65,14 @@ export function Hero() {
 
       <motion.div
         style={{ y: textY }}
-        className="relative z-20 container-inset pt-36 md:pt-44 pb-16 md:pb-20 min-h-[100dvh] flex flex-col justify-between"
+        className="relative z-20 container-inset pt-28 md:pt-40 pb-14 md:pb-20 min-h-[100dvh] flex flex-col justify-between gap-12 md:gap-16"
       >
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
           className="flex items-center gap-2.5"
-          style={{ color: 'var(--color-tertiary)', fontSize: '14px', fontWeight: 500, letterSpacing: '0.02em' }}
+          style={{ color: 'var(--color-tertiary)', fontSize: '14px', fontWeight: 500, letterSpacing: '0.04em', textTransform: 'uppercase' }}
         >
           <span
             aria-hidden
@@ -79,15 +82,15 @@ export function Hero() {
           {hero.kicker}
         </motion.div>
 
-        <div className="flex flex-col gap-10 max-w-[1100px]">
+        <div className="flex flex-col gap-10 max-w-[1100px] mt-auto">
           <motion.h1
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             style={{
-              fontSize: 'clamp(3.5rem, 2rem + 8vw, 10rem)',
-              lineHeight: 0.9,
-              letterSpacing: '-0.005em',
+              fontSize: 'clamp(2.75rem, 1.6rem + 7vw, 9.5rem)',
+              lineHeight: 0.92,
+              letterSpacing: '0.01em',
               fontWeight: 400,
               color: 'var(--color-fg-on-dark)',
               textTransform: 'uppercase',
@@ -95,7 +98,7 @@ export function Hero() {
           >
             {hero.heading}
             <br />
-            <span style={{ color: 'var(--color-primary)' }}>
+            <span style={{ color: 'var(--color-tertiary)' }}>
               {hero.headingItalic}
             </span>
           </motion.h1>
@@ -129,8 +132,8 @@ export function Hero() {
                 href={hero.secondaryCta.href}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[15px] transition-colors duration-200"
                 style={{
-                  color: 'var(--color-fg-on-dark)',
-                  border: '1px solid color-mix(in oklch, var(--color-fg-on-dark) 40%, transparent)',
+                  color: 'var(--color-tertiary)',
+                  border: '1px solid color-mix(in oklch, var(--color-tertiary) 55%, transparent)',
                   fontWeight: 500,
                 }}
               >
@@ -140,17 +143,44 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Bottom scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="flex items-end justify-between gap-4"
-          style={{ color: 'var(--color-fg-on-dark-muted)', fontSize: '13px' }}
+        {/* Metrics strip replacing simple caption */}
+        <motion.dl
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.55 }}
+          className="grid grid-cols-3 gap-6 pt-8"
+          style={{ borderTop: '1px solid color-mix(in oklch, var(--color-tertiary) 30%, transparent)' }}
         >
-          <span>Park Lounge Festival · Schijndel · 2023</span>
-          <span className="hidden md:inline">scroll ↓</span>
-        </motion.div>
+          {HERO_METRICS.map((m, i) => (
+            <div key={m.k} className={i === 1 ? 'text-center' : i === 2 ? 'text-right' : ''}>
+              <dt
+                style={{
+                  color: 'var(--color-tertiary)',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {m.k}
+              </dt>
+              <dd
+                className="uppercase"
+                style={{
+                  color: 'var(--color-fg-on-dark)',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 400,
+                  fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 3.75rem)',
+                  letterSpacing: '0.01em',
+                  lineHeight: 1,
+                  marginTop: '6px',
+                }}
+              >
+                {m.v}
+              </dd>
+            </div>
+          ))}
+        </motion.dl>
       </motion.div>
     </section>
   )

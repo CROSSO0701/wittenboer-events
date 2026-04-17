@@ -13,12 +13,13 @@ export default function Page() {
     <>
       <Nav />
       <main>
+        {/* Rhythm: dark → light → light → dark → light → light → dark */}
         <Hero />
+        <TrustedBy />
         <ServicesPreview />
         <FeaturedWork />
         <ArtistsTeaser />
         <ApproachStrip />
-        <TrustedBy />
         <ContactCTA />
       </main>
       <Footer />

@@ -21,10 +21,10 @@ export function ApproachStrip() {
         <div className="relative">
           <div
             aria-hidden
-            className="hidden md:block absolute top-9 left-8 right-8 h-0.5 z-0 rounded-full"
+            className="hidden md:block absolute top-[38px] left-8 right-8 h-0.5 z-0 rounded-full"
             style={{
               background:
-                'linear-gradient(90deg, var(--color-border-strong) 0%, var(--color-primary) 50%, var(--color-border-strong) 100%)',
+                'linear-gradient(90deg, var(--color-border-strong) 0%, var(--color-tertiary-deep) 50%, var(--color-border-strong) 100%)',
             }}
           />
 
@@ -35,14 +35,14 @@ export function ApproachStrip() {
                   <div className="flex items-center gap-4 mb-6">
                     <span
                       aria-hidden
-                      className="inline-flex h-[72px] w-[72px] items-center justify-center rounded-full shrink-0"
+                      className="inline-flex h-[76px] w-[76px] items-center justify-center rounded-full shrink-0"
                       style={{
-                        backgroundColor: 'var(--color-primary)',
-                        color: 'var(--color-fg-on-dark)',
+                        backgroundColor: 'var(--color-tertiary)',
+                        color: 'var(--color-fg)',
                         fontFamily: 'var(--font-display)',
                         fontWeight: 400,
-                        fontSize: '28px',
-                        letterSpacing: '-0.01em',
+                        fontSize: '30px',
+                        letterSpacing: '0.01em',
                         boxShadow: '0 0 0 6px var(--color-surface-1)',
                       }}
                     >

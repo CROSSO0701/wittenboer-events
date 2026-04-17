@@ -57,7 +57,7 @@ export function ServicesPreview() {
                         alt={s.title}
                         fill
                         sizes={isHero ? '(max-width: 768px) 100vw, 55vw' : '(max-width: 768px) 100vw, 40vw'}
-                        className="object-cover opacity-85 transition-transform duration-[900ms] group-hover:scale-[1.05]"
+                        className="object-cover transition-transform duration-[900ms] group-hover:scale-[1.05]"
                         style={{ transitionTimingFunction: 'var(--ease-out-quart)' }}
                       />
                       <div
@@ -97,10 +97,11 @@ export function ServicesPreview() {
                       {!isHero && (
                         <span
                           aria-hidden
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 shrink-0"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-500 group-hover:rotate-45 group-hover:[background-color:var(--color-primary)] group-hover:[color:var(--color-fg-on-dark)] group-hover:[border-color:var(--color-primary)] shrink-0"
                           style={{
-                            backgroundColor: 'var(--color-primary)',
-                            color: 'var(--color-fg-on-dark)',
+                            border: '1px solid var(--color-border-strong)',
+                            color: 'var(--color-fg)',
+                            transitionTimingFunction: 'var(--ease-out-quart)',
                           }}
                         >
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
