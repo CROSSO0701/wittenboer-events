@@ -5,29 +5,41 @@ import { NAV_LINKS } from './nav-links'
 export function Footer() {
   return (
     <footer
-      className="mt-[var(--space-5xl)]"
       style={{
         backgroundColor: 'var(--color-surface-dark)',
         color: 'var(--color-fg-on-dark)',
       }}
     >
-      <div className="container-inset py-20">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="container-inset pt-20 md:pt-24 pb-10">
+        {/* Big wordmark */}
+        <div className="mb-14 md:mb-20">
+          <p className="mono mb-4" style={{ color: 'var(--color-primary-soft)' }}>
+            Licht · Geluid · Productie · Sinds 2014
+          </p>
+          <h3
+            style={{
+              fontSize: 'clamp(2.5rem, 1.8rem + 5vw, 6.5rem)',
+              fontWeight: 600,
+              letterSpacing: '-0.045em',
+              lineHeight: 0.92,
+              color: 'var(--color-fg-on-dark)',
+            }}
+          >
+            Wittenboer<br />
+            <span style={{ color: 'var(--color-primary-soft)', fontStyle: 'italic', fontWeight: 400 }}>
+              Events.
+            </span>
+          </h3>
+        </div>
+
+        <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <span
-                aria-hidden
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-[14px] font-bold tracking-tight"
-                style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-fg-on-dark)' }}
-              >
-                WE
-              </span>
-              <span className="text-[17px] tracking-tight" style={{ fontWeight: 600 }}>
-                Wittenboer Events
-              </span>
-            </div>
-            <p className="mt-5 max-w-[46ch]" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-              Licht, geluid, stroom en productie voor evenementen van elke schaal. Sinds 2014 vanuit Sint-Michielsgestel.
+            <p className="mono mb-4" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
+              Wat wij doen
+            </p>
+            <p className="max-w-[46ch]" style={{ color: 'var(--color-fg-on-dark)' }}>
+              Complete technische productie voor evenementen van elke schaal. Eén aanspreekpunt,
+              A-merk materiaal, persoonlijk contact.
             </p>
           </div>
 
@@ -35,7 +47,7 @@ export function Footer() {
             <p className="mono mb-4" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
               Navigatie
             </p>
-            <ul className="flex flex-col gap-2 text-[15px]">
+            <ul className="flex flex-col gap-2.5 text-[15px]">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
                   <Link
@@ -54,7 +66,7 @@ export function Footer() {
             <p className="mono mb-4" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
               Contact
             </p>
-            <ul className="flex flex-col gap-2 text-[15px]">
+            <ul className="flex flex-col gap-2.5 text-[15px]">
               <li>
                 <a
                   href={contact.phone.href}
@@ -73,12 +85,31 @@ export function Footer() {
                   {contact.email.display}
                 </a>
               </li>
-              <li style={{ color: 'var(--color-fg-on-dark-muted)' }}>
-                {contact.address.street}
-                <br />
-                {contact.address.postal} {contact.address.city}
+              <li>
+                <a
+                  href={contact.whatsapp.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:[color:var(--color-primary-soft)]"
+                  style={{ color: 'var(--color-fg-on-dark)' }}
+                >
+                  WhatsApp
+                </a>
               </li>
             </ul>
+          </div>
+
+          <div>
+            <p className="mono mb-4" style={{ color: 'var(--color-fg-on-dark-muted)' }}>
+              Adres
+            </p>
+            <p style={{ color: 'var(--color-fg-on-dark)', fontSize: '15px' }}>
+              {contact.address.street}
+              <br />
+              <span style={{ color: 'var(--color-fg-on-dark-muted)' }}>
+                {contact.address.postal} {contact.address.city}
+              </span>
+            </p>
           </div>
         </div>
 
@@ -97,7 +128,7 @@ export function Footer() {
               className="mono transition-colors hover:[color:var(--color-primary-soft)]"
               style={{ color: 'var(--color-fg-on-dark-muted)' }}
             >
-              Instagram
+              Instagram ↗
             </a>
             <a
               href={contact.socials.facebook}
@@ -106,7 +137,7 @@ export function Footer() {
               className="mono transition-colors hover:[color:var(--color-primary-soft)]"
               style={{ color: 'var(--color-fg-on-dark-muted)' }}
             >
-              Facebook
+              Facebook ↗
             </a>
           </div>
         </div>
