@@ -1,0 +1,228 @@
+/*
+  Wittenboer Events — design tokens (v2, real brand)
+  Teal primary from the WE logo (#0d7788 calibrated in OKLCH).
+  Cool near-black neutrals, no pure black.
+  Outfit for display/body, JetBrains Mono for captions.
+*/
+
+@import "tailwindcss";
+
+@theme {
+  /* =======================================================
+     COLOR — teal primary, one accent, cool neutrals
+     ======================================================= */
+
+  --color-primary:        oklch(51% 0.09 205);   /* WE logo teal */
+  --color-primary-hover:  oklch(45% 0.10 205);
+  --color-primary-soft:   oklch(95% 0.025 205);  /* tint wash for badges */
+  --color-primary-deep:   oklch(30% 0.06 205);   /* deep teal for dark text emphasis */
+
+  /* Light surfaces (slightly cool off-white) */
+  --color-bg:             oklch(99% 0.003 235);
+  --color-surface-1:      oklch(97% 0.005 235);
+  --color-surface-2:      oklch(94% 0.006 235);
+
+  /* Dark surfaces (deep teal-charcoal, never #000) */
+  --color-surface-dark:   oklch(16% 0.025 220);
+  --color-surface-dark-1: oklch(20% 0.025 220);
+
+  /* Foreground / type */
+  --color-fg:             oklch(17% 0.015 235);
+  --color-fg-secondary:   oklch(40% 0.012 235);
+  --color-fg-muted:       oklch(58% 0.008 235);
+  --color-fg-on-dark:     oklch(96% 0.006 235);
+  --color-fg-on-dark-muted: oklch(72% 0.012 235);
+
+  /* Borders */
+  --color-border:         oklch(88% 0.010 235);
+  --color-border-strong:  oklch(74% 0.012 235);
+  --color-border-on-dark: oklch(32% 0.020 220);
+
+  /* =======================================================
+     TYPOGRAPHY — Outfit (display/body), JetBrains Mono
+     ======================================================= */
+
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* Fluid display scale */
+  --text-display-xl: clamp(2.75rem, 2rem + 4vw, 5.75rem);
+  --text-display-lg: clamp(2rem, 1.5rem + 2.5vw, 3.75rem);
+  --text-display-md: clamp(1.625rem, 1.3rem + 1.5vw, 2.5rem);
+  --text-display-sm: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+
+  /* Body scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.1875rem;
+  --text-xl:   1.375rem;
+
+  /* =======================================================
+     SPACING — 4pt scale
+     ======================================================= */
+
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+  --space-5xl: 9rem;
+
+  /* Layout */
+  --container-max:   1400px;
+  --container-inset: clamp(1.25rem, 2vw + 0.5rem, 2.5rem);
+  --measure-body:    62ch;
+  --measure-lead:    46ch;
+
+  /* =======================================================
+     MOTION — exponential easing only
+     ======================================================= */
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:  150ms;
+  --dur-base:  280ms;
+  --dur-slow:  480ms;
+
+  /* =======================================================
+     RADII
+     ======================================================= */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+:root {
+  color-scheme: light;
+  accent-color: var(--color-primary);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "kern", "liga";
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  min-height: 100dvh;
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  text-wrap: balance;
+  color: var(--color-fg);
+}
+
+h1 { font-size: var(--text-display-xl); font-weight: 600; }
+h2 { font-size: var(--text-display-lg); font-weight: 600; }
+h3 { font-size: var(--text-display-md); font-weight: 600; }
+h4 { font-size: var(--text-display-sm); font-weight: 600; }
+
+p {
+  max-inline-size: var(--measure-body);
+  color: var(--color-fg-secondary);
+}
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-fg-on-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.container-inset {
+  padding-inline: var(--container-inset);
+  margin-inline: auto;
+  max-width: var(--container-max);
+}
+
+.hairline { border: 0.5px solid var(--color-border); }
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Kinetic marquee — transform-only, GPU accelerated */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+.marquee-track {
+  display: flex;
+  gap: var(--space-3xl);
+  width: max-content;
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+/* Shimmer for skeleton + loading states */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--color-fg-on-dark) 20%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Breathing dot for "live" indicator */
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.9); }
+}
+
+.live-dot { animation: breathe 2.4s ease-in-out infinite; }

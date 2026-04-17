@@ -1,0 +1,45 @@
+import type { Metadata } from 'next'
+import { Outfit, JetBrains_Mono } from 'next/font/google'
+import './globals.css'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-outfit',
+  display: 'swap',
+})
+
+const jetbrains = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+})
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://wittenboerevents.nl'),
+  title: {
+    default: 'Wittenboer Events — licht, geluid en productie',
+    template: '%s — Wittenboer Events',
+  },
+  description:
+    'Van drive-in show tot volledige productie. Professioneel licht, geluid, stroomvoorziening en artiestenbegeleiding door Marnix Wittenboer. Gevestigd in Sint-Michielsgestel.',
+  openGraph: {
+    type: 'website',
+    locale: 'nl_NL',
+    title: 'Wittenboer Events — licht, geluid en productie',
+    description:
+      'Professioneel licht, geluid, stroomvoorziening en artiestenbegeleiding. Van festival tot bedrijfsevenement.',
+    siteName: 'Wittenboer Events',
+  },
+  robots: { index: true, follow: true },
+  icons: { icon: '/icon.png' },
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="nl" className={`${outfit.variable} ${jetbrains.variable}`}>
+      <body style={{ fontFamily: 'var(--font-outfit)' }}>{children}</body>
+    </html>
+  )
+}
