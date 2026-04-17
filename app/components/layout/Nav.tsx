@@ -148,7 +148,7 @@ export function Nav() {
               </li>
             ))}
 
-            <li className="pl-3 ml-1" style={{ borderLeft: '0.5px solid var(--color-border)' }}>
+            <li className="pl-3 ml-1" style={{ borderLeft: '1px solid color-mix(in oklch, var(--color-border) 50%, transparent)' }}>
               <a
                 href="tel:+31627172876"
                 className="inline-flex items-center gap-2 py-2 px-4 rounded-full transition-colors"

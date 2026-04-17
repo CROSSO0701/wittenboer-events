@@ -22,17 +22,31 @@ export default function ContactPage() {
     <>
       <Nav />
       <main>
-        <section className="pt-24 md:pt-32 pb-24">
+        <section className="pt-32 md:pt-40 pb-24">
           <div className="container-inset">
-            <div className="grid gap-16 md:grid-cols-[1.1fr_1fr] md:items-start">
+            <div className="grid gap-14 md:gap-16 md:grid-cols-[1.1fr_1fr] md:items-start">
               <div>
-                <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+                <p
+                  className="mb-3"
+                  style={{
+                    color: 'var(--color-tertiary-deep)',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Contact
                 </p>
-                <h1 className="max-w-[18ch] mb-6">Laten we beginnen bij koffie.</h1>
+                <h1
+                  className="max-w-[14ch] mb-8"
+                  style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+                >
+                  Laten we beginnen bij koffie.
+                </h1>
                 <p
-                  className="text-[var(--text-lg)] mb-12"
-                  style={{ color: 'var(--color-fg-secondary)', maxInlineSize: 'var(--measure-lead)' }}
+                  className="text-[17px] md:text-[19px] mb-12"
+                  style={{ color: 'var(--color-fg-secondary)', maxInlineSize: '52ch', lineHeight: 1.55 }}
                 >
                   Elke productie begint met een goed gesprek. Bel, app of stuur een bericht —
                   binnen twee werkdagen hoor je van ons.
@@ -52,7 +66,7 @@ export default function ContactPage() {
                         }}
                       >
                         <div>
-                          <p className="mono" style={{ color: 'var(--color-fg-muted)' }}>
+                          <p style={{ color: 'var(--color-fg-muted)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                             {c.label}
                           </p>
                           <p
@@ -82,7 +96,16 @@ export default function ContactPage() {
                 </ul>
 
                 <div className="mt-10">
-                  <p className="mono mb-3" style={{ color: 'var(--color-fg-muted)' }}>
+                  <p
+                    className="mb-3"
+                    style={{
+                      color: 'var(--color-fg-muted)',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     Adres & bereikbaarheid
                   </p>
                   <p style={{ color: 'var(--color-fg)' }}>
@@ -102,7 +125,16 @@ export default function ContactPage() {
                 className="rounded-[var(--radius-xl)] border p-6 md:p-8"
                 style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface-1)' }}
               >
-                <p className="mono mb-6" style={{ color: 'var(--color-fg-muted)' }}>
+                <p
+                  className="mb-6"
+                  style={{
+                    color: 'var(--color-tertiary-deep)',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Of stuur direct een bericht
                 </p>
                 <ContactForm />
