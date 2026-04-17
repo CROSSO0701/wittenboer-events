@@ -28,7 +28,7 @@ export function Footer() {
                 fontWeight: 400,
                 fontSize: 'clamp(1.75rem, 1.2rem + 3vw, 3.5rem)',
                 letterSpacing: '-0.005em',
-                lineHeight: 0.92,
+                lineHeight: 1.05,
                 color: 'var(--color-fg-on-dark)',
               }}
             >

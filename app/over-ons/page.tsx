@@ -23,7 +23,7 @@ export default function OverOnsPage() {
             </p>
             <h1
               className="max-w-[15ch] mb-10"
-              style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+              style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 1.05 }}
             >
               {about.heading}
             </h1>
@@ -115,7 +115,7 @@ export default function OverOnsPage() {
               style={{
                 color: 'var(--color-fg-on-dark)',
                 fontSize: 'clamp(2.5rem, 1.6rem + 4vw, 5rem)',
-                lineHeight: 0.95,
+                lineHeight: 1.05,
               }}
             >
               {about.closing.heading}

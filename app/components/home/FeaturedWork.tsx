@@ -41,7 +41,7 @@ export function FeaturedWork() {
             style={{
               color: 'var(--color-fg-on-dark)',
               fontSize: 'clamp(2.5rem, 1.5rem + 4vw, 5rem)',
-              lineHeight: 0.95,
+              lineHeight: 1.05,
               letterSpacing: '0.01em',
             }}
           >

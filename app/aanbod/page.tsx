@@ -23,7 +23,7 @@ export default function AanbodPage() {
               </p>
               <h1
                 className="max-w-[14ch] mb-6"
-                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 1.05 }}
               >
                 Alles voor jouw evenement.
               </h1>

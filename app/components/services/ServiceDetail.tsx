@@ -47,7 +47,7 @@ export function ServiceDetail({ service }: Props) {
               </p>
               <h1
                 className="mb-6"
-                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+                style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 1.05 }}
               >
                 {service.title}
               </h1>

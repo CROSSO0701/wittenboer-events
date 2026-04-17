@@ -79,7 +79,7 @@ export function Hero() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             style={{
               fontSize: 'clamp(2.75rem, 1.4rem + 7.5vw, 9rem)',
-              lineHeight: 0.95,
+              lineHeight: 1.05,
               letterSpacing: '0.01em',
               fontWeight: 400,
               color: 'var(--color-fg-on-dark)',

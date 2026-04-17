@@ -91,7 +91,7 @@ export function ServiceGrid() {
                       fontWeight: 400,
                       fontSize: 'clamp(1.75rem, 1.2rem + 1.5vw, 2.75rem)',
                       letterSpacing: '0.01em',
-                      lineHeight: 0.95,
+                      lineHeight: 1.05,
                       color: hasHeroImage ? 'var(--color-fg-on-dark)' : 'var(--color-fg)',
                     }}
                   >

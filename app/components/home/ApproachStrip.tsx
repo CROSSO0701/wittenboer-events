@@ -57,7 +57,7 @@ export function ApproachStrip() {
                       fontWeight: 400,
                       fontSize: 'clamp(2rem, 1.4rem + 2vw, 3.25rem)',
                       letterSpacing: '-0.005em',
-                      lineHeight: 0.95,
+                      lineHeight: 1.05,
                       color: 'var(--color-fg)',
                     }}
                   >

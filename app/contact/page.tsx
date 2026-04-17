@@ -40,7 +40,7 @@ export default function ContactPage() {
                 </p>
                 <h1
                   className="max-w-[14ch] mb-8"
-                  style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 0.92 }}
+                  style={{ fontSize: 'clamp(3rem, 2rem + 5vw, 7rem)', lineHeight: 1.05 }}
                 >
                   Laten we beginnen bij koffie.
                 </h1>

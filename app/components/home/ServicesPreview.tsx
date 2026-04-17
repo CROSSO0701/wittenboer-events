@@ -87,7 +87,7 @@ export function ServicesPreview() {
                           fontWeight: 400,
                           fontSize: isHero ? 'clamp(2.5rem, 2rem + 2vw, 4.5rem)' : 'clamp(1.5rem, 1.2rem + 1vw, 2.25rem)',
                           letterSpacing: isHero ? '-0.005em' : '0em',
-                          lineHeight: 0.95,
+                          lineHeight: 1.05,
                           color: hasImage ? 'var(--color-fg-on-dark)' : 'var(--color-fg)',
                           marginTop: isHero ? 'auto' : 0,
                         }}

@@ -26,7 +26,7 @@ export function ContactCTA() {
               style={{
                 color: 'var(--color-fg-on-dark)',
                 fontSize: 'clamp(3rem, 2rem + 5vw, 6.5rem)',
-                lineHeight: 0.9,
+                lineHeight: 1.05,
               }}
             >
               {contactCta.heading}
