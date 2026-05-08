@@ -7,3 +7,9 @@ out
 .env*.local
 *.log
 .vercel
+.claude/
+.claude-flow/
+*-PROMPT.md
+*-prompt.md
+tsconfig.tsbuildinfo
+supabase/.temp/

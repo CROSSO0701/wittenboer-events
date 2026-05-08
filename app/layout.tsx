@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Anton, Figtree, JetBrains_Mono } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 
 const anton = Anton({
@@ -44,8 +45,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${anton.variable} ${figtree.variable} ${jetbrains.variable}`}>
-      <body style={{ fontFamily: 'var(--font-body)' }}>{children}</body>
+    <html
+      lang="nl"
+      className={`${anton.variable} ${figtree.variable} ${jetbrains.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
+      <body>
+        <Script
+          id="js-loaded-flag"
+          strategy="beforeInteractive"
+        >{`document.documentElement.classList.add('js-loaded')`}</Script>
+        {children}
+      </body>
     </html>
   )
 }

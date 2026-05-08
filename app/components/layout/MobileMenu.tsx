@@ -1,17 +1,19 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { AnimatePresence, motion } from 'motion/react'
+import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
-import { NAV_LINKS } from './nav-links'
+import { NAV_ITEMS } from './nav-links'
 
 type Props = {
   open: boolean
   onClose: () => void
 }
 
-export function MobileMenu({ open, onClose }: Props) {
+export default function MobileMenu({ open, onClose }: Props) {
+  const pathname = usePathname()
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/')
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
@@ -27,76 +29,82 @@ export function MobileMenu({ open, onClose }: Props) {
   }, [open, onClose])
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigatie"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-          className="fixed inset-0 z-50"
-          style={{ backgroundColor: 'var(--color-surface-dark)' }}
+    <div
+      className={`mobile-menu${open ? ' is-open' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigatie"
+      aria-hidden={!open}
+    >
+      <div className="mobile-menu__head">
+        <span className="mono" style={{ color: 'var(--color-fg-muted)' }}>Menu</span>
+        <button
+          type="button"
+          className="mobile-menu__close"
+          aria-label="Sluit menu"
+          onClick={onClose}
         >
-          <div className="container-inset flex h-20 items-center justify-between">
-            <Image
-              src="/logo/we-mark.png"
-              alt="Wittenboer Events"
-              width={64}
-              height={64}
-              className="h-10 w-10 object-contain"
-              style={{ filter: 'brightness(1.4)' }}
-            />
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md"
-              style={{ color: 'var(--color-fg-on-dark)' }}
-              aria-label="Sluit menu"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
-                <path d="M6 6l12 12" />
-                <path d="M18 6L6 18" />
-              </svg>
-            </button>
-          </div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+            <path d="M6 6l12 12" />
+            <path d="M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
 
-          <motion.ul
-            initial="initial"
-            animate="animate"
-            variants={{ animate: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } }}
-            className="container-inset pt-8 flex flex-col gap-1"
-          >
-            {NAV_LINKS.map((l) => (
-              <motion.li
-                key={l.href}
-                variants={{
-                  initial: { opacity: 0, y: 16 },
-                  animate: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 1, 0.5, 1] } },
-                }}
-              >
-                <Link
-                  href={l.href}
-                  onClick={onClose}
-                  className="block py-3 border-b"
-                  style={{
-                    color: 'var(--color-fg-on-dark)',
-                    borderColor: 'var(--color-border-on-dark)',
-                    fontSize: 'clamp(2rem, 6vw, 3.25rem)',
-                    fontWeight: 500,
-                    letterSpacing: '-0.02em',
-                    lineHeight: 1.05,
-                  }}
-                >
-                  {l.label}
-                </Link>
-              </motion.li>
-            ))}
-          </motion.ul>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      <div className="mobile-menu__list">
+        <Link
+          href="/"
+          onClick={onClose}
+          aria-current={isActive('/') ? 'page' : undefined}
+        >
+          Home
+          <span aria-hidden>→</span>
+        </Link>
+        {NAV_ITEMS.map((item) =>
+          item.submenu ? (
+            <details key={item.href} open={isActive(item.href)}>
+              <summary aria-current={isActive(item.href) ? 'page' : undefined}>
+                {item.label}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </summary>
+              <div className="mobile-menu__sublist">
+                {item.submenu.map((sub) => (
+                  <Link
+                    key={sub.href}
+                    href={sub.href}
+                    onClick={onClose}
+                    aria-current={pathname === sub.href ? 'page' : undefined}
+                  >
+                    {sub.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+              <span aria-hidden>→</span>
+            </Link>
+          )
+        )}
+      </div>
+
+      <div className="mobile-menu__foot">
+        <a href="tel:+31627172876" className="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+          06 27 17 28 76
+        </a>
+        <a href="mailto:info@wittenboerevents.nl" className="btn-ghost">info@wittenboerevents.nl</a>
+      </div>
+    </div>
   )
 }

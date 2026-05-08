@@ -2,151 +2,142 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
-import { MobileMenu } from './MobileMenu'
-import { NAV_LINKS } from './nav-links'
+import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import MobileMenu from './MobileMenu'
+import { NAV_ITEMS, type NavItem } from './nav-links'
 
-export function Nav() {
-  const [open, setOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+function ChevronDown() {
+  return (
+    <svg
+      className="nav__chevron"
+      width="10"
+      height="6"
+      viewBox="0 0 10 6"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
-  const enterMenu = (label: string) => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    setOpenDropdown(label)
-  }
-  const leaveMenu = () => {
-    closeTimer.current = setTimeout(() => setOpenDropdown(null), 120)
-  }
+function isActive(pathname: string, item: NavItem) {
+  if (item.href === '/') return pathname === '/'
+  return pathname === item.href || pathname.startsWith(item.href + '/')
+}
+
+export default function Nav() {
+  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const triggerRef = useRef<HTMLLIElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (triggerRef.current && !triggerRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
+  }, [])
+
+  const overHero = pathname === '/'
 
   return (
     <>
-      <header
-        className="fixed top-0 left-0 right-0 z-40"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid var(--color-border)',
-        }}
-      >
-        <nav
-          aria-label="Hoofdnavigatie"
-          className="container-inset flex h-20 items-center justify-between"
-        >
-          <Link href="/" className="flex items-center" aria-label="Wittenboer Events home">
+      <nav className={`nav${overHero ? ' nav--over-hero' : ''}`} aria-label="Hoofdnavigatie">
+        <div className="container nav__inner">
+          <Link href="/" className="nav__logo" aria-label="Wittenboer Events home">
             <Image
               src="/logo/we-full.png"
               alt="Wittenboer Events"
               width={560}
               height={170}
               priority
-              className="h-9 md:h-10 w-auto"
-              style={{ objectFit: 'contain' }}
+              style={{ height: 40, width: 'auto', objectFit: 'contain' }}
             />
           </Link>
 
-          <ul className="hidden md:flex items-center gap-7 text-[15px]">
-            {NAV_LINKS.map((l) => (
-              <li
-                key={l.href}
-                className="relative"
-                onMouseEnter={() => l.children && enterMenu(l.label)}
-                onMouseLeave={() => l.children && leaveMenu()}
-              >
-                <Link
-                  href={l.href}
-                  className="group relative inline-flex items-center gap-1.5 py-2 transition-colors duration-200"
-                  style={{ color: 'var(--color-fg)' }}
-                >
-                  <span>{l.label}</span>
-                  {l.children && (
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      className="transition-transform"
-                      style={{
-                        transform: openDropdown === l.label ? 'rotate(180deg)' : 'rotate(0deg)',
+          <ul className="nav__links">
+            {NAV_ITEMS.map((item) => {
+              const active = isActive(pathname, item)
+              if (item.submenu) {
+                return (
+                  <li key={item.href} className="nav__has-menu" ref={triggerRef}>
+                    <button
+                      type="button"
+                      className="nav__menu-trigger"
+                      aria-expanded={dropdownOpen}
+                      aria-haspopup="true"
+                      aria-current={active ? 'page' : undefined}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setDropdownOpen((v) => !v)
                       }}
                     >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  )}
-                  <span
-                    aria-hidden
-                    className="absolute left-0 right-0 bottom-0 h-px origin-left scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100 transition-transform duration-300"
-                    style={{
-                      backgroundColor: 'var(--color-primary)',
-                      transitionTimingFunction: 'var(--ease-out-quart)',
-                    }}
-                  />
-                </Link>
+                      {item.label}
+                      <ChevronDown />
+                    </button>
+                    <div className="nav__menu" role="menu">
+                      <ul>
+                        {item.submenu.map((sub) => (
+                          <li key={sub.href}>
+                            <Link
+                              href={sub.href}
+                              role="menuitem"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <span className="nav__menu-label">{sub.label}</span>
+                              {sub.desc && <span className="nav__menu-desc">{sub.desc}</span>}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                )
+              }
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              )
+            })}
 
-                {l.children && (
-                  <AnimatePresence>
-                    {openDropdown === l.label && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 4 }}
-                        transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
-                        className="absolute left-0 top-full pt-3"
-                      >
-                        <div
-                          className="w-[340px] rounded-[var(--radius-lg)] p-2"
-                          style={{
-                            backgroundColor: 'var(--color-bg)',
-                            border: '1px solid var(--color-border)',
-                            boxShadow: '0 24px 48px -20px color-mix(in oklch, var(--color-fg) 20%, transparent)',
-                          }}
-                        >
-                          <ul className="flex flex-col">
-                            {l.children.map((c) => (
-                              <li key={c.href}>
-                                <Link
-                                  href={c.href}
-                                  onClick={() => setOpenDropdown(null)}
-                                  className="flex flex-col gap-0.5 px-4 py-3 rounded-[var(--radius-md)] transition-colors hover:[background-color:var(--color-surface-1)]"
-                                >
-                                  <span
-                                    className="text-[14.5px]"
-                                    style={{ color: 'var(--color-fg)', fontWeight: 500 }}
-                                  >
-                                    {c.label}
-                                  </span>
-                                  {c.description && (
-                                    <span className="text-[13px]" style={{ color: 'var(--color-fg-muted)' }}>
-                                      {c.description}
-                                    </span>
-                                  )}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
-              </li>
-            ))}
-
-            <li className="pl-4 ml-2" style={{ borderLeft: '1px solid var(--color-border)' }}>
+            <li className="nav__socials">
               <a
-                href="tel:+31627172876"
-                className="inline-flex items-center gap-2 py-2 px-4 rounded-full transition-colors"
-                style={{
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'var(--color-fg-on-dark)',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                }}
+                href="https://www.instagram.com/wittenboerevents/"
+                target="_blank"
+                rel="noopener"
+                aria-label="Instagram"
               >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+                </svg>
+              </a>
+              <a
+                href="https://www.facebook.com/profile.php?id=100054423193609"
+                target="_blank"
+                rel="noopener"
+                aria-label="Facebook"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </a>
+            </li>
+
+            <li className="nav__cta">
+              <a href="tel:+31627172876">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
@@ -157,10 +148,9 @@ export function Nav() {
 
           <button
             type="button"
-            onClick={() => setOpen(true)}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md"
-            style={{ color: 'var(--color-fg)' }}
+            className="nav__burger"
             aria-label="Open menu"
+            onClick={() => setMobileOpen(true)}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
               <path d="M4 7h16" />
@@ -168,10 +158,10 @@ export function Nav() {
               <path d="M4 17h10" />
             </svg>
           </button>
-        </nav>
-      </header>
+        </div>
+      </nav>
 
-      <MobileMenu open={open} onClose={() => setOpen(false)} />
+      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
     </>
   )
 }

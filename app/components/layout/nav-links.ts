@@ -1,24 +1,40 @@
-export type NavLink = {
-  label: string
+export type NavSubItem = {
   href: string
-  children?: { label: string; href: string; description?: string }[]
+  label: string
+  desc?: string
 }
 
-export const NAV_LINKS: NavLink[] = [
-  { label: 'Over ons', href: '/over-ons' },
+export type NavItem = {
+  href: string
+  label: string
+  page: string
+  submenu?: NavSubItem[]
+}
+
+export const NAV_ITEMS: NavItem[] = [
+  { href: '/over-ons', label: 'Over ons', page: 'over-ons' },
   {
-    label: 'Aanbod',
     href: '/aanbod',
-    children: [
-      { label: 'Geluid', href: '/aanbod/geluid', description: 'Line-arrays, mixers, monitoring' },
-      { label: 'Licht', href: '/aanbod/licht', description: 'Lichtontwerp en moving heads' },
-      { label: 'Tapeshows', href: '/aanbod/tapeshows', description: 'Tape-operator naast de artiest' },
-      { label: 'Stroomvoorziening', href: '/aanbod/stroomvoorziening', description: 'Aggregaten 25–500 kVA' },
-      { label: 'Artiestenbegeleiding', href: '/aanbod/artiestenbegeleiding', description: 'Backstage van aankomst tot encore' },
-      { label: 'Productiebegeleiding', href: '/aanbod/productiebegeleiding', description: 'End-to-end coördinatie' },
+    label: 'Aanbod',
+    page: 'aanbod',
+    submenu: [
+      { href: '/aanbod', label: 'Ons aanbod', desc: 'Overzicht van wat we doen' },
+      { href: '/aanbod/geluid', label: 'Geluid', desc: 'Line-arrays, mixers, monitoring' },
+      { href: '/aanbod/licht', label: 'Licht', desc: 'Lichtontwerp, fixtures, programmering' },
+      {
+        href: '/aanbod/stroomvoorziening',
+        label: 'Stroomvoorziening',
+        desc: 'Aggregaten en verdeelkasten',
+      },
+      {
+        href: '/aanbod/artiestenbegeleiding',
+        label: 'Artiesten',
+        desc: 'Tapes & backstage van A tot Z',
+      },
     ],
   },
-  { label: 'Artiesten', href: '/artiesten' },
-  { label: 'Projecten', href: '/projecten' },
-  { label: 'Contact', href: '/contact' },
+  { href: '/show-pakketten', label: 'Show pakketten', page: 'show-pakketten' },
+  { href: '/artiesten', label: 'Artiesten', page: 'artiesten' },
+  { href: '/projecten', label: 'Projecten', page: 'projecten' },
+  { href: '/contact', label: 'Contact', page: 'contact' },
 ]

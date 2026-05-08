@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Over ons - Wittenboer Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+  .about-intro { padding: 112px 0 80px; background: var(--color-bg); }
+  .about-intro__grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start; }
+  .about-intro__text h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3.5rem); margin-bottom: 28px; max-width: 18ch; }
+  .about-intro__text p { font-size: 17px; line-height: 1.65; margin-bottom: 20px; max-inline-size: 56ch; }
+  .about-intro__portrait { position: relative; aspect-ratio: 4/5; border-radius: var(--radius-xl); overflow: hidden; }
+  .about-intro__portrait img { width: 100%; height: 100%; object-fit: cover; }
+  .about-intro__sig { position: absolute; left: 24px; bottom: 24px; right: 24px; color: var(--color-fg-on-dark); }
+  .about-intro__sig::before { content: ""; position: absolute; inset: -120px -24px -24px -24px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.7)); z-index: -1; pointer-events: none; }
+  .about-intro__sig-name { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.02em; }
+  .about-intro__sig-role { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-tertiary); margin-top: 4px; }
+  @media (max-width: 900px) { .about-intro__grid { grid-template-columns: 1fr; gap: 48px; } }
+
+  .why { padding: 112px 0; background: var(--color-surface-1); }
+  .why__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 56px; }
+  .why-card { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: 40px; }
+  .why-card__num { font-family: var(--font-display); color: var(--color-primary); font-size: 24px; letter-spacing: 0.08em; margin-bottom: 16px; }
+  .why-card h3 { font-size: 24px; margin-bottom: 12px; }
+  .why-card p { font-size: 15px; line-height: 1.6; }
+  @media (max-width: 700px) { .why__grid { grid-template-columns: 1fr; } }
+
+  .stats { padding: 80px 0; background: var(--color-surface-dark); color: var(--color-fg-on-dark); }
+  .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .stats__cell { border-left: 1px solid var(--color-border-on-dark); padding-left: 24px; }
+  .stats__cell:first-child { border-left: none; padding-left: 0; }
+  .stats__num { font-family: var(--font-display); font-size: clamp(2.5rem, 1.8rem + 2.5vw, 4.5rem); line-height: 1; letter-spacing: 0.02em; color: var(--color-tertiary); }
+  .stats__label { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-fg-on-dark-muted); margin-top: 12px; }
+  @media (max-width: 700px) { .stats__grid { grid-template-columns: 1fr 1fr; } .stats__cell:nth-child(3) { border-left: none; padding-left: 0; } }
+
+  .closing { padding: 112px 0; background: var(--color-bg); text-align: center; }
+  .closing h2 { font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem); margin-bottom: 32px; max-width: 20ch; margin-inline: auto; }
+  .closing__ctas { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body data-screen-label="Over ons">
+
+<div id="nav-mount"></div>
+
+<header class="page-header page-header--photo" style="--photo: url('assets/photos/event-2.jpg');">
+  <div class="container page-header__inner">
+    <div class="page-header__crumbs">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <span>Over ons</span>
+    </div>
+    <h1>Een team dat al ruim tien jaar <span class="accent">evenementen op poten zet.</span></h1>
+    <p class="page-header__lead">Wittenboer Events is sinds 2014 actief in de regio 's-Hertogenbosch. Een vaste kern crew, een netwerk van freelancers, eigen materiaal - en altijd dezelfde aanspreekpersoon van offerte tot opbouwdag.</p>
+  </div>
+</header>
+
+<section class="about-intro">
+  <div class="container about-intro__grid">
+    <div class="about-intro__text">
+      <p class="kicker">Het verhaal</p>
+      <h2>Begonnen in 2014. Inmiddels een vaste crew.</h2>
+      <p>Marnix Wittenboer startte het bedrijf in 2014 vanuit een schuur met de eerste set licht en geluid. Tien jaar later draaien we tussen de 60 en 80 producties per jaar - van bedrijfsborrels tot meerdaagse festivals met vijfduizend bezoekers.</p>
+      <p>De vaste kern is klein: drie technici die elkaar door en door kennen, plus een netwerk van vaste freelancers waarmee we al jaren werken. Geen wisselende invalkrachten op je opbouwdag, geen onbekende gezichten achter de mengtafel. Wie je in de offerte ziet, staat er op de avond zelf.</p>
+      <p>Wat ons onderscheidt is niet het materiaal - A-merk apparatuur is wat iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek. We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de leverancier terug als een stekker niet klopt.</p>
+      <p style="color: var(--color-fg);"><strong>Je hoort ons pas als er iets is, en meestal is er dan al een oplossing.</strong></p>
+    </div>
+    <div class="about-intro__portrait">
+      <img src="assets/photos/portrait-marnix.jpg" alt="Marnix Wittenboer op locatie" />
+      <div class="about-intro__sig">
+        <div class="about-intro__sig-name">Marnix Wittenboer</div>
+        <div class="about-intro__sig-role">Oprichter · belt zelf op</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container">
+    <div class="stats__grid">
+      <div class="stats__cell"><div class="stats__num">2014</div><div class="stats__label">Sinds</div></div>
+      <div class="stats__cell"><div class="stats__num">400+</div><div class="stats__label">Producties</div></div>
+      <div class="stats__cell"><div class="stats__num">5000</div><div class="stats__label">Max bezoekers</div></div>
+      <div class="stats__cell"><div class="stats__num">3</div><div class="stats__label">Vaste technici</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Waarom Wittenboer</p>
+        <h2>Vijf redenen waarom je belt.</h2>
+      </div>
+      <p class="section-head__lead">Niet de slogans uit een offertemap. De concrete dingen waar opdrachtgevers ons om bellen sinds 2014.</p>
+    </div>
+    <div class="why__grid">
+      <div class="why-card"><div class="why-card__num">01</div><h3>Complete A tot Z productie</h3><p>Licht, geluid, stroom, artiesten, backstage. Alles via één partij. Geen losse offertes stapelen, geen coördinatieproblemen op de dag zelf.</p></div>
+      <div class="why-card"><div class="why-card__num">02</div><h3>A-merk materiaal</h3><p>L-Acoustics, d&amp;b, Robe, Avolites, MA Lighting. We werken alleen met apparatuur die doet wat het belooft, onder alle omstandigheden.</p></div>
+      <div class="why-card"><div class="why-card__num">03</div><h3>Meedenken op voorhand</h3><p>We komen langs op de locatie, meten na en stellen alternatieven voor. Het plan dat je krijgt is al door een technisch oog gehaald, niet alleen door een verkoper.</p></div>
+      <div class="why-card"><div class="why-card__num">04</div><h3>Persoonlijk contact</h3><p>Je belt met Marnix of een van de vaste technici, niet met een planner. De crew die het plan maakt, staat ook op de dag zelf naast je.</p></div>
+      <div class="why-card"><div class="why-card__num">05</div><h3>Flexibel</h3><p>Een artiest valt uit, een opbouw schuift, de weersvoorspelling verandert. Dat lossen we op zonder dat jij er wakker van ligt.</p></div>
+      <div class="why-card"><div class="why-card__num">06</div><h3>Eigen materiaal</h3><p>Eigen aggregaten, eigen line-arrays, eigen bus. Geen wachten op leveranciers, geen verrassingen op de opbouwdag.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="container">
+    <p class="kicker" style="margin-bottom: 16px;">Klaar om te beginnen?</p>
+    <h2>Klaar om mee te denken over jouw evenement?</h2>
+    <div class="closing__ctas">
+      <a class="btn-primary" href="contact.html">Neem contact op</a>
+      <a class="btn-ghost" href="aanbod.html">Bekijk het aanbod</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="shared.js" data-page="over-ons"></script>
+</body>
+</html>

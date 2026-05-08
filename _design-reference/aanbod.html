@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aanbod · Wittenboer Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+  .aanbod { padding: 96px 0 112px; }
+  .aanbod__intro { max-width: 64ch; margin-bottom: 64px; }
+  .aanbod__intro p { font-size: 18px; line-height: 1.65; }
+
+  .aanbod__grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; grid-auto-rows: minmax(220px, auto); }
+  .a-card { position: relative; overflow: hidden; border-radius: var(--radius-xl); display: block; transition: transform .5s var(--ease-out-quart); min-height: 240px; }
+  .a-card:hover { transform: translateY(-4px); }
+  .a-card--photo { background: var(--color-surface-dark); color: var(--color-fg-on-dark); }
+  .a-card--flat { background: var(--color-surface-1); color: var(--color-fg); border: 1px solid var(--color-border); }
+  .a-card__photo { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform .9s var(--ease-out-quart); }
+  .a-card:hover .a-card__photo { transform: scale(1.05); }
+  .a-card__photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42,56,64,0.2) 0%, rgba(42,56,64,0.92) 100%); }
+  .a-card__inner { position: relative; z-index: 1; height: 100%; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
+  .a-card__num { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-tertiary); opacity: 0.9; }
+  .a-card--flat .a-card__num { color: var(--color-primary); }
+  .a-card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.75rem, 1.25rem + 1.4vw, 2.75rem); text-transform: uppercase; letter-spacing: 0.005em; line-height: 1.05; color: inherit; }
+  .a-card p { font-size: 14px; line-height: 1.55; max-inline-size: 36ch; }
+  .a-card--photo p { color: var(--color-fg-on-dark-muted); }
+  .a-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .a-card__cta { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .a-card__arrow { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 999px; border: 1px solid currentColor; flex-shrink: 0; transition: all .4s var(--ease-out-quart); }
+  .a-card:hover .a-card__arrow { transform: rotate(45deg); background: var(--color-primary); color: var(--color-fg-on-dark); border-color: var(--color-primary); }
+
+  /* Layout - 6 cards on 6-col grid */
+  .a-card--geluid { grid-column: span 4; grid-row: span 2; min-height: 480px; }
+  .a-card--licht { grid-column: span 2; grid-row: span 2; min-height: 480px; }
+  .a-card--stroom { grid-column: span 3; }
+  .a-card--artiesten { grid-column: span 3; }
+  .a-card--pakketten { grid-column: span 6; min-height: 280px; background: var(--color-surface-dark); color: var(--color-fg-on-dark); }
+  .a-card--pakketten .a-card__inner { flex-direction: row; align-items: stretch; gap: 32px; padding: 0; }
+  .a-card--pakketten .a-card__photo-side { flex: 0 0 42%; position: relative; background-size: cover; background-position: center; min-height: 280px; border-radius: var(--radius-xl) 0 0 var(--radius-xl); }
+  .a-card--pakketten .a-card__photo-side::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20,28,32,0) 60%, rgba(20,28,32,0.4) 100%); border-radius: inherit; }
+  .a-card--pakketten .a-card__txt-side { flex: 1; padding: 36px 36px 36px 0; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
+  .a-card--pakketten .a-card__price-tag { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 14px; background: var(--color-tertiary); color: var(--color-secondary-darker); border-radius: 999px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; align-self: flex-start; }
+  .a-card--pakketten .a-card__price-tag strong { font-family: var(--font-display); font-size: 14px; letter-spacing: 0; text-transform: none; }
+  .a-card--pakketten p { color: var(--color-fg-on-dark-muted); max-inline-size: 48ch; }
+  .a-card--pakketten .a-card__pkg-list { display: flex; flex-wrap: wrap; gap: 6px 10px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-tertiary); margin: 0; }
+  .a-card--pakketten .a-card__pkg-list span { padding: 4px 10px; border: 1px solid var(--color-border-on-dark); border-radius: 999px; }
+  .a-card--productie { grid-column: span 6; min-height: 220px; }
+  .a-card--productie .a-card__inner { flex-direction: row; align-items: center; }
+  .a-card--productie h3 { flex: 0 0 auto; }
+  .a-card--productie p { flex: 1; }
+
+  @media (max-width: 1000px) {
+    .aanbod__grid { grid-template-columns: repeat(2, 1fr); }
+    .a-card--geluid, .a-card--licht, .a-card--stroom, .a-card--artiesten, .a-card--pakketten, .a-card--productie { grid-column: span 2; grid-row: auto; min-height: 280px; }
+    .a-card--productie .a-card__inner { flex-direction: column; align-items: flex-start; }
+    .a-card--pakketten .a-card__inner { flex-direction: column; gap: 0; }
+    .a-card--pakketten .a-card__photo-side { flex: 0 0 200px; width: 100%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+    .a-card--pakketten .a-card__txt-side { padding: 28px; }
+  }
+
+  .closing { padding: 96px 0; background: var(--color-surface-1); text-align: center; }
+  .closing h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3.5rem); margin-bottom: 24px; max-width: 22ch; margin-inline: auto; }
+  .closing p { margin: 0 auto 32px; max-inline-size: 52ch; font-size: 17px; }
+</style>
+</head>
+<body data-screen-label="Aanbod">
+
+<div id="nav-mount"></div>
+
+<header class="page-header">
+  <div class="container page-header__inner">
+    <div class="page-header__crumbs">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <span>Aanbod</span>
+    </div>
+    <h1>Voor ieder evenement <span class="accent">een passende oplossing.</span></h1>
+    <p class="page-header__lead">Geluid, licht, stroom, artiesten, productie. Los te boeken of compleet uit handen. Zes diensten, één aanspreekpunt.</p>
+  </div>
+</header>
+
+<section class="aanbod">
+  <div class="container">
+    <div class="aanbod__intro">
+      <p class="kicker">Wat we doen</p>
+      <p>We werken met A-merk materiaal en sturen onze eigen technici aan. Of je nu één microfoon nodig hebt voor een toespraak, of een complete festivalproductie. Onderstaande zes diensten kun je los boeken of als pakket. Klik op een kaart voor de details.</p>
+    </div>
+
+    <div class="aanbod__grid">
+      <a class="a-card a-card--photo a-card--geluid" href="aanbod-detail.html#geluid">
+        <div class="a-card__photo" style="background-image: url('assets/photos/studio-023.jpg');"></div>
+        <div class="a-card__inner">
+          <div class="a-card__num">01 / Audio</div>
+          <div>
+            <h3>Geluid</h3>
+            <p>Goed geluid op een kantoorfeestje of een festival met 5000 bezoekers. Wij regelen beide. Line-arrays, mixers, monitoring, microfoontechniek.</p>
+          </div>
+          <div class="a-card__foot">
+            <span class="a-card__cta">Bekijk details</span>
+            <span class="a-card__arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="a-card a-card--photo a-card--licht" href="aanbod-detail.html#licht">
+        <div class="a-card__photo" style="background-image: url('assets/photos/park-lounge-2.jpg');"></div>
+        <div class="a-card__inner">
+          <div class="a-card__num">02 / Visueel</div>
+          <div>
+            <h3>Licht</h3>
+            <p>Een goede belichting bepaalt de hele sfeer. Van intiem diner tot festivalpodium.</p>
+          </div>
+          <div class="a-card__foot">
+            <span class="a-card__cta">Bekijk details</span>
+            <span class="a-card__arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="a-card a-card--flat a-card--stroom" href="aanbod-detail.html#stroomvoorziening">
+        <div class="a-card__inner">
+          <div class="a-card__num">03 / Infrastructuur</div>
+          <div>
+            <h3>Stroomvoorziening</h3>
+            <p>Aggregaten, verdeelkasten, kabels. Belastingsberekening vooraf, redundante failover voor hoofdpodia.</p>
+          </div>
+          <div class="a-card__foot">
+            <span class="a-card__cta" style="color: var(--color-primary);">Bekijk details</span>
+            <span class="a-card__arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="a-card a-card--flat a-card--artiesten" href="aanbod-detail.html#artiestenbegeleiding">
+        <div class="a-card__inner">
+          <div class="a-card__num">04 / Backstage &amp; tapes</div>
+          <div>
+            <h3>Artiesten</h3>
+            <p>Boekingsadvies, tape-begeleiding en backstage-coördinatie. We kennen de repertoires van de meeste Nederlandse zangers.</p>
+          </div>
+          <div class="a-card__foot">
+            <span class="a-card__cta" style="color: var(--color-primary);">Bekijk details</span>
+            <span class="a-card__arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="a-card a-card--pakketten" href="pakketten.html">
+        <div class="a-card__inner">
+          <div class="a-card__photo-side" style="background-image: url('assets/photos/event-5.jpg');"></div>
+          <div class="a-card__txt-side">
+            <div>
+              <div class="a-card__num">05 / Kant-en-klaar</div>
+              <h3 style="margin-top: 8px;">Showpakketten</h3>
+              <p style="margin-top: 14px;">Vier vaste setups voor bruiloften, jubilea en privéfeesten. Wij brengen, bouwen op, draaien, breken af. Eén prijs. Geen verrassingen.</p>
+            </div>
+            <div class="a-card__pkg-list">
+              <span>Compact</span>
+              <span>Booth</span>
+              <span>Truss Show</span>
+              <span>Show Wit</span>
+            </div>
+            <div class="a-card__foot">
+              <span class="a-card__price-tag">Vanaf <strong>€495</strong></span>
+              <span class="a-card__arrow" style="color: var(--color-tertiary);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="a-card a-card--flat a-card--productie" href="aanbod-detail.html#productiebegeleiding" style="background: var(--color-tertiary-soft); border-color: var(--color-tertiary);">
+        <div class="a-card__inner" style="gap: 32px;">
+          <div>
+            <div class="a-card__num">06 / End-to-end</div>
+            <h3 style="margin-top: 8px;">Productiebegeleiding</h3>
+          </div>
+          <p style="font-size: 16px;">Wil je één aanspreekpunt voor je hele evenement? Locatie-inspectie, vergunningenadvies, leveranciers, planning, techniek, artiesten en crewmanagement. Jij hoeft alleen te genieten.</p>
+          <div class="a-card__foot" style="flex: 0 0 auto; flex-direction: column; align-items: flex-end; gap: 16px;">
+            <span class="a-card__cta" style="color: var(--color-primary);">Bekijk details</span>
+            <span class="a-card__arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="container">
+    <p class="kicker" style="margin-bottom: 16px;">Niet zeker wat je nodig hebt?</p>
+    <h2>Bel ons en we denken mee.</h2>
+    <p>Geen verkooppraatje. Een korte belronde, een locatie-inspectie als het nuttig is, en een plan dat past bij wat je écht zoekt.</p>
+    <a class="btn-primary" href="contact.html">Neem contact op</a>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="shared.js" data-page="aanbod"></script>
+</body>
+</html>

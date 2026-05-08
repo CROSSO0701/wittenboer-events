@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aanbod - details - Wittenboer Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+  .toc { position: sticky; top: 80px; padding: 18px 0; background: var(--color-bg); z-index: 20; border-bottom: 1px solid var(--color-border); }
+  .nav.is-scrolled ~ * .toc, html.is-scrolled .toc { top: 68px; }
+  .toc__inner { display: flex; gap: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .toc__inner::-webkit-scrollbar { display: none; }
+  .toc a { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fg-muted); white-space: nowrap; padding: 8px 14px; border: 1px solid var(--color-border); border-radius: 999px; transition: all .2s; }
+  .toc a:hover { color: var(--color-fg); border-color: var(--color-border-strong); }
+  .toc a.is-active { color: var(--color-primary); border-color: var(--color-primary); background: var(--color-primary-soft); }
+
+  .svc { padding: 96px 0; border-bottom: 1px solid var(--color-border); scroll-margin-top: 160px; }
+  .svc:nth-child(odd) { background: var(--color-bg); }
+  .svc:nth-child(even) { background: var(--color-surface-1); }
+  .svc--dark { background: var(--color-surface-dark) !important; color: var(--color-fg-on-dark); border-bottom-color: var(--color-border-on-dark); }
+  .svc--dark p { color: var(--color-fg-on-dark-muted); }
+
+  .svc__grid { display: grid; grid-template-columns: 220px 1fr; gap: 64px; align-items: start; }
+  .svc__num { font-family: var(--font-display); font-size: clamp(3rem, 2rem + 4vw, 6rem); line-height: 0.9; color: var(--color-tertiary); letter-spacing: 0.02em; }
+  .svc--dark .svc__num { color: var(--color-tertiary); }
+  .svc__num small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-fg-muted); margin-top: 16px; }
+  .svc--dark .svc__num small { color: var(--color-fg-on-dark-muted); }
+
+  .svc__body { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  .svc__body h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3.5rem); max-width: 18ch; }
+  .svc__body .lead { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem); line-height: 1.5; color: var(--color-fg); max-inline-size: 52ch; }
+  .svc--dark .svc__body .lead { color: var(--color-fg-on-dark); }
+  .svc__body p { font-size: 16px; line-height: 1.65; max-inline-size: 60ch; }
+
+  .svc__bullets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; margin-top: 8px; }
+  .svc__bullets li { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid var(--color-border); font-size: 15px; line-height: 1.45; }
+  .svc--dark .svc__bullets li { border-top-color: var(--color-border-on-dark); }
+  .svc__bullets li::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--color-primary); margin-top: 9px; flex: 0 0 auto; }
+
+  .svc__photo { margin-top: 16px; aspect-ratio: 16/9; border-radius: var(--radius-xl); overflow: hidden; }
+  .svc__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .svc__cta-row { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .svc__grid { grid-template-columns: 1fr; gap: 32px; }
+    .svc__bullets { grid-template-columns: 1fr; }
+    .svc__num { font-size: 4rem; }
+  }
+
+  .closing { padding: 112px 0; background: var(--color-surface-dark); color: var(--color-fg-on-dark); text-align: center; }
+  .closing h2 { font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem); margin-bottom: 24px; max-width: 22ch; margin-inline: auto; color: var(--color-fg-on-dark); }
+  .closing p { color: var(--color-fg-on-dark-muted); margin: 0 auto 32px; max-inline-size: 52ch; font-size: 17px; }
+</style>
+</head>
+<body data-screen-label="Aanbod detail">
+
+<div id="nav-mount"></div>
+
+<header class="page-header">
+  <div class="container page-header__inner">
+    <div class="page-header__crumbs">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <a href="aanbod.html">Aanbod</a>
+      <span>/</span>
+      <span>Details</span>
+    </div>
+    <h1>Alles, <span class="accent">tot in detail.</span></h1>
+    <p class="page-header__lead">Per dienst: wat we doen, met welke apparatuur en hoe het er op de dag uitziet. Klik op een onderwerp hieronder om er direct heen te springen.</p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Op deze pagina">
+  <div class="container">
+    <div class="toc__inner">
+      <a href="#geluid">01 Geluid</a>
+      <a href="#licht">02 Licht</a>
+      <a href="#stroomvoorziening">03 Stroomvoorziening</a>
+      <a href="#artiestenbegeleiding">04 Artiesten</a>
+      <a href="#productiebegeleiding">05 Productie</a>
+    </div>
+  </div>
+</nav>
+
+<section class="svc" id="geluid">
+  <div class="container svc__grid">
+    <div class="svc__num">01<small>Audio</small></div>
+    <div class="svc__body">
+      <p class="kicker">Geluid</p>
+      <h2>Een systeem dat past bij de locatie.</h2>
+      <p class="lead">Goed geluid op een kantoorfeestje of een festival met 5000 bezoekers. Wij regelen beide.</p>
+      <p>We verzorgen het complete audiosysteem. Van line-arrays en subs tot microfoontechniek en monitoring. Elk evenement krijgt een systeem dat bij de locatie past, met een geluidstechnicus die de show live mixt. Akoestisch uitdagende locaties? We rekenen het door en stellen een oplossing voor waarbij omgeving én publiek worden ontzien.</p>
+      <ul class="svc__bullets">
+        <li>Line-arrays en point-source systemen (A-merk: L-Acoustics, d&amp;b, RCF)</li>
+        <li>Digitale mixers met multi-track opname</li>
+        <li>In-ear monitoring en wedge-monitoring</li>
+        <li>Meet- en richtmicrofoons voor klachtgevoelige locaties</li>
+      </ul>
+      <div class="svc__photo"><img src="assets/photos/studio-023.jpg" alt="Geluidsapparatuur in de studio" /></div>
+      <div class="svc__cta-row"><a class="btn-primary" href="contact.html">Vraag een offerte</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="svc" id="licht">
+  <div class="container svc__grid">
+    <div class="svc__num">02<small>Visueel</small></div>
+    <div class="svc__body">
+      <p class="kicker">Licht</p>
+      <h2>Een lichtontwerp dat de show maakt.</h2>
+      <p class="lead">Een goede belichting bepaalt de hele sfeer van jouw evenement.</p>
+      <p>Van een intiem bedrijfsdiner tot een compleet festivalpodium. We ontwerpen het lichtplan, bouwen het op en programmeren de show. We werken met A-merk fixtures, moving heads en architecturale armaturen. Een van onze technici staat altijd aan de console om de show live te operaten.</p>
+      <ul class="svc__bullets">
+        <li>Volledig lichtontwerp op maat</li>
+        <li>Moving heads, LED-wash, beams en architecturale verlichting</li>
+        <li>Programmeerbare consoles (grandMA, Hog)</li>
+        <li>Synchronisatie met video en geluid</li>
+      </ul>
+      <div class="svc__photo"><img src="assets/photos/park-lounge-2.jpg" alt="Lichtshow op Park Lounge Festival" /></div>
+      <div class="svc__cta-row"><a class="btn-primary" href="contact.html">Vraag een offerte</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="svc" id="stroomvoorziening">
+  <div class="container svc__grid">
+    <div class="svc__num">03<small>Infrastructuur</small></div>
+    <div class="svc__body">
+      <p class="kicker">Stroomvoorziening</p>
+      <h2>Het netwerk onder de show.</h2>
+      <p class="lead">Tijdelijke stroomvoorziening voor festivals, beurzen en bedrijfsevenementen.</p>
+      <p>We leveren aggregaten, verdeelkasten, kabels en aansluitingen op maat. Voor kleine tuinfeesten tot grote festivalterreinen. Een van onze technici maakt vooraf de belastingsberekening en zorgt dat het op de dag probleemloos draait. Inclusief redundante failover voor hoofdpodia.</p>
+      <ul class="svc__bullets">
+        <li>Stille, EU-5 aggregaten (25kVA tot 500kVA)</li>
+        <li>Complete verdeelkasten met CEE-aansluitingen</li>
+        <li>Belastingsberekening en enkele/drie-fase verdeling</li>
+        <li>Failover-opstellingen voor hoofdpodia</li>
+      </ul>
+      <div class="svc__cta-row"><a class="btn-primary" href="contact.html">Vraag een offerte</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="svc svc--dark" id="artiestenbegeleiding">
+  <div class="container svc__grid">
+    <div class="svc__num">04<small>Backstage &amp; tapes</small></div>
+    <div class="svc__body">
+      <p class="kicker" style="color: var(--color-tertiary);">Artiesten</p>
+      <h2>Boekingsadvies, tapes en backstage in één hand.</h2>
+      <p class="lead">Van aankomst tot laatste encore. Plus de tape-show als de artiest die nodig heeft.</p>
+      <p>We werken al jaren met dezelfde groep Nederlandse zangers en kennen hun repertoires. Onze tape-operator staat naast de artiest op de bühne of in de techniek, afhankelijk van de wens. We zorgen voor tijdige aankomst, professionele backstage-faciliteiten, het programma en de aansluiting tussen artiest en techniek. Geen no-shows, geen chaos bij de wissels.</p>
+      <ul class="svc__bullets">
+        <li>Tape-begeleiding voor de meeste Nederlandse zangers</li>
+        <li>Backstage-coördinatie en runner-rol</li>
+        <li>Aansluiting tussen artiestenwissel en techniek</li>
+        <li>Boekingsadvies en line-up sparring vooraf</li>
+      </ul>
+      <div class="svc__cta-row"><a class="btn-primary" href="artiesten.html">Bekijk artiesten</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="svc" id="productiebegeleiding">
+  <div class="container svc__grid">
+    <div class="svc__num">05<small>End-to-end</small></div>
+    <div class="svc__body">
+      <p class="kicker">Productiebegeleiding</p>
+      <h2>Eén aanspreekpunt voor het hele evenement.</h2>
+      <p class="lead">Van eerste gesprek tot en met de afbouw. End-to-end coördinatie.</p>
+      <p>Wil je één aanspreekpunt voor je hele evenement? We nemen de volledige productie uit handen. Van locatie-inspectie, vergunningenadvies, leveranciersselectie, planning, techniek, artiesten en crewmanagement tot evaluatie. Jij hoeft alleen te genieten.</p>
+      <div class="svc__cta-row"><a class="btn-primary" href="contact.html">Plan een gesprek</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="container">
+    <p class="kicker" style="color: var(--color-tertiary); margin-bottom: 16px;">Vragen?</p>
+    <h2>Liever even bellen?</h2>
+    <p>Een korte belronde geeft vaak meer duidelijkheid dan een formulier. We nemen meestal binnen een paar uur op.</p>
+    <a class="btn-primary" href="tel:+31627172876">Bel 06 27 17 28 76</a>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="shared.js" data-page="aanbod"></script>
+<script>
+  // Scroll-spy voor TOC
+  const links = document.querySelectorAll('.toc a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

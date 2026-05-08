@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Artiesten - Wittenboer Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+  .roster { padding: 96px 0 112px; }
+  .roster__intro { max-width: 64ch; margin-bottom: 64px; }
+  .roster__intro p { font-size: 18px; line-height: 1.65; }
+
+  .roster__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  @media (max-width: 1100px) { .roster__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 800px) { .roster__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .roster__grid { grid-template-columns: 1fr; } }
+
+  .artist { display: flex; flex-direction: column; gap: 16px; }
+  .artist__photo { aspect-ratio: 3/4; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-surface-2); position: relative; }
+  .artist__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease-out-quart); }
+  .artist:hover .artist__photo img { transform: scale(1.05); }
+  .artist__photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(26,36,44,0.45)); opacity: 0; transition: opacity .3s; }
+  .artist:hover .artist__photo::after { opacity: 1; }
+  .artist__name { font-family: var(--font-display); font-size: 26px; letter-spacing: 0.005em; text-transform: uppercase; line-height: 1.05; }
+  .artist__blurb { font-size: 14px; line-height: 1.5; color: var(--color-fg-secondary); max-inline-size: none; }
+  .artist__link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-primary); margin-top: 4px; }
+  .artist__link:hover { color: var(--color-primary-hover); }
+
+  .booking-note { background: var(--color-tertiary-soft); border: 1px solid var(--color-tertiary); border-radius: var(--radius-xl); padding: 40px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; margin-top: 80px; }
+  .booking-note h3 { font-size: 24px; margin-bottom: 8px; }
+  .booking-note p { font-size: 15px; line-height: 1.6; max-inline-size: 60ch; }
+  @media (max-width: 700px) { .booking-note { grid-template-columns: 1fr; } }
+
+  .closing { padding: 96px 0; background: var(--color-surface-1); text-align: center; }
+  .closing h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3.5rem); margin-bottom: 24px; max-width: 22ch; margin-inline: auto; }
+  .closing p { margin: 0 auto 32px; max-inline-size: 52ch; font-size: 17px; }
+</style>
+</head>
+<body data-screen-label="Artiesten">
+
+<div id="nav-mount"></div>
+
+<header class="page-header page-header--photo" style="--photo: url('assets/photos/event-2.jpg');">
+  <div class="container page-header__inner">
+    <div class="page-header__crumbs">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <span>Artiesten</span>
+    </div>
+    <h1>De namen <span class="accent">die we draaien.</span></h1>
+    <p class="page-header__lead">We werken samen met een vaste groep Nederlandse artiesten - we kennen hun show, hun tapes, hun rider. Boekingen lopen via de artiest zelf; wij regelen de techniek en begeleiding.</p>
+  </div>
+</header>
+
+<section class="roster">
+  <div class="container">
+    <div class="roster__intro">
+      <p class="kicker">Onze artiesten</p>
+      <p>De artiesten hieronder zijn we vertrouwd mee. Voor de meeste verzorgen we ook de tape-show en de begeleiding op locatie. Klik op de boeking-link om direct contact op te nemen met de artiest of hun management.</p>
+    </div>
+
+    <div class="roster__grid">
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-jan-biggel.jpg" alt="Jan Biggel" /></div>
+        <div class="artist__name">Jan Biggel</div>
+        <p class="artist__blurb">Bekend door zijn unieke geluid en enthousiaste optredens. 2020-hits "Fleske d'rin Fleske d'r" en "Ons Moeder Zeej Nog".</p>
+        <a class="artist__link" href="https://www.janbiggel.nl" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-ferry-de-lits.jpg" alt="Ferry de Lits" /></div>
+        <div class="artist__name">Ferry de Lits</div>
+        <p class="artist__blurb">Meerdere chart-hits, samenwerkingen met Django Wagner. Debuutalbum "Ritme Van De Nacht".</p>
+        <a class="artist__link" href="https://www.ferrydelits.nl" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-mo-de-show.jpg" alt="Lars Brans" /></div>
+        <div class="artist__name">Lars Brans</div>
+        <p class="artist__blurb">Sinds 2020 actief, met radio-hits als "Wil Je Met Me Dansen" en "Mijn Schat".</p>
+        <a class="artist__link" href="https://www.deaprodukties.nl/boeken/lars-brans/" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-evert.jpg" alt="Evert van Huigevoort" /></div>
+        <div class="artist__name">Evert van Huigevoort</div>
+        <p class="artist__blurb">Een van de meest veelbelovende zangers in Nederland. Samenwerking op "Al Mijn Maten" met Wesley Klein en Roy Donders.</p>
+        <a class="artist__link" href="https://www.casperjanssenmusicpromotion.nl/artiesten/evert-van-huygevoort/" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-jeffrey.jpg" alt="Jeffrey Lake" /></div>
+        <div class="artist__name">Jeffrey Lake</div>
+        <p class="artist__blurb">Werkt met Rood-Hit-Blauw, optredens naast Django Wagner en Wesley Klein. Single "With Christmas".</p>
+        <a class="artist__link" href="https://www.jeffreylake.nl" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-brian-more.jpg" alt="Brian More" /></div>
+        <div class="artist__name">Brian More</div>
+        <p class="artist__blurb">Energieke performer. Engels en Nederlands, van ballades tot dance. "In De Nacht", "Schuil dan maar bij mij".</p>
+        <a class="artist__link" href="https://www.brianmore.nl" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-mo-de-show.jpg" alt="Mo de Show" /></div>
+        <div class="artist__name">Mo de Show</div>
+        <p class="artist__blurb">Veelzijdig entertainer met Nederlandse volksmuziek-stijl. Optredens vanaf de jeugd.</p>
+        <a class="artist__link" href="https://www.rjbookings.nl/artiesten/zangers/zanger-mo-de-show/" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+      <div class="artist">
+        <div class="artist__photo"><img src="assets/photos/artist-jeffrey.jpg" alt="Dirk Drost" /></div>
+        <div class="artist__name">Dirk Drost</div>
+        <p class="artist__blurb">Debuut "Ik Hou Van Jou" (2015), getekend bij Limbo-Power. Bekend van "Oranje Kampioen".</p>
+        <a class="artist__link" href="https://www.dirkdrost.nl" target="_blank" rel="noopener">Boekingsinfo →</a>
+      </div>
+    </div>
+
+    <div class="booking-note">
+      <div>
+        <h3>Hoe werkt boeken?</h3>
+        <p>De artiesten boek je rechtstreeks via hun eigen kanalen. Wij zorgen voor de tape-show, technische begeleiding en backstage-coördinatie als je dat wilt. Bel ons als je wilt sparren over een line-up of een combinatie van artiesten op één avond - we kennen de meeste werkschema's.</p>
+      </div>
+      <a class="btn-primary" href="contact.html">Bespreek een line-up</a>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="container">
+    <p class="kicker" style="margin-bottom: 16px;">Niet de juiste artiest gevonden?</p>
+    <h2>We kennen er meer dan op deze pagina staan.</h2>
+    <p>Vraag het rustig. Voor de meeste Nederlandse zangers en bands hebben we de tape-arrangementen of de contacten direct beschikbaar.</p>
+    <a class="btn-primary" href="tel:+31627172876">Bel 06 27 17 28 76</a>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="shared.js" data-page="artiesten"></script>
+</body>
+</html>
