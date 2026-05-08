@@ -56,7 +56,7 @@ export default async function AccountPage() {
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
           {profile?.has_password
             ? 'Wijzig je wachtwoord. Vul je huidige wachtwoord in ter bevestiging.'
-            : 'Stel een wachtwoord in zodat je voortaan zonder magic-link kunt inloggen.'}
+            : 'Stel een wachtwoord in zodat je voortaan direct kunt inloggen, zonder telkens een mail-link aan te vragen.'}
         </p>
         <Suspense fallback={null}>
           <PasswordForm hasPassword={!!profile?.has_password} />

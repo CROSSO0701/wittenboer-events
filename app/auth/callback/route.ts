@@ -53,10 +53,10 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL('/portal/account?firstTime=true', url.origin))
   }
 
-  let target = next || '/'
+  let target = next || '/portal/account'
   if (profile?.role === 'admin') target = '/portal/admin'
   else if (profile?.role === 'artist') target = '/portal/artiest'
-  else if (profile?.role === 'staff') target = '/portal/personeel'
+  // staff: geen eigen portal-route; toon account-pagina
 
   return NextResponse.redirect(new URL(target, url.origin))
 }
