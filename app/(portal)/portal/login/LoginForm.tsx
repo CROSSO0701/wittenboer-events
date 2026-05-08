@@ -25,60 +25,17 @@ const SITE_URL =
 
 export function LoginForm() {
   const params = useSearchParams()
-  const router = useRouter()
   const next = params.get('next') ?? ''
   const [tab, setTab] = useState<'password' | 'magic'>('password')
   const [forgotOpen, setForgotOpen] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
 
-  // Magic-link callback handler — Supabase parsed de hash al; we routen door op basis van rol.
+  // Toon foutmelding na een mislukte inlog-link callback (server-side route geeft auth_error mee).
   useEffect(() => {
-    const action = params.get('action')
-    if (action !== 'callback') return
-    let cancelled = false
-    ;(async () => {
-      try {
-        const supabase = createSupabaseBrowserClient()
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (cancelled) return
-        if (!user) {
-          toast.error('Inloggen mislukt — link verlopen of ongeldig.')
-          return
-        }
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role, has_password')
-          .eq('id', user.id)
-          .maybeSingle()
-        if (cancelled) return
-
-        // Eerste-keer-login zonder wachtwoord → stuur door naar account met banner
-        if (profile && !profile.has_password) {
-          toast.success('Ingelogd — stel een wachtwoord in voor sneller inloggen.')
-          router.replace('/portal/account?firstTime=true')
-          router.refresh()
-          return
-        }
-
-        const target =
-          profile?.role === 'admin'
-            ? '/portal/admin'
-            : profile?.role === 'artist'
-              ? '/portal/artiest'
-              : next || '/'
-        toast.success('Ingelogd')
-        router.replace(target)
-        router.refresh()
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : 'Inloggen faalde')
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [params, router, next])
+    const authError = params.get('auth_error')
+    if (!authError) return
+    toast.error(`Inloggen mislukt — ${authError}`)
+  }, [params])
 
   return (
     <div className="space-y-4">
@@ -88,7 +45,7 @@ export function LoginForm() {
             <Lock size={14} /> Wachtwoord
           </TabsTrigger>
           <TabsTrigger value="magic">
-            <Mail size={14} /> Magic-link
+            <Mail size={14} /> Inlog-link via mail
           </TabsTrigger>
         </TabsList>
 
@@ -203,8 +160,8 @@ function MagicPanel({ next, onSent }: { next: string; onSent: () => void }) {
     setSubmitting(true)
     try {
       const supabase = createSupabaseBrowserClient()
-      const redirectTo = `${SITE_URL}/portal/login?action=callback${
-        next ? `&next=${encodeURIComponent(next)}` : ''
+      const redirectTo = `${SITE_URL}/auth/callback${
+        next ? `?next=${encodeURIComponent(next)}` : ''
       }`
       const { error } = await supabase.auth.signInWithOtp({
         email: values.email,
@@ -212,7 +169,7 @@ function MagicPanel({ next, onSent }: { next: string; onSent: () => void }) {
       })
       if (error) throw error
       onSent()
-      toast.success('We hebben de magic-link verstuurd. Check je inbox.')
+      toast.success('Inlog-link verstuurd. Check je inbox.')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Versturen faalde')
     } finally {
@@ -228,7 +185,7 @@ function MagicPanel({ next, onSent }: { next: string; onSent: () => void }) {
         {errors.email && <p className="text-xs text-red-600">{errors.email.message}</p>}
       </div>
       <Button type="submit" disabled={submitting}>
-        {submitting ? 'Versturen…' : 'Stuur magic-link'}
+        {submitting ? 'Versturen…' : 'Stuur mij een inlog-link'}
       </Button>
     </form>
   )
@@ -239,11 +196,11 @@ function MagicSentBanner({ onReset }: { onReset: () => void }) {
     <div className="space-y-3 text-sm">
       <div className="flex items-center gap-2 text-[var(--color-primary-deep)]">
         <Mail size={16} />
-        <span className="font-medium">Magic-link verstuurd</span>
+        <span className="font-medium">Inlog-link verstuurd</span>
       </div>
       <p className="text-[var(--color-fg-muted)]">
         Open de mail in je inbox en klik op de link. Je wordt automatisch ingelogd en
-        doorgestuurd naar je portal.
+        doorgestuurd naar je portaal.
       </p>
       <Button type="button" variant="ghost" size="sm" onClick={onReset}>
         Andere mail proberen
@@ -268,7 +225,7 @@ function ForgotPanel({ onClose }: { onClose: () => void }) {
     setSubmitting(true)
     try {
       const supabase = createSupabaseBrowserClient()
-      const redirectTo = `${SITE_URL}/portal/account?reset=true`
+      const redirectTo = `${SITE_URL}/auth/callback?next=${encodeURIComponent('/portal/account?reset=true')}`
       const { error } = await supabase.auth.resetPasswordForEmail(values.email, { redirectTo })
       if (error) throw error
       setSent(true)

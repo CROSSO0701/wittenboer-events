@@ -14,8 +14,7 @@ export default function LoginPage() {
         Inloggen artiestenportal
       </h1>
       <p className="mt-3 text-sm text-[var(--color-fg-muted)]">
-        Vul je e-mailadres in. Je krijgt een magic-link toegestuurd waarmee je direct ingelogd
-        wordt. Geen wachtwoord nodig.
+        Log in met je wachtwoord, of laat je een inlog-link mailen — geen wachtwoord nodig.
       </p>
       <div className="mt-8 rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm">
         <Suspense fallback={null}>

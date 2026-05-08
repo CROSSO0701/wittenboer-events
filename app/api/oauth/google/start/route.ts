@@ -16,7 +16,10 @@ export async function GET(request: Request) {
   const clientId = process.env.GOOGLE_CLIENT_ID
   if (!clientId) {
     return NextResponse.json(
-      { error: 'GOOGLE_CLIENT_ID ontbreekt. Vul .env.local en herstart.' },
+      {
+        error:
+          'Google Agenda is nog niet ingesteld. Vraag de developer om de Google-koppeling te activeren — daarna kun je hier verbinden.',
+      },
       { status: 503 }
     )
   }
