@@ -93,8 +93,14 @@ export function BookingDetailSheet({
             <DetailRow label="Locatie" value={booking.event_location ?? '—'} />
             <DetailRow label="Aanvang" value={booking.event_start ? new Date(booking.event_start).toLocaleString('nl-NL') : '—'} />
             <DetailRow label="Einde" value={booking.event_end ? new Date(booking.event_end).toLocaleString('nl-NL') : '—'} />
-            <DetailRow label="Klant e-mail" value={booking.client_email ?? '—'} />
-            <DetailRow label="Klant telefoon" value={booking.client_phone ?? '—'} />
+            <DetailRow
+              label={booking.source === 'artist' ? 'Organisator e-mail' : 'Klant e-mail'}
+              value={booking.client_email ?? '—'}
+            />
+            <DetailRow
+              label={booking.source === 'artist' ? 'Organisator telefoon' : 'Klant telefoon'}
+              value={booking.client_phone ?? '—'}
+            />
             <DetailRow label="Gage" value={formatEUR(booking.fee_cents)} />
             <DetailRow label="Aangemaakt" value={new Date(booking.created_at).toLocaleString('nl-NL')} />
           </dl>

@@ -137,7 +137,7 @@ function ArtwinCard({
         toast.error(data.error ?? `Status ${res.status}`)
         return
       }
-      toast.success('iCal-URL opgeslagen')
+      toast.success('Verbinding opgeslagen')
     } finally {
       setSaving(false)
     }
@@ -248,14 +248,14 @@ function FeedCard() {
   }
 
   return (
-    <CardShell icon={<LinkIcon size={18} />} title="Mijn agenda-feed" ok={!!token}>
+    <CardShell icon={<LinkIcon size={18} />} title="Mijn agenda-link" ok={!!token}>
       <p className="text-sm text-[var(--color-fg-secondary)]">
-        Persoonlijke iCal-URL met al jouw geaccepteerde klussen. Plak in Google Calendar →
-        Andere agenda&apos;s → Toevoegen via URL. Werkt ook in Outlook, Apple Calendar etc.
+        Krijg al je geaccepteerde klussen automatisch in een agenda van jouw keuze (Google,
+        Apple, Outlook). Eén persoonlijke link, blijft up-to-date.
       </p>
       {!token && (
         <Button onClick={generate} disabled={busy} className="mt-4" size="sm">
-          {busy ? 'Genereren…' : 'Genereer feed-URL'}
+          {busy ? 'Bezig…' : 'Maak mijn agenda-link'}
         </Button>
       )}
       {token && (
@@ -263,7 +263,7 @@ function FeedCard() {
           <Input readOnly value={url} className="font-mono text-xs" />
           <div className="flex gap-2">
             <Button onClick={copyUrl} size="sm" variant="ghost">
-              <Copy size={14} /> Kopieer URL
+              <Copy size={14} /> Kopieer link
             </Button>
             <a
               href={url}
@@ -271,12 +271,12 @@ function FeedCard() {
               rel="noopener noreferrer"
               className="inline-flex h-8 items-center gap-1.5 rounded-full border border-[var(--color-border-strong)] bg-transparent px-3 text-[13px] font-medium text-[var(--color-fg)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
             >
-              Open .ics <ExternalLink size={12} />
+              Open in agenda <ExternalLink size={12} />
             </a>
           </div>
           <p className="text-xs text-[var(--color-fg-muted)]">
-            Behandel deze URL als een wachtwoord — wie hem heeft, ziet je geaccepteerde klussen
-            (zonder klantgegevens). Een nieuwe genereren regenereert het token (komt later).
+            Plak deze link in Google Agenda → &ldquo;Andere agenda&rsquo;s&rdquo; → &ldquo;Toevoegen via URL&rdquo;.
+            Behandel hem als een wachtwoord — wie hem heeft, kan je klussen meekijken.
           </p>
         </div>
       )}
@@ -286,15 +286,14 @@ function FeedCard() {
 
 function ResendCard({ connected }: { connected: boolean }) {
   return (
-    <CardShell icon={<Mail size={18} />} title="Resend" ok={connected}>
+    <CardShell icon={<Mail size={18} />} title="Mail-service" ok={connected}>
       <p className="text-sm text-[var(--color-fg-secondary)]">
-        Transactionele mail wordt via Resend verstuurd (booking-bevestigingen, klant-confirmaties,
-        staff-notificaties).
+        Bevestigingen aan klanten en artiesten, en berichtjes naar crew gaan via deze mail-service.
       </p>
       <p className="mt-3 text-xs text-[var(--color-fg-muted)]">
-        Status: <strong>{connected ? 'API-key actief' : 'Geen API-key'}</strong>. Configureer{' '}
-        <code className="rounded bg-[var(--color-surface-1)] px-1">RESEND_API_KEY</code> in je env.
-        Read-only via portal — wordt nooit getoond.
+        {connected
+          ? 'Mail werkt — alles wordt automatisch verstuurd.'
+          : 'Nog niet ingesteld. Vraag de developer om dit te activeren — pas dan worden mails ook echt verstuurd.'}
       </p>
     </CardShell>
   )

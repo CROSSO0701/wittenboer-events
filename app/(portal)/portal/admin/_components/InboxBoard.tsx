@@ -30,6 +30,12 @@ function formatEUR(cents?: number | null) {
   return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 }
 
+const SOURCE_LABEL: Record<string, string> = {
+  artist: 'Artiest',
+  client: 'Klant via website',
+  artwinlive: 'ArtwinLive',
+}
+
 export function InboxBoard({
   bookings,
   error,
@@ -158,8 +164,8 @@ export function InboxBoard({
             <thead className="sticky top-0 bg-[var(--color-surface-1)]">
               <tr className="border-b border-[var(--color-border)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                 <th className="px-4 py-2">Datum</th>
-                <th className="px-4 py-2">Bron</th>
-                <th className="px-4 py-2">Klant</th>
+                <th className="px-4 py-2">Aangevraagd door</th>
+                <th className="px-4 py-2">Klant / show</th>
                 <th className="px-4 py-2">Artiest</th>
                 <th className="px-4 py-2">Locatie</th>
                 <th className="px-4 py-2 text-right">Gage</th>
@@ -174,7 +180,7 @@ export function InboxBoard({
                 >
                   <td className="px-4 py-3 text-[var(--color-fg)]">{relativeDate(b.event_date)}</td>
                   <td className="px-4 py-3">
-                    <Badge tone="info">{b.source}</Badge>
+                    <Badge tone="info">{SOURCE_LABEL[b.source] ?? b.source}</Badge>
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '—'}</td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">

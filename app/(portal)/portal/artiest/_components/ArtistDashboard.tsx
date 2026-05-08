@@ -5,18 +5,51 @@ import { CalendarPlus, FileText } from 'lucide-react'
 import { Button } from '../../../../components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../../../../components/ui/dialog'
 import { SubmitBookingForm } from './SubmitBookingForm'
-import { StatusBadge } from '../../_components/StatusBadge'
+import { Badge } from '../../../../components/ui/badge'
 import type { Database } from '../../../../lib/db/types.generated'
 
 type Booking = Database['public']['Tables']['bookings']['Row']
 
-function formatEUR(cents?: number | null) {
-  if (cents == null) return '—'
-  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
-}
 function formatDate(d?: string | null) {
   if (!d) return '—'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
+}
+
+const ARTIST_STATUS_LABEL: Record<string, string> = {
+  pending: 'Aangevraagd',
+  accepted: 'Geaccepteerd, ingepland',
+  declined: 'Afgewezen door Marnix',
+  cancelled: 'Geannuleerd',
+  done: 'Geweest',
+}
+const ARTIST_STATUS_TONE: Record<string, 'pending' | 'accepted' | 'declined' | 'done' | 'cancelled' | 'neutral'> = {
+  pending: 'pending',
+  accepted: 'accepted',
+  declined: 'declined',
+  cancelled: 'cancelled',
+  done: 'done',
+}
+
+function ArtistStatusBadge({ status }: { status: string }) {
+  return (
+    <Badge tone={ARTIST_STATUS_TONE[status] ?? 'neutral'}>
+      {ARTIST_STATUS_LABEL[status] ?? status}
+    </Badge>
+  )
+}
+
+function parseNeeds(notes?: string | null): string[] {
+  if (!notes) return []
+  const line = notes
+    .split('\n')
+    .map((l) => l.trim())
+    .find((l) => l.toLowerCase().startsWith('nodig:'))
+  if (!line) return []
+  return line
+    .slice(line.indexOf(':') + 1)
+    .split('·')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export function ArtistDashboard({
@@ -109,16 +142,16 @@ export function ArtistDashboard({
 
       {!hasArtistRow && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-          Je profiel is gevonden, maar er is nog geen artiestendossier aan gekoppeld. Marnix moet
-          je profiel koppelen voordat je klussen kunt indienen.
+          Je inlog werkt, maar Marnix moet je nog als artiest activeren. Even een berichtje naar
+          Marnix (06-27172876) en je kunt aanvragen versturen.
         </div>
       )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Stat label="Open" value={stats.open} sub="wachten op accept" />
-        <Stat label="Komende maand" value={stats.comingMonth} sub="geaccepteerd" />
-        <Stat label="Dit jaar" value={stats.total} sub="totaal" />
+        <Stat label="Wacht op antwoord" value={stats.open} sub="bij Marnix" />
+        <Stat label="Komende maand" value={stats.comingMonth} sub="ingepland" />
+        <Stat label="Dit jaar" value={stats.total} sub="aanvragen" />
       </div>
 
       <section>
@@ -159,37 +192,51 @@ export function ArtistDashboard({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
-                  <th className="px-4 py-2">Datum</th>
-                  <th className="px-4 py-2">Klant</th>
+                  <th className="px-4 py-2">Datum show</th>
                   <th className="px-4 py-2">Locatie</th>
-                  <th className="px-4 py-2">Gage</th>
+                  <th className="px-4 py-2">Wat heb je nodig</th>
                   <th className="px-4 py-2">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((b) => (
-                  <tr
-                    key={b.id}
-                    className="border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-1)]"
-                    title={
-                      b.status === 'declined' && b.decline_reason
-                        ? `Reden: ${b.decline_reason}`
-                        : undefined
-                    }
-                  >
-                    <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
-                    <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '—'}</td>
-                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                      {b.event_location ?? '—'}
-                    </td>
-                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                      {formatEUR(b.fee_cents)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={b.status} />
-                    </td>
-                  </tr>
-                ))}
+                {bookings.map((b) => {
+                  const needs = parseNeeds(b.notes)
+                  return (
+                    <tr
+                      key={b.id}
+                      className="border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-1)]"
+                      title={
+                        b.status === 'declined' && b.decline_reason
+                          ? `Reden van Marnix: ${b.decline_reason}`
+                          : undefined
+                      }
+                    >
+                      <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
+                      <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
+                        {b.event_location ?? '—'}
+                      </td>
+                      <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
+                        {needs.length === 0 ? (
+                          <span className="text-[var(--color-fg-muted)]">—</span>
+                        ) : (
+                          <span className="flex flex-wrap gap-1">
+                            {needs.map((n) => (
+                              <span
+                                key={n}
+                                className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface-1)] px-2 py-0.5 text-[11px] text-[var(--color-fg)]"
+                              >
+                                {n}
+                              </span>
+                            ))}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <ArtistStatusBadge status={b.status} />
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
