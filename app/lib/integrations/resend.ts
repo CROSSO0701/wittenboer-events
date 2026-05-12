@@ -9,7 +9,14 @@ type SendArgs = {
   replyTo?: string
 }
 
-const FROM_DEFAULT = 'Wittenboer Events <noreply@wittenboerevents.nl>'
+// Configurable via env. Moet een door Resend-geverifieerd domein zijn.
+// Voorbeeld: 'Wittenboer Events <noreply@jouw-andere-site.nl>'
+const FROM_DEFAULT =
+  process.env.RESEND_FROM_EMAIL || 'Wittenboer Events <noreply@wittenboerevents.nl>'
+
+// Optionele reply-to override (bv. naar info@wittenboerevents.nl zodat antwoorden
+// daar terechtkomen ook al verstuurt Resend vanuit een ander domein).
+const REPLY_TO_DEFAULT = process.env.RESEND_REPLY_TO || undefined
 
 export async function sendResend(args: SendArgs): Promise<{ ok: boolean; id?: string; error?: string }> {
   const key = process.env.RESEND_API_KEY
@@ -33,7 +40,7 @@ export async function sendResend(args: SendArgs): Promise<{ ok: boolean; id?: st
         subject: args.subject,
         html: args.html,
         text: args.text,
-        reply_to: args.replyTo,
+        reply_to: args.replyTo ?? REPLY_TO_DEFAULT,
       }),
     })
     if (!res.ok) {
