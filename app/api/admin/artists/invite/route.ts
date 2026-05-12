@@ -53,6 +53,30 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient()
 
+  // 0. Check of dit e-mailadres al aan een artiest hangt — voorkomt
+  //    dubbele koppelingen (1 user kan maar bij 1 artiest horen).
+  const { data: emailProfile } = await supabase
+    .from('profiles')
+    .select('id, full_name')
+    .eq('email', input.email)
+    .maybeSingle()
+
+  if (emailProfile?.id) {
+    const { data: linkedArtist } = await supabase
+      .from('artists')
+      .select('id, stage_name')
+      .eq('profile_id', emailProfile.id)
+      .maybeSingle()
+    if (linkedArtist && (!input.artist_id || linkedArtist.id !== input.artist_id)) {
+      return NextResponse.json(
+        {
+          error: `Dit e-mailadres is al gekoppeld aan artiest "${linkedArtist.stage_name}". Trek eerst de toegang in als je opnieuw wilt uitnodigen.`,
+        },
+        { status: 409 }
+      )
+    }
+  }
+
   // 1. Resolve artiest-rij
   let artistId = input.artist_id ?? null
   let artistName = input.stage_name ?? null
@@ -64,62 +88,63 @@ export async function POST(request: Request) {
       .eq('id', artistId)
       .maybeSingle()
     if (!existing) return NextResponse.json({ error: 'Artiest niet gevonden.' }, { status: 404 })
-    if (existing.profile_id) {
+    if (existing.profile_id && existing.profile_id !== emailProfile?.id) {
       return NextResponse.json({ error: 'Deze artiest heeft al toegang.' }, { status: 409 })
     }
     artistName = existing.stage_name
   } else if (input.stage_name) {
-    // nieuwe artiest aanmaken
+    // Voorkom dupes — check of er al een artiest met deze (genormaliseerde) naam bestaat
     const baseSlug = slugFor(input.stage_name)
-    let slug = baseSlug
-    for (let i = 2; i < 50; i++) {
-      const { data: clash } = await supabase.from('artists').select('id').eq('slug', slug).maybeSingle()
-      if (!clash) break
-      slug = `${baseSlug}-${i}`
-    }
-    const { data: created, error: createErr } = await supabase
+    const { data: existingByName } = await supabase
       .from('artists')
-      .insert({
-        stage_name: input.stage_name,
-        slug,
-        genre: input.genre ?? null,
-        photo_url: input.photo_url ?? null,
-        active: true,
-        display_order: 999,
-      })
-      .select('id, stage_name')
+      .select('id, stage_name, profile_id')
+      .eq('slug', baseSlug)
       .maybeSingle()
-    if (createErr || !created) {
-      return NextResponse.json(
-        { error: 'Aanmaken faalde.', detail: createErr?.message },
-        { status: 500 }
-      )
+
+    if (existingByName) {
+      if (existingByName.profile_id) {
+        return NextResponse.json(
+          {
+            error: `Er is al een artiest "${existingByName.stage_name}" met toegang. Kies een andere naam, of gebruik "Bestaande artiest" en trek eerst de toegang in.`,
+          },
+          { status: 409 }
+        )
+      }
+      // Bestaande lege rij hergebruiken
+      artistId = existingByName.id
+      artistName = existingByName.stage_name
+    } else {
+      const { data: created, error: createErr } = await supabase
+        .from('artists')
+        .insert({
+          stage_name: input.stage_name,
+          slug: baseSlug,
+          genre: input.genre ?? null,
+          photo_url: input.photo_url ?? null,
+          active: true,
+          display_order: 999,
+        })
+        .select('id, stage_name')
+        .maybeSingle()
+      if (createErr || !created) {
+        return NextResponse.json(
+          { error: 'Aanmaken faalde.', detail: createErr?.message },
+          { status: 500 }
+        )
+      }
+      artistId = created.id
+      artistName = created.stage_name
     }
-    artistId = created.id
-    artistName = created.stage_name
   }
 
-  // 2. Check eerst of er al een user bestaat met dit e-mailadres.
-  //    Zo ja: skip invite, koppel direct aan het bestaande account.
+  // 2. User-resolution: bestond al (van emailProfile-lookup eerder) of nieuw.
   // Magic-link/invite codes moeten via /auth/callback uitgewisseld worden voor
   // een sessie. Daarna stuurt callback door naar de juiste pagina o.b.v. rol.
   const redirectTo = `${SITE_URL}/auth/callback?next=${encodeURIComponent('/portal/account?welcome=1')}`
   const useResend = !!process.env.RESEND_API_KEY
-  let userId: string | undefined
+  let userId: string | undefined = emailProfile?.id
   let actionLink: string | undefined
-  let reusedExisting = false
-
-  {
-    const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', input.email)
-      .maybeSingle()
-    if (existingProfile?.id) {
-      userId = existingProfile.id
-      reusedExisting = true
-    }
-  }
+  const reusedExisting = !!emailProfile?.id
 
   if (!reusedExisting) {
     try {

@@ -35,11 +35,16 @@ export default async function ArtiestPage() {
     )
   }
 
-  const { data: artist } = await supabase
+  // Defensief: pak de meest recente match. UNIQUE-constraint zorgt dat dit
+  // normaal precies één rij is, maar bij legacy-data kan het meerdere zijn.
+  const { data: artists } = await supabase
     .from('artists')
-    .select('id, stage_name, slug')
+    .select('id, stage_name, slug, created_at')
     .eq('profile_id', user.id)
-    .maybeSingle()
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  const artist = artists?.[0] ?? null
 
   return (
     <ArtistDashboard

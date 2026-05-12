@@ -13,6 +13,8 @@ export type AuditAction =
   | 'note.added'
   | 'artist.invited'
   | 'artist.access_revoked'
+  | 'artist.updated'
+  | 'artist.deleted'
   | 'staff.invited'
 
 export async function logAudit(input: {

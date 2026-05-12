@@ -11,7 +11,9 @@ type ArtistRow = {
   stage_name: string
   slug: string
   genre: string | null
+  bio: string | null
   photo_url: string | null
+  external_booking_url: string | null
   active: boolean
   profile_id: string | null
   display_order: number
@@ -35,7 +37,7 @@ export default async function ArtistsAdminPage() {
 
   const { data } = await supabase
     .from('artists')
-    .select('id, stage_name, slug, genre, photo_url, active, profile_id, display_order')
+    .select('id, stage_name, slug, genre, bio, photo_url, external_booking_url, active, profile_id, display_order')
     .order('display_order', { ascending: true })
 
   const artists = (data as ArtistRow[] | null) ?? []
