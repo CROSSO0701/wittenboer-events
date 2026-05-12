@@ -13,3 +13,5 @@ out
 *-prompt.md
 tsconfig.tsbuildinfo
 supabase/.temp/
+*.tmp
+Offerte-*.pdf
