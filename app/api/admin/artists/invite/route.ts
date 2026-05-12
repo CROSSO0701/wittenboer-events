@@ -172,22 +172,46 @@ export async function POST(request: Request) {
     await supabase.from('artists').update({ profile_id: userId }).eq('id', artistId)
   }
 
-  // 5. Bij Resend-modus: stuur eigen branded mail
-  let sent: { ok: boolean; error?: string } = { ok: true }
-  if (useResend && actionLink) {
+  // 5. Stuur mail. Voor bestaande users genereren we een verse magic-link
+  //    (i.p.v. invite-link, want die bestaat al). Dan via Resend versturen.
+  let sent: { ok: boolean; error?: string } = { ok: false, error: 'geen mail-poging' }
+  let linkToSend = actionLink
+
+  if (reusedExisting && useResend) {
+    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: input.email,
+      options: { redirectTo },
+    })
+    if (linkErr || !linkData?.properties?.action_link) {
+      sent = { ok: false, error: linkErr?.message ?? 'Magic-link genereren faalde' }
+    } else {
+      linkToSend = linkData.properties.action_link
+    }
+  }
+
+  if (useResend && linkToSend) {
     const mail = await renderEmail(
       InviteMail({
         name: artistName ?? 'artiest',
         role: 'artiest',
-        link: actionLink,
+        link: linkToSend,
       })
     )
     sent = await sendResend({
       to: input.email,
-      subject: 'Welkom bij Wittenboer Events',
+      subject: reusedExisting
+        ? 'Je inloglink voor Wittenboer Events'
+        : 'Welkom bij Wittenboer Events',
       html: mail.html,
       text: mail.text,
     })
+  } else if (!useResend && !reusedExisting) {
+    // Supabase heeft de invite-mail al verstuurd via inviteUserByEmail
+    sent = { ok: true }
+  } else if (!useResend && reusedExisting) {
+    // Geen Resend + bestaande user: kunnen geen mail sturen
+    sent = { ok: false, error: 'Bestaand account — laat ze inloggen op /portal/login' }
   }
 
   await logAudit({

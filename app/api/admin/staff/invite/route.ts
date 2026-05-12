@@ -111,17 +111,38 @@ export async function POST(request: Request) {
     .update({ role: 'staff', full_name: input.full_name, phone: input.phone ?? null })
     .eq('id', userId)
 
-  let sent: { ok: boolean; error?: string } = { ok: true }
-  if (useResend && actionLink) {
+  let sent: { ok: boolean; error?: string } = { ok: false, error: 'geen mail-poging' }
+  let linkToSend = actionLink
+
+  if (reusedExisting && useResend) {
+    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: input.email,
+      options: { redirectTo },
+    })
+    if (linkErr || !linkData?.properties?.action_link) {
+      sent = { ok: false, error: linkErr?.message ?? 'Magic-link genereren faalde' }
+    } else {
+      linkToSend = linkData.properties.action_link
+    }
+  }
+
+  if (useResend && linkToSend) {
     const mail = await renderEmail(
-      InviteMail({ name: input.full_name, role: 'crewlid', link: actionLink })
+      InviteMail({ name: input.full_name, role: 'crewlid', link: linkToSend })
     )
     sent = await sendResend({
       to: input.email,
-      subject: 'Welkom bij Wittenboer Events',
+      subject: reusedExisting
+        ? 'Je inloglink voor Wittenboer Events'
+        : 'Welkom bij Wittenboer Events',
       html: mail.html,
       text: mail.text,
     })
+  } else if (!useResend && !reusedExisting) {
+    sent = { ok: true }
+  } else if (!useResend && reusedExisting) {
+    sent = { ok: false, error: 'Bestaand account — laat ze inloggen op /portal/login' }
   }
 
   await logAudit({
