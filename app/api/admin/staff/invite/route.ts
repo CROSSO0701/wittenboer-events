@@ -53,7 +53,9 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient()
 
-  const redirectTo = `${SITE_URL}/portal/account?welcome=1`
+  // Magic-link/invite codes moeten via /auth/callback uitgewisseld worden voor
+  // een sessie. Daarna stuurt callback door naar de juiste pagina o.b.v. rol.
+  const redirectTo = `${SITE_URL}/auth/callback?next=${encodeURIComponent('/portal/account?welcome=1')}`
   const useResend = !!process.env.RESEND_API_KEY
 
   let userId: string | undefined

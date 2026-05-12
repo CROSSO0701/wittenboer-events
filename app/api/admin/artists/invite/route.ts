@@ -101,7 +101,9 @@ export async function POST(request: Request) {
 
   // 2. Check eerst of er al een user bestaat met dit e-mailadres.
   //    Zo ja: skip invite, koppel direct aan het bestaande account.
-  const redirectTo = `${SITE_URL}/portal/account?welcome=1`
+  // Magic-link/invite codes moeten via /auth/callback uitgewisseld worden voor
+  // een sessie. Daarna stuurt callback door naar de juiste pagina o.b.v. rol.
+  const redirectTo = `${SITE_URL}/auth/callback?next=${encodeURIComponent('/portal/account?welcome=1')}`
   const useResend = !!process.env.RESEND_API_KEY
   let userId: string | undefined
   let actionLink: string | undefined
