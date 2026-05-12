@@ -84,24 +84,42 @@ export async function POST(request: Request) {
     artistName = created.stage_name
   }
 
-  // 2. Genereer invite-link via admin auth API (creëert user als hij nog niet bestaat)
+  // 2. Stuur invite. Als Resend geconfigureerd is: gebruik generateLink + eigen
+  //    branded mail. Zonder Resend: laat Supabase de invite-mail zelf versturen
+  //    via inviteUserByEmail (gebruikt template uit Auth → Email Templates).
   const redirectTo = `${SITE_URL}/portal/account?welcome=1`
+  const useResend = !!process.env.RESEND_API_KEY
   let userId: string | undefined
   let actionLink: string | undefined
+
   try {
-    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-      type: 'invite',
-      email: input.email,
-      options: { redirectTo, data: { full_name: artistName ?? '' } },
-    })
-    if (linkErr || !linkData) {
-      return NextResponse.json(
-        { error: 'Uitnodigen faalde.', detail: linkErr?.message },
-        { status: 500 }
+    if (useResend) {
+      const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+        type: 'invite',
+        email: input.email,
+        options: { redirectTo, data: { full_name: artistName ?? '' } },
+      })
+      if (linkErr || !linkData) {
+        return NextResponse.json(
+          { error: 'Uitnodigen faalde.', detail: linkErr?.message },
+          { status: 500 }
+        )
+      }
+      userId = linkData.user?.id
+      actionLink = linkData.properties?.action_link
+    } else {
+      const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(
+        input.email,
+        { redirectTo, data: { full_name: artistName ?? '' } }
       )
+      if (inviteErr || !inviteData?.user) {
+        return NextResponse.json(
+          { error: 'Uitnodigen faalde.', detail: inviteErr?.message },
+          { status: 500 }
+        )
+      }
+      userId = inviteData.user.id
     }
-    userId = linkData.user?.id
-    actionLink = linkData.properties?.action_link
   } catch (err) {
     return NextResponse.json(
       { error: 'Uitnodigen faalde.', detail: err instanceof Error ? err.message : String(err) },
@@ -109,7 +127,7 @@ export async function POST(request: Request) {
     )
   }
 
-  if (!userId || !actionLink) {
+  if (!userId) {
     return NextResponse.json({ error: 'Onvolledige invite-respons.' }, { status: 500 })
   }
 
@@ -124,27 +142,35 @@ export async function POST(request: Request) {
     await supabase.from('artists').update({ profile_id: userId }).eq('id', artistId)
   }
 
-  // 5. Stuur eigen mail (i.p.v. Supabase default template)
-  const mail = await renderEmail(
-    InviteMail({
-      name: artistName ?? 'artiest',
-      role: 'artiest',
-      link: actionLink,
+  // 5. Bij Resend-modus: stuur eigen branded mail
+  let sent: { ok: boolean; error?: string } = { ok: true }
+  if (useResend && actionLink) {
+    const mail = await renderEmail(
+      InviteMail({
+        name: artistName ?? 'artiest',
+        role: 'artiest',
+        link: actionLink,
+      })
+    )
+    sent = await sendResend({
+      to: input.email,
+      subject: 'Welkom bij Wittenboer Events',
+      html: mail.html,
+      text: mail.text,
     })
-  )
-  const sent = await sendResend({
-    to: input.email,
-    subject: 'Welkom bij Wittenboer Events',
-    html: mail.html,
-    text: mail.text,
-  })
+  }
 
   await logAudit({
     actorId: admin.id,
     action: 'artist.invited',
     entity: 'artist',
     entityId: artistId,
-    metadata: { email: input.email, mailSent: sent.ok, mailError: sent.error },
+    metadata: {
+      email: input.email,
+      via: useResend ? 'resend' : 'supabase',
+      mailSent: sent.ok,
+      mailError: sent.error,
+    },
   })
 
   return NextResponse.json({
@@ -153,5 +179,6 @@ export async function POST(request: Request) {
     user_id: userId,
     mailSent: sent.ok,
     mailError: sent.error,
+    via: useResend ? 'resend' : 'supabase',
   })
 }

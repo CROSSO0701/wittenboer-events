@@ -39,37 +39,69 @@ export async function POST(request: Request) {
   const supabase = createSupabaseAdminClient()
 
   const redirectTo = `${SITE_URL}/portal/account?welcome=1`
-  const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-    type: 'invite',
-    email: input.email,
-    options: { redirectTo, data: { full_name: input.full_name } },
-  })
-  if (linkErr || !linkData?.user || !linkData.properties?.action_link) {
-    return NextResponse.json({ error: 'Uitnodigen faalde.', detail: linkErr?.message }, { status: 500 })
+  const useResend = !!process.env.RESEND_API_KEY
+
+  let userId: string | undefined
+  let actionLink: string | undefined
+
+  if (useResend) {
+    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      type: 'invite',
+      email: input.email,
+      options: { redirectTo, data: { full_name: input.full_name } },
+    })
+    if (linkErr || !linkData?.user || !linkData.properties?.action_link) {
+      return NextResponse.json({ error: 'Uitnodigen faalde.', detail: linkErr?.message }, { status: 500 })
+    }
+    userId = linkData.user.id
+    actionLink = linkData.properties.action_link
+  } else {
+    const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(
+      input.email,
+      { redirectTo, data: { full_name: input.full_name } }
+    )
+    if (inviteErr || !inviteData?.user) {
+      return NextResponse.json({ error: 'Uitnodigen faalde.', detail: inviteErr?.message }, { status: 500 })
+    }
+    userId = inviteData.user.id
   }
 
   await supabase
     .from('profiles')
     .update({ role: 'staff', full_name: input.full_name, phone: input.phone ?? null })
-    .eq('id', linkData.user.id)
+    .eq('id', userId)
 
-  const mail = await renderEmail(
-    InviteMail({ name: input.full_name, role: 'crewlid', link: linkData.properties.action_link })
-  )
-  const sent = await sendResend({
-    to: input.email,
-    subject: 'Welkom bij Wittenboer Events',
-    html: mail.html,
-    text: mail.text,
-  })
+  let sent: { ok: boolean; error?: string } = { ok: true }
+  if (useResend && actionLink) {
+    const mail = await renderEmail(
+      InviteMail({ name: input.full_name, role: 'crewlid', link: actionLink })
+    )
+    sent = await sendResend({
+      to: input.email,
+      subject: 'Welkom bij Wittenboer Events',
+      html: mail.html,
+      text: mail.text,
+    })
+  }
 
   await logAudit({
     actorId: admin.id,
     action: 'staff.invited',
     entity: 'profile',
-    entityId: linkData.user.id,
-    metadata: { email: input.email, mailSent: sent.ok, mailError: sent.error },
+    entityId: userId,
+    metadata: {
+      email: input.email,
+      via: useResend ? 'resend' : 'supabase',
+      mailSent: sent.ok,
+      mailError: sent.error,
+    },
   })
 
-  return NextResponse.json({ ok: true, user_id: linkData.user.id, mailSent: sent.ok, mailError: sent.error })
+  return NextResponse.json({
+    ok: true,
+    user_id: userId,
+    mailSent: sent.ok,
+    mailError: sent.error,
+    via: useResend ? 'resend' : 'supabase',
+  })
 }
