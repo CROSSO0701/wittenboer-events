@@ -132,7 +132,9 @@ function InviteStaffDialog({
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        toast.error(data.error ?? `Fout (${res.status})`)
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
         return
       }
       if (data.mailSent) toast.success(`${fullName} heeft een uitnodiging in de mail.`)

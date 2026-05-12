@@ -10,6 +10,21 @@ import { logAudit } from '../../../../lib/audit'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
+function friendlyAuthError(msg?: string | null): string {
+  if (!msg) return 'Uitnodigen faalde.'
+  const m = msg.toLowerCase()
+  if (m.includes('already') && (m.includes('registered') || m.includes('exists'))) {
+    return 'Deze e-mail heeft al een account. Koppel via "Bestaande artiest" of laat ze inloggen op /portal/login.'
+  }
+  if (m.includes('rate limit')) {
+    return 'Te veel invites verstuurd. Probeer over een uur opnieuw, of stel Resend in voor onbeperkte mail.'
+  }
+  if (m.includes('invalid') && m.includes('email')) {
+    return 'Ongeldig e-mailadres.'
+  }
+  return `Uitnodigen faalde: ${msg}`
+}
+
 export async function POST(request: Request) {
   let admin
   try {
@@ -84,47 +99,62 @@ export async function POST(request: Request) {
     artistName = created.stage_name
   }
 
-  // 2. Stuur invite. Als Resend geconfigureerd is: gebruik generateLink + eigen
-  //    branded mail. Zonder Resend: laat Supabase de invite-mail zelf versturen
-  //    via inviteUserByEmail (gebruikt template uit Auth → Email Templates).
+  // 2. Check eerst of er al een user bestaat met dit e-mailadres.
+  //    Zo ja: skip invite, koppel direct aan het bestaande account.
   const redirectTo = `${SITE_URL}/portal/account?welcome=1`
   const useResend = !!process.env.RESEND_API_KEY
   let userId: string | undefined
   let actionLink: string | undefined
+  let reusedExisting = false
 
-  try {
-    if (useResend) {
-      const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-        type: 'invite',
-        email: input.email,
-        options: { redirectTo, data: { full_name: artistName ?? '' } },
-      })
-      if (linkErr || !linkData) {
-        return NextResponse.json(
-          { error: 'Uitnodigen faalde.', detail: linkErr?.message },
-          { status: 500 }
-        )
-      }
-      userId = linkData.user?.id
-      actionLink = linkData.properties?.action_link
-    } else {
-      const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(
-        input.email,
-        { redirectTo, data: { full_name: artistName ?? '' } }
-      )
-      if (inviteErr || !inviteData?.user) {
-        return NextResponse.json(
-          { error: 'Uitnodigen faalde.', detail: inviteErr?.message },
-          { status: 500 }
-        )
-      }
-      userId = inviteData.user.id
+  {
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', input.email)
+      .maybeSingle()
+    if (existingProfile?.id) {
+      userId = existingProfile.id
+      reusedExisting = true
     }
-  } catch (err) {
-    return NextResponse.json(
-      { error: 'Uitnodigen faalde.', detail: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
-    )
+  }
+
+  if (!reusedExisting) {
+    try {
+      if (useResend) {
+        const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+          type: 'invite',
+          email: input.email,
+          options: { redirectTo, data: { full_name: artistName ?? '' } },
+        })
+        if (linkErr || !linkData) {
+          return NextResponse.json(
+            { error: friendlyAuthError(linkErr?.message), detail: linkErr?.message },
+            { status: 500 }
+          )
+        }
+        userId = linkData.user?.id
+        actionLink = linkData.properties?.action_link
+      } else {
+        const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(
+          input.email,
+          { redirectTo, data: { full_name: artistName ?? '' } }
+        )
+        if (inviteErr || !inviteData?.user) {
+          return NextResponse.json(
+            { error: friendlyAuthError(inviteErr?.message), detail: inviteErr?.message },
+            { status: 500 }
+          )
+        }
+        userId = inviteData.user.id
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      return NextResponse.json(
+        { error: friendlyAuthError(msg), detail: msg },
+        { status: 500 }
+      )
+    }
   }
 
   if (!userId) {

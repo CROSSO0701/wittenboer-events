@@ -155,7 +155,9 @@ function InviteDialog({
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        toast.error(data.error ?? `Fout bij uitnodigen (${res.status})`)
+        const msg = data.error ?? `Fout bij uitnodigen (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
         return
       }
       if (data.mailSent) toast.success('Uitnodiging verstuurd. De artiest krijgt direct een mail.')
