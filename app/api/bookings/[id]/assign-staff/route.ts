@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { assignStaffSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
+import { patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { StaffAssignedMail } from '../../../../lib/email/templates/staff-assigned'
@@ -77,6 +78,28 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (upsertErr) {
     return NextResponse.json({ error: 'Toewijzen faalde.', detail: upsertErr.message }, { status: 500 })
+  }
+
+  // Zet de toegewezen crew als "(naam, naam)" achter de agenda-titel.
+  if (booking.google_event_id) {
+    const { data: allAssigns } = await supabase
+      .from('booking_assignments')
+      .select('staff_id')
+      .eq('booking_id', id)
+    const ids = (allAssigns ?? []).map((a) => a.staff_id)
+    let staffNames: string[] = []
+    if (ids.length > 0) {
+      const { data: profs } = await supabase.from('profiles').select('full_name').in('id', ids)
+      staffNames = (profs ?? []).map((p) => p.full_name).filter((n): n is string => !!n)
+    }
+    await patchEvent(booking.google_event_id, {
+      summary: calendarTitle({
+        source: booking.source,
+        clientName: booking.client_name,
+        artistName: booking.artist?.stage_name ?? null,
+        staffNames,
+      }),
+    })
   }
 
   // Notify per staff member

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '../../../lib/db/server'
 import { fetchFeed } from '../../../lib/integrations/artwinlive'
-import { createEvent } from '../../../lib/integrations/google-calendar'
+import { createEvent, patchEvent, cleanArtwinSummary, calendarTitle } from '../../../lib/integrations/google-calendar'
 
 export async function GET(request: Request) {
   const auth = request.headers.get('authorization')
@@ -12,6 +12,9 @@ export async function GET(request: Request) {
   if (auth !== `Bearer ${expected}`) {
     return NextResponse.json({ error: 'Niet geautoriseerd.' }, { status: 401 })
   }
+
+  // ?retitle=1 → werk ook bestaande Google-events bij naar de schone titel (eenmalig).
+  const retitle = new URL(request.url).searchParams.get('retitle') === '1'
 
   const feed = await fetchFeed()
   if (!feed.ok) {
@@ -51,6 +54,7 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (existing) {
+      const cleanName = cleanArtwinSummary(ev.summary)
       const { error } = await supabase
         .from('bookings')
         .update({
@@ -59,10 +63,17 @@ export async function GET(request: Request) {
           event_end: ev.endISO,
           event_location: ev.location ?? null,
           notes: ev.description ?? null,
+          client_name: cleanName,
         })
         .eq('id', existing.id)
       if (error) errors.push(`update ${ev.uid}: ${error.message}`)
       else updated += 1
+      // Eenmalige opschoning van bestaande agenda-titels (?retitle=1).
+      if (retitle && existing.google_event_id) {
+        await patchEvent(existing.google_event_id, {
+          summary: calendarTitle({ source: 'artwinlive', clientName: cleanName }),
+        })
+      }
     } else {
       const { data: created, error } = await supabase
         .from('bookings')
@@ -75,7 +86,7 @@ export async function GET(request: Request) {
           event_end: ev.endISO,
           event_location: ev.location ?? null,
           notes: ev.description ?? null,
-          client_name: ev.summary,
+          client_name: cleanArtwinSummary(ev.summary),
         })
         .select('id')
         .maybeSingle()
@@ -87,7 +98,7 @@ export async function GET(request: Request) {
 
       // Push naar Google Calendar
       const gcal = await createEvent({
-        summary: `[ArtwinLive] ${ev.summary}`,
+        summary: calendarTitle({ source: 'artwinlive', clientName: cleanArtwinSummary(ev.summary) }),
         description: ev.description,
         location: ev.location,
         startISO: ev.startISO,

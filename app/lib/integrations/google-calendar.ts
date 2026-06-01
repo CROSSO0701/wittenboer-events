@@ -208,3 +208,31 @@ export async function listOverlapping(startISO: string, endISO: string): Promise
     return { ok: false, events: [], error: err instanceof Error ? err.message : String(err) }
   }
 }
+
+// ===========================================================
+// Titel-helpers — gedeeld door de Artwin-sync en de staff-toewijzing
+// ===========================================================
+
+// ArtwinLive zet "10:00 PM - 11:30 PM " vóór de echte naam. Strip dat: het event
+// heeft al een start/eind, dus die tijd in de titel is dubbel én in AM/PM-vorm.
+export function cleanArtwinSummary(summary: string): string {
+  return summary
+    .replace(/^\s*\d{1,2}:\d{2}\s*[AP]M\s*[-–—]\s*\d{1,2}:\d{2}\s*[AP]M\s*/i, '')
+    .trim()
+}
+
+// Bouwt de agenda-titel: schone naam + eventueel "(crewlid, crewlid)" erachter.
+export function calendarTitle(opts: {
+  source: string
+  clientName?: string | null
+  artistName?: string | null
+  staffNames?: string[]
+}): string {
+  const { source, clientName, artistName, staffNames = [] } = opts
+  let base =
+    source === 'artwinlive'
+      ? (clientName ?? '').trim()
+      : [clientName, artistName].filter(Boolean).join(' — ').trim()
+  if (!base) base = 'Boeking'
+  return staffNames.length > 0 ? `${base} (${staffNames.join(', ')})` : base
+}

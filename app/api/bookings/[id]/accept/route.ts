@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { acceptBookingSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { createEvent, listOverlapping } from '../../../../lib/integrations/google-calendar'
+import { createEvent, listOverlapping, patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { BookingAcceptedMail } from '../../../../lib/email/templates/booking-accepted'
@@ -91,9 +91,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   let googleEventId: string | null = null
   let googleError: string | undefined
   if (booking.event_start && booking.event_end) {
-    const summary = booking.client_name
-      ? `${booking.client_name}${booking.artist?.stage_name ? ` — ${booking.artist.stage_name}` : ''}`
-      : booking.artist?.stage_name ?? 'Boeking'
+    const summary = calendarTitle({
+      source: booking.source,
+      clientName: booking.client_name,
+      artistName: booking.artist?.stage_name ?? null,
+    })
     const created = await createEvent({
       summary,
       description: booking.notes ?? undefined,
@@ -135,6 +137,25 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       assigned_by: admin.id,
     }))
     await supabase.from('booking_assignments').upsert(rows, { onConflict: 'booking_id,staff_id' })
+
+    // Zet de toegewezen crew als "(naam, naam)" achter de agenda-titel.
+    if (googleEventId) {
+      const { data: profs } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .in('id', input.staff_ids)
+      const staffNames = (profs ?? []).map((p) => p.full_name).filter((n): n is string => !!n)
+      if (staffNames.length > 0) {
+        await patchEvent(googleEventId, {
+          summary: calendarTitle({
+            source: booking.source,
+            clientName: booking.client_name,
+            artistName: booking.artist?.stage_name ?? null,
+            staffNames,
+          }),
+        })
+      }
+    }
   }
 
   // Mail naar artiest
