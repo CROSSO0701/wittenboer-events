@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '../../../../lib/db/server'
-import { InquiriesPanel } from '../_components/InquiriesPanel'
+import { AanvragenOverzicht } from '../_components/AanvragenOverzicht'
 
 export const metadata: Metadata = { title: 'Aanvragen' }
 export const dynamic = 'force-dynamic'
@@ -32,10 +32,10 @@ export default async function AanvragenPage() {
           Inkomende aanvragen
         </h1>
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
-          Contact-, pakket- en artiestboekingen vanaf de publieke site.
+          Alle inkomende aanvragen op één plek — boekingen én losse aanvragen vanaf de site.
         </p>
       </header>
-      <InquiriesPanel />
+      <AanvragenOverzicht />
     </div>
   )
 }

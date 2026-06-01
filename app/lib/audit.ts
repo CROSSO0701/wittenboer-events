@@ -17,6 +17,13 @@ export type AuditAction =
   | 'artist.deleted'
   | 'staff.invited'
   | 'staff.created'
+  | 'klus.created'
+  | 'klus.updated'
+  | 'klus.deleted'
+  | 'klus.assigned'
+  | 'availability.created'
+  | 'availability.updated'
+  | 'availability.deleted'
 
 export async function logAudit(input: {
   actorId?: string | null

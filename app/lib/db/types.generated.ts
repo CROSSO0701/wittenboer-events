@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       artist_booking_inquiries: {
@@ -435,6 +410,47 @@ export type Database = {
         }
         Relationships: []
       }
+      crew_availability: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          end_date: string
+          id: string
+          kind: Database["public"]["Enums"]["availability_kind"]
+          note: string | null
+          staff_id: string
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          end_date: string
+          id?: string
+          kind?: Database["public"]["Enums"]["availability_kind"]
+          note?: string | null
+          staff_id: string
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          end_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["availability_kind"]
+          note?: string | null
+          staff_id?: string
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crew_availability_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disco_inquiries: {
         Row: {
           converted_booking_id: string | null
@@ -593,6 +609,97 @@ export type Database = {
           },
         ]
       }
+      klus_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          klus_id: string
+          notification_channel: Database["public"]["Enums"]["notification_channel"]
+          notified_at: string | null
+          role_on_job: string | null
+          staff_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          klus_id: string
+          notification_channel?: Database["public"]["Enums"]["notification_channel"]
+          notified_at?: string | null
+          role_on_job?: string | null
+          staff_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          klus_id?: string
+          notification_channel?: Database["public"]["Enums"]["notification_channel"]
+          notified_at?: string | null
+          role_on_job?: string | null
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "klus_assignments_klus_id_fkey"
+            columns: ["klus_id"]
+            isOneToOne: false
+            referencedRelation: "klussen"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      klussen: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          created_by: string | null
+          event_date: string
+          event_end: string | null
+          event_start: string | null
+          id: string
+          kind: Database["public"]["Enums"]["klus_kind"]
+          location: string | null
+          notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date: string
+          event_end?: string | null
+          event_start?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["klus_kind"]
+          location?: string | null
+          notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date?: string
+          event_end?: string | null
+          event_start?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["klus_kind"]
+          location?: string | null
+          notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "klussen_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           calendar_feed_token: string | null
@@ -650,10 +757,12 @@ export type Database = {
       is_artist: { Args: never; Returns: boolean }
     }
     Enums: {
+      availability_kind: "vrij" | "vakantie"
       booking_source: "artist" | "client" | "artwinlive"
       booking_status: "pending" | "accepted" | "declined" | "done" | "cancelled"
       contact_inquiry_status: "new" | "replied" | "closed"
       inquiry_status: "new" | "contacted" | "quoted" | "booked" | "closed"
+      klus_kind: "opbouw" | "afbreken" | "ophalen" | "overig"
       notification_channel: "email" | "whatsapp" | "sms"
       user_role: "admin" | "artist" | "staff"
     }
@@ -781,15 +890,14 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
+      availability_kind: ["vrij", "vakantie"],
       booking_source: ["artist", "client", "artwinlive"],
       booking_status: ["pending", "accepted", "declined", "done", "cancelled"],
       contact_inquiry_status: ["new", "replied", "closed"],
       inquiry_status: ["new", "contacted", "quoted", "booked", "closed"],
+      klus_kind: ["opbouw", "afbreken", "ophalen", "overig"],
       notification_channel: ["email", "whatsapp", "sms"],
       user_role: ["admin", "artist", "staff"],
     },

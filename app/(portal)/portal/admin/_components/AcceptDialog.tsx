@@ -17,7 +17,14 @@ import { Input } from '../../../../components/ui/input'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 
 type Staff = { id: string; full_name: string | null; email: string | null }
-type Conflict = { kind: 'artist' | 'staff'; label: string; detail: string }
+type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
+
+const CONFLICT_ICON: Record<Conflict['kind'], string> = {
+  artist: '🎤',
+  staff: '📅',
+  klus: '🔧',
+  unavailable: '🌴',
+}
 
 export function AcceptDialog({
   bookingId,
@@ -143,6 +150,7 @@ export function AcceptDialog({
             <ul className="space-y-1">
               {conflicts.map((c, i) => (
                 <li key={i}>
+                  <span aria-hidden className="mr-1">{CONFLICT_ICON[c.kind]}</span>
                   <strong>{c.label}</strong>
                   {c.detail ? ` · ${c.detail}` : ''}
                 </li>
