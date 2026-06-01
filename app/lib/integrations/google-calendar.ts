@@ -170,6 +170,54 @@ export async function deleteEvent(eventId: string): Promise<{ ok: boolean; error
   }
 }
 
+// Maakt een nieuwe (secundaire) agenda aan onder het gekoppelde Google-account.
+// Vereist de volledige `calendar`-scope; faalt netjes als alleen `calendar.events`.
+export async function createCalendar(summary: string): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+  try {
+    const res = await fetch(`${API_BASE}/calendars`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ summary, timeZone: env.timezone }),
+    })
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${body}` }
+    }
+    const data = (await res.json()) as { id: string }
+    return { ok: true, id: data.id }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+// Verplaatst een bestaand event van de huidige (gekoppelde) agenda naar een
+// andere agenda van hetzelfde account. Behoudt het event-ID, dus booking-
+// koppelingen blijven kloppen.
+export async function moveEvent(eventId: string, toCalendarId: string): Promise<{ ok: boolean; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+  try {
+    const params = new URLSearchParams({ destination: toCalendarId, sendUpdates: 'none' })
+    const res = await fetch(
+      `${API_BASE}/calendars/${encodeURIComponent(env.calendarId)}/events/${encodeURIComponent(eventId)}/move?${params}`,
+      { method: 'POST', headers: { Authorization: `Bearer ${token}` } }
+    )
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${body}` }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 type Overlap = { id: string; summary: string; startISO: string; endISO: string }
 
 export async function listOverlapping(startISO: string, endISO: string): Promise<{ ok: boolean; events: Overlap[]; error?: string }> {
