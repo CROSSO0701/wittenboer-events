@@ -29,7 +29,7 @@ export default function ProjectenPage() {
             <span>Projecten</span>
           </div>
           <h1>
-            Wat we hebben <span className="accent">gedraaid.</span>
+            Wat wij hebben <span className="accent">gedraaid.</span>
           </h1>
           <p className="page-header__lead">
             Een selectie uit 400+ producties sinds 2014. Van festivals in een woonwijk tot
@@ -44,7 +44,7 @@ export default function ProjectenPage() {
             <p className="kicker">Cases</p>
             <p>
               Twee uitgewerkte cases, vier projecten in het kort. Voor elke case staat: wat het
-              project was, wat we deden, en wat de opdrachtgever erover zei.
+              project was, wat wij deden, en wat de opdrachtgever erover zei.
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export default function ProjectenPage() {
               <p>
                 Festival in een woonwijk. Een locatie met akoestische uitdagingen en gevoelige
                 buren. Wij hebben gerichte microfoonarrays opgesteld, monitoringapparatuur in de
-                buurt geplaatst en het geluid verantwoord beheerd. Op alle podia verzorgden we
+                buurt geplaatst en het geluid verantwoord beheerd. Op alle podia verzorgden wij
                 licht- en geluidstechniek. Resultaat: minimaal klachten uit de buurt, een show
                 van hoog niveau.
               </p>
@@ -108,7 +108,7 @@ export default function ProjectenPage() {
               </div>
               <h2>Megapark Schijndel.</h2>
               <p>
-                Een thema-evenement in de sfeer van het Megapark op Mallorca. We bouwden
+                Een thema-evenement in de sfeer van het Megapark op Mallorca. Wij bouwden
                 aangepaste installaties waaronder een werkende fontein op het hoofdpodium en
                 verlichte danskooien met gesynchroniseerde lichteffecten. Artiestenboeking en
                 backstage-coördinatie werden volledig door ons verzorgd. Alle artiesten waren
@@ -144,8 +144,8 @@ export default function ProjectenPage() {
               <h2>Een greep uit het archief.</h2>
             </div>
             <p className="section-head__lead">
-              Korte impressies. Vraag een uitgebreide referentie als je iets vergelijkbaars
-              overweegt &mdash; we hebben de detail-draaiboeken nog liggen.
+              Korte impressies. Vraag een uitgebreide referentie als u iets vergelijkbaars
+              overweegt &mdash; wij hebben de detail-draaiboeken nog liggen.
             </p>
           </div>
           <div className="more-grid__cards" data-reveal-stagger>
@@ -173,8 +173,8 @@ export default function ProjectenPage() {
           </p>
           <h2 style={{ color: 'var(--color-fg-on-dark)' }}>Vraag een referentie aan.</h2>
           <p style={{ color: 'var(--color-fg-on-dark-muted)', margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            We bellen vorige opdrachtgevers graag voor je. Of stuur ons een korte beschrijving
-            en we kijken welke case het dichtst bij ligt.
+            Wij bellen vorige opdrachtgevers graag voor u. Of stuur ons een korte beschrijving
+            en wij kijken welke case het dichtst bij ligt.
           </p>
           <div className="closing__ctas">
             <Link className="btn-primary" href="/contact">Neem contact op</Link>

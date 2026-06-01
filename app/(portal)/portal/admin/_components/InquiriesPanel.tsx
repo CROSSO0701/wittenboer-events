@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '../../../../components/ui/badge'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
-import { CONTACT_STATUS_LABEL, INQUIRY_STATUS_LABEL } from '../../../../lib/format'
+import { CONTACT_STATUS_LABEL, INQUIRY_STATUS_LABEL, relativeDate } from '../../../../lib/format'
 import { StatusSelect } from './StatusSelect'
 
 type InquiryType = 'contact' | 'show-package' | 'artist-booking'
@@ -50,8 +50,10 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
   const [disco, setDisco] = useState<DiscoRow[]>([])
   const [artist, setArtist] = useState<ArtistBookingRow[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
+    setLoading(true)
     try {
       const supabase = createSupabaseBrowserClient()
       const [c, d, a] = await Promise.all([
@@ -73,6 +75,8 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
       setArtist((a.data as ArtistBookingRow[]) ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -102,6 +106,30 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
 
   if (error) return <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>
 
+  if (loading) {
+    return (
+      <div className="space-y-10">
+        {['Contact', 'Show-pakketten', 'Artiest-boekingen'].map((title) => (
+          <section key={title}>
+            <div className="mb-3 flex items-baseline justify-between">
+              <h3 className="font-[family-name:var(--font-display)] text-lg uppercase tracking-wide text-[var(--color-fg)]">
+                {title}
+              </h3>
+            </div>
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-12 animate-pulse rounded-xl border border-[var(--color-border)] bg-white"
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-10">
       <Section title="Contact" subtitle={`${contact.length} aanvragen`}>
@@ -124,7 +152,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                   <Td>{r.name}</Td>
                   <Td>{r.email}</Td>
                   <Td>{r.subject ?? '—'}</Td>
-                  <Td muted>{new Date(r.created_at).toLocaleDateString('nl-NL')}</Td>
+                  <Td muted>{relativeDate(r.created_at)}</Td>
                   <Td>
                     <StatusSelect
                       value={r.status}
@@ -165,7 +193,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                   <Td>
                     {r.package?.name ? <Badge tone="info">{r.package.name}</Badge> : '—'}
                   </Td>
-                  <Td muted>{r.event_date ?? '—'}</Td>
+                  <Td muted>{relativeDate(r.event_date)}</Td>
                   <Td muted>{r.guest_count ?? '—'}</Td>
                   <Td muted>{r.location ?? '—'}</Td>
                   <Td>
@@ -190,7 +218,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
           <Table>
             <thead>
               <tr>
-                <Th>Klant</Th>
+                <Th>Naam</Th>
                 <Th>Artiest</Th>
                 <Th>Datum</Th>
                 <Th>Locatie</Th>
@@ -205,7 +233,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <div className="text-xs text-[var(--color-fg-muted)]">{r.email}</div>
                   </Td>
                   <Td>{r.artist?.stage_name ?? '—'}</Td>
-                  <Td muted>{r.event_date ?? '—'}</Td>
+                  <Td muted>{relativeDate(r.event_date)}</Td>
                   <Td muted>{r.event_location ?? '—'}</Td>
                   <Td>
                     <StatusSelect
@@ -249,8 +277,8 @@ function Section({
 
 function Table({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-      <table className="w-full text-sm">{children}</table>
+    <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+      <table className="w-full min-w-[640px] text-sm">{children}</table>
     </div>
   )
 }

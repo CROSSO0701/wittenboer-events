@@ -64,7 +64,7 @@ export default async function KlantDetail({ params }: { params: Promise<{ id: st
       </header>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Stat label="Bookings totaal" value={String(client.total_bookings)} />
+        <Stat label="Boekingen totaal" value={String(client.total_bookings)} />
         <Stat label="Omzet totaal" value={formatEUR(client.total_value_cents)} />
         <Stat label="Eerste / laatste" value={`${formatDate(client.first_booking_at)} – ${formatDate(client.last_booking_at)}`} small />
       </div>
@@ -87,8 +87,8 @@ export default async function KlantDetail({ params }: { params: Promise<{ id: st
             Geen boekingen gevonden voor deze klant.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                   <th className="px-4 py-2">Datum</th>

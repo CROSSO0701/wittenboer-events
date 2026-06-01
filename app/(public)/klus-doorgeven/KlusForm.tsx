@@ -74,7 +74,7 @@ export function KlusForm() {
     return (
       <div className="contact-form">
         <div className="form__success">
-          Bedankt — je klus is doorgegeven aan Wittenboer. We bevestigen de details en regelen
+          Bedankt, uw klus is doorgegeven aan Wittenboer. Wij bevestigen de details en regelen
           licht, geluid en crew. Voor spoed:{' '}
           <a href="tel:+31627172876" style={{ color: 'inherit', textDecoration: 'underline' }}>
             06 27 17 28 76
@@ -98,7 +98,7 @@ export function KlusForm() {
       />
 
       <div className="field">
-        <label htmlFor="artist_id">Wie ben je?</label>
+        <label htmlFor="artist_id">Wie bent u?</label>
         <select id="artist_id" name="artist_id" defaultValue="" required>
           <option value="" disabled>
             Kies je artiestennaam…
@@ -144,7 +144,7 @@ export function KlusForm() {
       </div>
 
       <div className="field">
-        <label htmlFor="notes">Wat heb je nodig?</label>
+        <label htmlFor="notes">Wat heeft u nodig?</label>
         <textarea
           id="notes"
           name="notes"
@@ -153,8 +153,8 @@ export function KlusForm() {
       </div>
 
       <div className="field">
-        <label htmlFor="client_phone">Jouw telefoon (optioneel)</label>
-        <input id="client_phone" name="client_phone" type="tel" placeholder="Zodat we je snel kunnen bereiken" />
+        <label htmlFor="client_phone">Uw telefoon (optioneel)</label>
+        <input id="client_phone" name="client_phone" type="tel" placeholder="Zodat wij u snel kunnen bereiken" />
       </div>
 
       {status === 'error' && (

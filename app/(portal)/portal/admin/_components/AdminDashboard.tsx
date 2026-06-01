@@ -76,8 +76,8 @@ export function AdminDashboard() {
             : r.status === 'declined' && r.decided_at
               ? `Afgewezen · ${who}`
               : r.source === 'artwinlive'
-                ? `ArtwinLive sync · ${who}`
-                : `Aanvraag binnen · ${who}`
+                ? `Artwin-import · ${who}`
+                : `Aangevraagd · ${who}`
         return { id: r.id, text, when: fmtAgo(r.updated_at) }
       })
       setActivity(items)

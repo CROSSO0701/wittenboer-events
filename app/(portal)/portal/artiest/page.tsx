@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from '../../../lib/db/server'
 import { ArtistDashboard } from './_components/ArtistDashboard'
 
 export const metadata: Metadata = {
-  title: 'Mijn portal',
+  title: 'Mijn portaal',
   robots: { index: false, follow: false },
 }
 
@@ -30,7 +30,7 @@ export default async function ArtiestPage() {
   if (profile?.role !== 'artist') {
     return (
       <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 text-sm text-[var(--color-fg-muted)]">
-        Je profiel staat nog niet als artiest gemarkeerd. Vraag Marnix om je rol op te zetten.
+        Je account is nog niet als artiest geactiveerd. Neem contact op om dit in orde te maken.
       </div>
     )
   }

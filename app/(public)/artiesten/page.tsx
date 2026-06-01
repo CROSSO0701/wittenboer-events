@@ -49,10 +49,10 @@ export default function ArtiestenPage() {
             <span>Artiesten</span>
           </div>
           <h1>
-            De namen <span className="accent">die we draaien.</span>
+            De namen <span className="accent">die wij draaien.</span>
           </h1>
           <p className="page-header__lead">
-            We werken samen met een vaste groep Nederlandse artiesten &mdash; we kennen hun show,
+            Wij werken samen met een vaste groep Nederlandse artiesten &mdash; wij kennen hun show,
             hun tapes, hun rider. Boekingen lopen via de artiest zelf; wij regelen de techniek
             en begeleiding.
           </p>
@@ -64,9 +64,9 @@ export default function ArtiestenPage() {
           <div className="roster__intro" data-reveal>
             <p className="kicker">Onze artiesten</p>
             <p>
-              De artiesten hieronder zijn we vertrouwd mee. Voor de meeste verzorgen we ook de
-              tape-show en de begeleiding op locatie. Klik op de boeking-link om direct contact
-              op te nemen met de artiest of hun management.
+              Met de artiesten hieronder werken wij vertrouwd samen. Voor de meeste verzorgen wij
+              ook de tape-show en de begeleiding op locatie. Klik op de boekingslink om direct
+              contact op te nemen met de artiest of hun management.
             </p>
           </div>
 
@@ -91,10 +91,10 @@ export default function ArtiestenPage() {
             <div>
               <h3>Hoe werkt boeken?</h3>
               <p>
-                De artiesten boek je rechtstreeks via hun eigen kanalen. Wij zorgen voor de
-                tape-show, technische begeleiding en backstage-coördinatie als je dat wilt. Bel
-                ons als je wilt sparren over een line-up of een combinatie van artiesten op één
-                avond &mdash; we kennen de meeste werkschema&apos;s.
+                De artiesten boekt u rechtstreeks via hun eigen kanalen. Wij zorgen voor de
+                tape-show, technische begeleiding en backstage-coördinatie als u dat wilt. Bel
+                ons als u wilt sparren over een line-up of een combinatie van artiesten op één
+                avond &mdash; wij kennen de meeste werkschema&apos;s.
               </p>
             </div>
             <Link className="btn-primary" href="/contact">Bespreek een line-up</Link>
@@ -105,9 +105,9 @@ export default function ArtiestenPage() {
       <section className="closing" style={{ background: 'var(--color-surface-1)' }}>
         <div className="container">
           <p className="kicker" style={{ marginBottom: 16 }}>Niet de juiste artiest gevonden?</p>
-          <h2>We kennen er meer dan op deze pagina staan.</h2>
+          <h2>Wij kennen er meer dan op deze pagina staan.</h2>
           <p style={{ margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            Vraag het rustig. Voor de meeste Nederlandse zangers en bands hebben we de
+            Vraag het ons gerust. Voor de meeste Nederlandse zangers en bands hebben wij de
             tape-arrangementen of de contacten direct beschikbaar.
           </p>
           <div className="closing__ctas">

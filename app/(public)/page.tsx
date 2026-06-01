@@ -22,6 +22,12 @@ const ICON_NORTHEAST_18 = (
   </svg>
 )
 
+const ICON_DIAMOND = (
+  <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2l10 10-10 10L2 12z" />
+  </svg>
+)
+
 const TRUSTED = [
   'Park Lounge Schijndel',
   'Megapark Schijndel',
@@ -35,9 +41,9 @@ const TRUSTED = [
 
 const HOME_ARTISTS = [
   { name: 'Jan Biggel', photo: '/photos/artist-jan-biggel.jpg' },
-  { name: 'Ferry de Lits', photo: '/photos/artist-ferry-de-lits.jpg' },
-  { name: 'Lars Brans', photo: '/photos/artist-mo-de-show.jpg' },
-  { name: 'Evert van Huigevoort', photo: '/photos/artist-evert.jpg' },
+  { name: 'Mikey Wonder', photo: '/photos/artist-mikey-wonder.jpg' },
+  { name: 'Mo de Show', photo: '/photos/artist-mo-de-show.jpg' },
+  { name: 'Frank van Weert', photo: '/photos/artist-frank-van-weert.jpg' },
 ]
 
 export default function Page() {
@@ -66,8 +72,8 @@ export default function Page() {
             <div className="hero__body-row">
               <div>
                 <p className="hero__lead" data-reveal data-reveal-delay="2">
-                  Van drive-in tot festival voor 5000 man. Eén team, A-merk materiaal,
-                  en techniek die je vergeet omdat alles werkt.
+                  Van drive-in tot festival voor 5000 bezoekers. Eén team, A-merk materiaal,
+                  en techniek die u vergeet omdat alles werkt.
                 </p>
               </div>
               <div className="hero__cta-row" data-reveal data-reveal-delay="3">
@@ -75,7 +81,7 @@ export default function Page() {
                   Vraag een offerte aan
                   {ICON_ARROW_RIGHT}
                 </Link>
-                <Link href="/aanbod" className="btn-ghost">Bekijk wat we doen</Link>
+                <Link href="/aanbod" className="btn-ghost">Bekijk wat wij doen</Link>
               </div>
             </div>
           </div>
@@ -106,7 +112,7 @@ export default function Page() {
           <div className="trusted__track marquee-track">
             {[...TRUSTED, ...TRUSTED].map((name, i) => (
               <span key={`${name}-${i}`} className="trusted__name">
-                {name} <span className="trusted__sep">✦</span>
+                {name} <span className="trusted__sep" style={{ color: 'var(--color-primary)' }}>{ICON_DIAMOND}</span>
               </span>
             ))}
           </div>
@@ -148,11 +154,11 @@ export default function Page() {
         <div className="container">
           <div className="section-head" data-reveal>
             <div>
-              <p className="kicker">Wat we doen</p>
-              <h2>Alles voor jouw evenement, in één bus.</h2>
+              <p className="kicker">Wat wij doen</p>
+              <h2>Alles voor uw evenement, in één bus.</h2>
             </div>
             <p className="section-head__lead">
-              Geluid, licht, stroom, artiesten. Los of compleet. Kies wat je nodig hebt, of laat
+              Geluid, licht, stroom, artiesten. Los of compleet. Kies wat u nodig hebt, of laat
               ons het hele plaatje doen.
             </p>
           </div>
@@ -177,7 +183,7 @@ export default function Page() {
                   <h3>Licht</h3>
                   <span className="service-card__arrow" aria-hidden="true">{ICON_NORTHEAST}</span>
                 </div>
-                <p>Een goede belichting bepaalt de hele sfeer van jouw evenement.</p>
+                <p>Een goede belichting bepaalt de hele sfeer van uw evenement.</p>
               </div>
             </Link>
             <Link href="/aanbod/artiestenbegeleiding" className="service-card service-card--flat span-5">
@@ -305,17 +311,17 @@ export default function Page() {
                 />
                 <div className="artist__name-row">
                   <span className="artist__name">{a.name}</span>
-                  <span className="artist__arrow" aria-hidden="true">↗</span>
+                  <span className="artist__arrow" aria-hidden="true">{ICON_NORTHEAST}</span>
                 </div>
               </Link>
             ))}
           </div>
           <div className="artists__bottom">
             <Link href="/artiesten">
-              <span>Alle 8 artiesten</span>
+              <span>Alle 10 artiesten</span>
               {ICON_ARROW_RIGHT}
             </Link>
-            <p className="artists__bottom-list">Jeffrey Lake · Brian More · Mo de Show · Dirk Drost</p>
+            <p className="artists__bottom-list">Guus Doggen · Daymian van Oss · Mark van Veen · Remco Voets</p>
           </div>
         </div>
       </section>
@@ -375,15 +381,15 @@ export default function Page() {
         <div className="container">
           <div className="section-head" data-reveal>
             <div>
-              <p className="kicker">Hoe we werken</p>
-              <h2>Geen gedoe. Eén aanspreekpunt.</h2>
+              <p className="kicker">Hoe wij werken</p>
+              <h2>Eén aanspreekpunt. Eén draaiboek.</h2>
             </div>
           </div>
           <div className="approach__grid" data-reveal-stagger>
             <div className="approach__step">
               <span className="approach__num">01 / Bellen</span>
               <h3>Bellen<span className="dot" /></h3>
-              <p>Je belt of mailt. We komen langs of regelen het telefonisch. Geen verkooppraatje.</p>
+              <p>U belt of mailt. Wij komen langs of regelen het telefonisch — en denken meteen mee.</p>
             </div>
             <div className="approach__step">
               <span className="approach__num">02 / Plan</span>
@@ -393,7 +399,7 @@ export default function Page() {
             <div className="approach__step">
               <span className="approach__num">03 / Knallen</span>
               <h3>Knallen<span className="dot" /></h3>
-              <p>Wij bouwen op, draaien de show, breken af. Jij bij de gasten. Wij op de techniek.</p>
+              <p>Wij bouwen op, draaien de show, breken af. U bij de gasten. Wij op de techniek.</p>
             </div>
           </div>
         </div>
@@ -408,7 +414,7 @@ export default function Page() {
               <h2>Bel, app, of loop binnen.</h2>
             </div>
             <p data-reveal data-reveal-delay="2">
-              Elk evenement is anders. We denken graag vroeg mee. Hoe eerder je belt, hoe strakker
+              Elk evenement is anders. Wij denken graag vroeg mee. Hoe eerder u belt, hoe strakker
               het wordt.
             </p>
           </div>

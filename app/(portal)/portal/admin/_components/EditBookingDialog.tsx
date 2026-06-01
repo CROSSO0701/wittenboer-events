@@ -34,6 +34,14 @@ function localToISO(local: string): string | undefined {
   return d.toISOString()
 }
 
+// Leid de kalenderdatum (YYYY-MM-DD) af uit een datetime-local waarde,
+// zodat event_date nooit kan desyncen van event_start.
+function dateFromLocal(local: string): string | undefined {
+  if (!local) return undefined
+  const datePart = local.slice(0, 10)
+  return /^\d{4}-\d{2}-\d{2}$/.test(datePart) ? datePart : undefined
+}
+
 export function EditBookingDialog({
   booking,
   open,
@@ -52,12 +60,17 @@ export function EditBookingDialog({
     setSubmitting(true)
     const fd = new FormData(e.currentTarget)
     const feeRaw = (fd.get('fee_eur') as string)?.trim()
+    const startLocal = (fd.get('event_start') as string) || ''
+    // Houd event_date gelijk aan de dag van event_start zodra die is gezet,
+    // anders blijft de losse datum hangen en mist Google-sync de dagwijziging.
+    const eventDate =
+      dateFromLocal(startLocal) ?? (((fd.get('event_date') as string) || '').trim() || undefined)
     const body = {
       client_name: ((fd.get('client_name') as string) || '').trim() || undefined,
       client_email: ((fd.get('client_email') as string) || '').trim() || undefined,
       client_phone: ((fd.get('client_phone') as string) || '').trim() || undefined,
-      event_date: ((fd.get('event_date') as string) || '').trim() || undefined,
-      event_start: localToISO((fd.get('event_start') as string) || ''),
+      event_date: eventDate,
+      event_start: localToISO(startLocal),
       event_end: localToISO((fd.get('event_end') as string) || ''),
       event_location: ((fd.get('event_location') as string) || '').trim() || undefined,
       fee_cents: feeRaw ? Math.round(Number(feeRaw) * 100) : undefined,

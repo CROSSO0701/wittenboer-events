@@ -50,16 +50,16 @@ export function StaffPanel() {
     <>
       <div className="mb-3 flex justify-end">
         <Button onClick={() => setInviting(true)}>
-          <UserPlus size={16} /> Medewerker toevoegen
+          <UserPlus size={16} /> Crewlid toevoegen
         </Button>
       </div>
       {staff.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
-          Nog geen crewleden. Klik op &ldquo;Medewerker toevoegen&rdquo; om er een toe te voegen.
+          Nog geen crewleden. Klik op &ldquo;Crewlid toevoegen&rdquo; om er een toe te voegen.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                 <th className="px-4 py-2">Naam</th>
@@ -152,10 +152,9 @@ function InviteStaffDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Medewerker toevoegen</DialogTitle>
+          <DialogTitle>Crewlid toevoegen</DialogTitle>
           <DialogDescription>
-            Het account wordt meteen aangemaakt en is direct toewijsbaar aan shows. Geen
-            uitnodiging nodig.
+            Het account wordt direct aangemaakt en is meteen toewijsbaar aan shows.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
@@ -215,12 +214,17 @@ function EditStaffDialog({
     setSubmitting(true)
     try {
       const supabase = createSupabaseBrowserClient()
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({ full_name: fullName, phone: phone })
         .eq('id', profile.id)
+        .select('id')
       if (error) throw error
-      toast.success('Profiel bijgewerkt')
+      // RLS kan de update stilletjes blokkeren (0 rijen terug). Voorkom een valse succesmelding.
+      if (!data || data.length === 0) {
+        throw new Error('Geen rechten om dit profiel bij te werken.')
+      }
+      toast.success('Profiel bijgewerkt.')
       onSaved()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Bijwerken faalde')

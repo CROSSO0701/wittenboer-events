@@ -39,7 +39,7 @@ export default async function KlantenPage() {
           Klantendatabase
         </h1>
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
-          Wordt automatisch bijgehouden zodra je een booking aanmaakt met een klant-emailadres.
+          Wordt automatisch bijgehouden zodra een boeking een e-mailadres van de klant bevat.
         </p>
       </header>
 

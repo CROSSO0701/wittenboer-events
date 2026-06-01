@@ -15,7 +15,12 @@ type BookingRow = Database['public']['Tables']['bookings']['Row'] & {
   }>
 }
 
-const isoDate = (d: Date) => d.toISOString().slice(0, 10)
+function ymd(d: Date) {
+  // Lokale datum-componenten — NIET toISOString() (dat is UTC en schuift in
+  // tijdzones oost van UTC, bv. Amsterdam, de dag een terug).
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
 
 function formatTimeRange(start: string | null, end: string | null) {
   if (!start && !end) return 'Hele dag'
@@ -45,7 +50,7 @@ export function TodayWidget({ refreshKey = 0 }: { refreshKey?: number }) {
   const load = useCallback(async () => {
     try {
       const supabase = createSupabaseBrowserClient()
-      const todayIso = isoDate(new Date())
+      const todayIso = ymd(new Date())
 
       const { data: todays } = await supabase
         .from('bookings')
@@ -92,7 +97,7 @@ export function TodayWidget({ refreshKey = 0 }: { refreshKey?: number }) {
         </header>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-[var(--color-fg)]">
-            Geen klussen vandaag &mdash; lekker rustig.
+            Geen klussen vandaag.
             {next && (
               <>
                 {' '}Eerstvolgende: <strong>{next.client_name ?? '(naam onbekend)'}</strong> op{' '}

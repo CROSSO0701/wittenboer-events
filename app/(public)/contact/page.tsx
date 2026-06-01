@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { ContactForm } from '../../components/contact/ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Bel, app of mail Wittenboer Events in Sint-Michielsgestel. Persoonlijk contact met Marnix. We denken graag vroeg mee.',
+    'Bel, app of mail Wittenboer Events in Den Dungen (regio ’s-Hertogenbosch). Persoonlijk contact, korte lijnen. Wij denken graag vroeg mee.',
 }
 
 export default function ContactPage() {
@@ -22,7 +23,7 @@ export default function ContactPage() {
             Bel, app, <span className="accent">of loop binnen.</span>
           </h1>
           <p className="page-header__lead">
-            Elk evenement is anders. We denken graag vroeg mee. Hoe eerder je belt, hoe strakker
+            Elk evenement is anders. Wij denken graag vroeg mee. Hoe eerder u belt, hoe strakker
             het wordt.
           </p>
         </div>
@@ -40,7 +41,7 @@ export default function ContactPage() {
               <span className="ch-card__label">Bellen</span>
               <span className="ch-card__value">06 27 17 28 76</span>
               <span className="ch-card__hint">
-                Werkdagen 08:00 – 17:00 · we nemen meestal binnen het uur op
+                Werkdagen 08:00 – 17:00 · wij nemen meestal binnen het uur op
               </span>
             </a>
             <a className="ch-card" href="https://wa.me/31627172876" target="_blank" rel="noopener">
@@ -72,11 +73,10 @@ export default function ContactPage() {
         <div className="container form-grid">
           <div className="form-side" data-reveal>
             <p className="kicker">Of stuur een aanvraag</p>
-            <h2>Vertel ons kort over je evenement.</h2>
+            <h2>Vertel ons kort over uw evenement.</h2>
             <p>
-              We reageren binnen één werkdag. Hoe meer je nu deelt &mdash; datum, locatie,
-              aantal gasten, wat je nodig hebt &mdash; hoe gerichter we kunnen meedenken. Geen
-              verplichting.
+              Wij reageren binnen één werkdag. Hoe meer u nu deelt &mdash; datum, locatie,
+              aantal gasten, wat u nodig hebt &mdash; hoe gerichter wij meedenken.
             </p>
             <div className="form-side__meta">
               <div className="form-side__row">
@@ -117,7 +117,9 @@ export default function ContactPage() {
             </div>
           </div>
           <div data-reveal data-reveal-delay="2">
-            <ContactForm />
+            <Suspense fallback={null}>
+              <ContactForm />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -130,8 +132,8 @@ export default function ContactPage() {
               <h2>Regio &lsquo;s-Hertogenbosch.</h2>
             </div>
             <p className="section-head__lead">
-              We werken in heel Noord-Brabant en daarbuiten. Voor locatiebezoeken in een straal
-              van 50 km rekenen we niets.
+              Wij werken in heel Noord-Brabant en daarbuiten. Voor locatiebezoeken in een straal
+              van 50 km rekenen wij niets.
             </p>
           </div>
           <div className="map" data-reveal>

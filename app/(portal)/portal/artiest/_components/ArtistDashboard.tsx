@@ -18,7 +18,7 @@ function formatDate(d?: string | null) {
 const ARTIST_STATUS_LABEL: Record<string, string> = {
   pending: 'Aangevraagd',
   accepted: 'Geaccepteerd, ingepland',
-  declined: 'Afgewezen door Marnix',
+  declined: 'Afgewezen',
   cancelled: 'Geannuleerd',
   done: 'Geweest',
 }
@@ -124,7 +124,7 @@ export function ArtistDashboard({
               <DialogHeader>
                 <DialogTitle>Aanvraag voor je show</DialogTitle>
                 <DialogDescription>
-                  Vul de gegevens van je show in. Marnix krijgt direct een mail en koppelt
+                  Vul de gegevens van je show in. We ontvangen je aanvraag direct en koppelen
                   binnen één werkdag terug.
                 </DialogDescription>
               </DialogHeader>
@@ -141,14 +141,14 @@ export function ArtistDashboard({
 
       {!hasArtistRow && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-          Je inlog werkt, maar Marnix moet je nog als artiest activeren. Even een berichtje naar
-          Marnix (06-27172876) en je kunt aanvragen versturen.
+          Je account is nog niet als artiest geactiveerd. Neem contact op via 06 27 17 28 76,
+          dan zetten we het voor je klaar.
         </div>
       )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Stat label="Wacht op antwoord" value={stats.open} sub="bij Marnix" />
+        <Stat label="Wacht op antwoord" value={stats.open} sub="in behandeling" />
         <Stat label="Komende maand" value={stats.comingMonth} sub="ingepland" />
         <Stat label="Dit jaar" value={stats.total} sub="aanvragen" />
       </div>
@@ -200,15 +200,12 @@ export function ArtistDashboard({
               <tbody>
                 {bookings.map((b) => {
                   const needs = parseNeeds(b.notes)
+                  const declineReason =
+                    b.status === 'declined' && b.decline_reason ? b.decline_reason : null
                   return (
                     <tr
                       key={b.id}
                       className="border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-1)]"
-                      title={
-                        b.status === 'declined' && b.decline_reason
-                          ? `Reden van Marnix: ${b.decline_reason}`
-                          : undefined
-                      }
                     >
                       <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
                       <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
@@ -232,6 +229,11 @@ export function ArtistDashboard({
                       </td>
                       <td className="px-4 py-3">
                         <ArtistStatusBadge status={b.status} />
+                        {declineReason && (
+                          <p className="mt-1.5 text-xs text-[var(--color-fg-muted)]">
+                            Reden: {declineReason}
+                          </p>
+                        )}
                       </td>
                     </tr>
                   )

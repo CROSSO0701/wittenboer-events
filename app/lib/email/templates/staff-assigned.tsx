@@ -21,10 +21,10 @@ export function StaffAssignedMail({
 }) {
   return (
     <MailLayout title="Je staat ingepland" preheader={`${eventDate} · ${eventLocation}`}>
-      <p style={{ marginTop: 0 }}>Hoi {staffName},</p>
+      <p style={{ marginTop: 0 }}>Beste {staffName},</p>
       <p>
         Je bent toegevoegd aan een klus{artistName ? ` met ${artistName}` : ''}. Hieronder de
-        details. Bevestig in het portal of neem contact op als het niet uitkomt.
+        details. Bevestig in het portaal of neem contact op als het niet uitkomt.
       </p>
       <table width="100%" cellPadding={0} cellSpacing={0} role="presentation" style={{ marginTop: 16 }}>
         <tbody>
@@ -37,7 +37,7 @@ export function StaffAssignedMail({
         </tbody>
       </table>
       <p style={{ marginTop: 24 }}>
-        <Button href={portalUrl}>Bekijk in portal</Button>
+        <Button href={portalUrl}>Bekijk in portaal</Button>
       </p>
     </MailLayout>
   )

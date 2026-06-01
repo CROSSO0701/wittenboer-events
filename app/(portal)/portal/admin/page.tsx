@@ -31,7 +31,7 @@ export default async function AdminPage() {
   if (profile?.role !== 'admin') {
     return (
       <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 text-sm text-[var(--color-fg-muted)]">
-        Geen admin-rechten. Vraag Marnix om je rol aan te passen.
+        Geen beheerdersrechten. Neem contact op met de beheerder om je rol aan te passen.
       </div>
     )
   }

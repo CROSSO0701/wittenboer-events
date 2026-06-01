@@ -51,7 +51,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    const url = `${PHOTON_URL}?q=${encodeURIComponent(q)}&lang=nl&limit=6`
+    // Photon ondersteunt GEEN lang=nl (alleen default/de/en/fr) — met lang=nl
+    // geeft het een foutobject i.p.v. resultaten. Default = lokale namen (NL).
+    // lat/lon biast richting Nederland zodat NL-adressen bovenaan komen.
+    const url = `${PHOTON_URL}?q=${encodeURIComponent(q)}&limit=6&lat=52.1&lon=5.29`
     // Korte timeout zodat een trage geocoder de UI niet ophoudt.
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 4000)

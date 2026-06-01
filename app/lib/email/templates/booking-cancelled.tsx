@@ -14,8 +14,8 @@ export function BookingCancelledMail({
   reason?: string
 }) {
   return (
-    <MailLayout title="Klus geannuleerd" preheader={`${eventDate} · ${clientName}`}>
-      <p style={{ marginTop: 0 }}>Hoi {name},</p>
+    <MailLayout title="Boeking geannuleerd" preheader={`${eventDate} · ${clientName}`}>
+      <p style={{ marginTop: 0 }}>Beste {name},</p>
       <p>
         De klus voor <strong>{clientName}</strong> op {eventDate} is geannuleerd. De agenda is
         bijgewerkt.
@@ -45,7 +45,7 @@ export function BookingCancelledMail({
         </blockquote>
       )}
       <p style={{ marginTop: 24, color: '#636466', fontSize: 13 }}>
-        Vragen? Bel of mail Marnix.
+        Vragen? Neem gerust contact met ons op.
       </p>
     </MailLayout>
   )

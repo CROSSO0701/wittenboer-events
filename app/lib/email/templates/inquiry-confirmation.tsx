@@ -9,16 +9,16 @@ export function InquiryConfirmationMail({
 }) {
   const subjectLine =
     type === 'contact'
-      ? 'je bericht'
+      ? 'uw bericht'
       : type === 'show-package'
-        ? 'je pakket-aanvraag'
-        : 'je artiestboeking'
+        ? 'uw pakketaanvraag'
+        : 'uw artiestaanvraag'
 
   return (
-    <MailLayout title="Bedankt voor je bericht" preheader="We nemen binnen één werkdag contact op">
-      <p style={{ marginTop: 0 }}>Hoi {name},</p>
+    <MailLayout title="Bedankt voor uw bericht" preheader="Wij nemen binnen één werkdag contact op">
+      <p style={{ marginTop: 0 }}>Beste {name},</p>
       <p>
-        We hebben {subjectLine} ontvangen. Marnix neemt binnen één werkdag persoonlijk contact op
+        Wij hebben {subjectLine} ontvangen en nemen binnen één werkdag contact met u op
         om mee te denken en de details door te nemen.
       </p>
       <p style={{ marginTop: 20, color: '#636466', fontSize: 14 }}>
@@ -29,7 +29,7 @@ export function InquiryConfirmationMail({
         of stuur een WhatsApp naar hetzelfde nummer.
       </p>
       <p style={{ marginTop: 24, color: '#636466', fontSize: 13 }}>
-        Tot snel,
+        Met vriendelijke groet,
         <br />
         Wittenboer Events
       </p>

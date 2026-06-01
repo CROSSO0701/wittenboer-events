@@ -36,11 +36,11 @@ export default function AanbodPage() {
       <section className="aanbod">
         <div className="container">
           <div className="aanbod__intro" data-reveal>
-            <p className="kicker">Wat we doen</p>
+            <p className="kicker">Wat wij doen</p>
             <p>
-              We werken met A-merk materiaal en sturen onze eigen technici aan. Of je nu één
+              Wij werken met A-merk materiaal en sturen onze eigen technici aan. Of u nu één
               microfoon nodig hebt voor een toespraak, of een complete festivalproductie.
-              Onderstaande zes diensten kun je los boeken of als pakket. Klik op een kaart voor
+              Onderstaande diensten kunt u los boeken of als pakket. Klik op een kaart voor
               de details.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function AanbodPage() {
                 <div>
                   <h3>Artiesten</h3>
                   <p>
-                    Boekingsadvies, tape-begeleiding en backstage-coördinatie. We kennen de
+                    Boekingsadvies, tape-begeleiding en backstage-coördinatie. Wij kennen de
                     repertoires van de meeste Nederlandse zangers.
                   </p>
                 </div>
@@ -118,7 +118,7 @@ export default function AanbodPage() {
                 <div className="a-card__photo-side" style={{ backgroundImage: "url('/photos/event-5.jpg')" }} />
                 <div className="a-card__txt-side">
                   <div>
-                    <div className="a-card__num">05 / Kant-en-klaar</div>
+                    <div className="a-card__num">Kant-en-klaar</div>
                     <h3 style={{ marginTop: 8 }}>Showpakketten</h3>
                     <p style={{ marginTop: 14 }}>
                       Vier vaste setups voor bruiloften, jubilea en privéfeesten. Wij brengen,
@@ -148,13 +148,13 @@ export default function AanbodPage() {
             >
               <div className="a-card__inner" style={{ gap: 32 }}>
                 <div>
-                  <div className="a-card__num">06 / End-to-end</div>
+                  <div className="a-card__num">05 / End-to-end</div>
                   <h3 style={{ marginTop: 8 }}>Productiebegeleiding</h3>
                 </div>
                 <p style={{ fontSize: 16 }}>
-                  Wil je één aanspreekpunt voor je hele evenement? Locatie-inspectie,
+                  Wilt u één aanspreekpunt voor uw hele evenement? Locatie-inspectie,
                   vergunningenadvies, leveranciers, planning, techniek, artiesten en
-                  crewmanagement. Jij hoeft alleen te genieten.
+                  crewmanagement. U hoeft alleen te genieten.
                 </p>
                 <div
                   className="a-card__foot"
@@ -171,11 +171,11 @@ export default function AanbodPage() {
 
       <section className="closing" style={{ background: 'var(--color-surface-1)' }}>
         <div className="container">
-          <p className="kicker" style={{ marginBottom: 16 }}>Niet zeker wat je nodig hebt?</p>
-          <h2>Bel ons en we denken mee.</h2>
+          <p className="kicker" style={{ marginBottom: 16 }}>Niet zeker wat u nodig hebt?</p>
+          <h2>Bel ons en wij denken mee.</h2>
           <p style={{ margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            Geen verkooppraatje. Een korte belronde, een locatie-inspectie als het nuttig is, en
-            een plan dat past bij wat je écht zoekt.
+            Een korte belronde, een locatie-inspectie als dat nuttig is, en een plan dat past bij
+            wat u écht zoekt.
           </p>
           <div className="closing__ctas">
             <Link className="btn-primary" href="/contact">Neem contact op</Link>

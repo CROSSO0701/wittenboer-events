@@ -31,17 +31,29 @@ export default function Nav() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const triggerRef = useRef<HTMLLIElement>(null)
+  const menuRef = useRef<HTMLLIElement>(null)
+  const menuTriggerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (triggerRef.current && !triggerRef.current.contains(e.target as Node)) {
+    if (!dropdownOpen) return
+    const onPointer = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setDropdownOpen(false)
       }
     }
-    document.addEventListener('click', handler)
-    return () => document.removeEventListener('click', handler)
-  }, [])
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDropdownOpen(false)
+        menuTriggerRef.current?.focus()
+      }
+    }
+    document.addEventListener('click', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('click', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [dropdownOpen])
 
   const overHero = pathname === '/'
 
@@ -65,8 +77,9 @@ export default function Nav() {
               const active = isActive(pathname, item)
               if (item.submenu) {
                 return (
-                  <li key={item.href} className="nav__has-menu" ref={triggerRef}>
+                  <li key={item.href} className="nav__has-menu" ref={menuRef}>
                     <button
+                      ref={menuTriggerRef}
                       type="button"
                       className="nav__menu-trigger"
                       aria-expanded={dropdownOpen}
@@ -80,13 +93,12 @@ export default function Nav() {
                       {item.label}
                       <ChevronDown />
                     </button>
-                    <div className="nav__menu" role="menu">
+                    <div className="nav__menu">
                       <ul>
                         {item.submenu.map((sub) => (
                           <li key={sub.href}>
                             <Link
                               href={sub.href}
-                              role="menuitem"
                               onClick={() => setDropdownOpen(false)}
                             >
                               <span className="nav__menu-label">{sub.label}</span>

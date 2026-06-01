@@ -8,9 +8,12 @@ export const metadata: Metadata = {
 
 export default function PortalGroupLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-[100dvh] bg-[var(--color-bg)] text-[var(--color-fg)]">
-      {children}
-      <PortalToaster />
-    </div>
+    <>
+      <a href="#main" className="skip-link">Naar inhoud</a>
+      <div id="main" tabIndex={-1} className="min-h-[100dvh] bg-[var(--color-bg)] text-[var(--color-fg)]">
+        {children}
+        <PortalToaster />
+      </div>
+    </>
   )
 }

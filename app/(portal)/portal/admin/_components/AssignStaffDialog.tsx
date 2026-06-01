@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
+import type { ComponentType } from 'react'
 import { toast } from 'sonner'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, CalendarClock, Music2, Palmtree, Wrench } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -20,11 +21,11 @@ type Staff = { id: string; full_name: string | null; email: string | null }
 type Pick = { role: string; channel: 'email' | 'whatsapp' }
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
 
-const CONFLICT_ICON: Record<Conflict['kind'], string> = {
-  artist: '🎤',
-  staff: '📅',
-  klus: '🔧',
-  unavailable: '🌴',
+const CONFLICT_ICON: Record<Conflict['kind'], ComponentType<{ size?: number; className?: string }>> = {
+  artist: Music2,
+  staff: CalendarClock,
+  klus: Wrench,
+  unavailable: Palmtree,
 }
 
 export function AssignStaffDialog({
@@ -38,6 +39,7 @@ export function AssignStaffDialog({
   onOpenChange: (o: boolean) => void
   onAssigned: () => void
 }) {
+  const fieldId = useId()
   const [staff, setStaff] = useState<Staff[]>([])
   const [picked, setPicked] = useState<Record<string, Pick>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -125,13 +127,18 @@ export function AssignStaffDialog({
               <AlertTriangle size={16} /> Mogelijke dubbelboeking
             </div>
             <ul className="space-y-1">
-              {conflicts.map((c, i) => (
-                <li key={i}>
-                  <span aria-hidden className="mr-1">{CONFLICT_ICON[c.kind]}</span>
-                  <strong>{c.label}</strong>
-                  {c.detail ? ` · ${c.detail}` : ''}
-                </li>
-              ))}
+              {conflicts.map((c, i) => {
+                const Icon = CONFLICT_ICON[c.kind]
+                return (
+                  <li key={i} className="flex items-center gap-1.5">
+                    <Icon size={14} className="shrink-0 text-amber-700" />
+                    <span>
+                      <strong>{c.label}</strong>
+                      {c.detail ? ` · ${c.detail}` : ''}
+                    </span>
+                  </li>
+                )
+              })}
             </ul>
             <label className="mt-3 flex items-center gap-2 text-xs">
               <input type="checkbox" checked={override} onChange={(e) => setOverride(e.target.checked)} />
@@ -145,6 +152,8 @@ export function AssignStaffDialog({
           <div className="max-h-72 space-y-2 overflow-auto rounded-xl border border-[var(--color-border)] p-3">
             {staff.map((s) => {
               const checked = !!picked[s.id]
+              const roleId = `${fieldId}-role-${s.id}`
+              const channelId = `${fieldId}-channel-${s.id}`
               return (
                 <div key={s.id} className="rounded-lg border border-[var(--color-border)] p-3">
                   <label className="flex items-center gap-2 text-sm">
@@ -153,9 +162,11 @@ export function AssignStaffDialog({
                     {s.email && <span className="text-[var(--color-fg-muted)]">· {s.email}</span>}
                   </label>
                   {checked && (
-                    <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <Input
-                        placeholder="Rol op klus"
+                        id={roleId}
+                        aria-label="Rol op de boeking"
+                        placeholder="Rol op de boeking"
                         value={picked[s.id]!.role}
                         onChange={(e) =>
                           setPicked((p) => ({
@@ -165,6 +176,8 @@ export function AssignStaffDialog({
                         }
                       />
                       <select
+                        id={channelId}
+                        aria-label="Notificatie via"
                         className="h-10 rounded-md border border-[var(--color-border-strong)] bg-white px-3 text-sm"
                         value={picked[s.id]!.channel}
                         onChange={(e) =>

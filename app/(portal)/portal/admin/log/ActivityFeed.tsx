@@ -27,14 +27,14 @@ type LogRow = {
 const PAGE = 50
 
 const ACTION_LABELS: Record<string, string> = {
-  'booking.accepted': 'Booking geaccepteerd',
-  'booking.declined': 'Booking afgewezen',
+  'booking.accepted': 'Boeking geaccepteerd',
+  'booking.declined': 'Boeking afgewezen',
   'booking.assigned': 'Crew toegewezen',
-  'booking.updated': 'Booking bewerkt',
-  'booking.cancelled': 'Booking geannuleerd',
-  'booking.synced': 'Booking gesynchroniseerd',
+  'booking.updated': 'Boeking bewerkt',
+  'booking.cancelled': 'Boeking geannuleerd',
+  'booking.synced': 'Boeking gesynchroniseerd',
   'integration.google_connected': 'Google Agenda gekoppeld',
-  'integration.artwinlive_saved': 'ArtwinLive feed bijgewerkt',
+  'integration.artwinlive_saved': 'Artwin-koppeling bijgewerkt',
   'note.added': 'Notitie toegevoegd',
   'artist.invited': 'Artiest uitgenodigd',
   'artist.access_revoked': 'Artiest-toegang ingetrokken',
@@ -84,11 +84,13 @@ export function ActivityFeed() {
         const { data, error } = await q
         if (error) {
           // eerste keer kan FK-naam mismatch geven; fallback zonder actor-relatie
-          const fb = await supabase
+          let fbq = supabase
             .from('audit_log')
             .select('id, action, entity, entity_id, metadata, created_at, actor_id')
             .order('created_at', { ascending: false })
             .range(from, from + PAGE - 1)
+          if (filter) fbq = fbq.eq('action', filter)
+          const fb = await fbq
           const fbData = (fb.data as LogRow[] | null) ?? []
           setRows((prev) => (reset ? fbData : [...prev, ...fbData]))
           setOffset(from + fbData.length)
@@ -161,8 +163,8 @@ export function ActivityFeed() {
           Nog geen activiteit voor dit filter.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                 <th className="px-4 py-2">Wanneer</th>

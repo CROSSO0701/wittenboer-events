@@ -49,8 +49,22 @@ export default function Footer() {
                   href="https://maps.google.com/?q=Het+Schild+35+Den+Dungen"
                   target="_blank"
                   rel="noopener"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
                 >
-                  Op de kaart →
+                  Op de kaart
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="M13 6l6 6-6 6" />
+                  </svg>
                 </a>
               </li>
             </ul>
@@ -58,10 +72,6 @@ export default function Footer() {
         </div>
         <div className="footer__bottom">
           <p>© {year} Wittenboer Events · KVK 65834921</p>
-          <div className="footer__legal">
-            <a href="#">Algemene voorwaarden</a>
-            <a href="#">Privacybeleid</a>
-          </div>
         </div>
       </div>
     </footer>

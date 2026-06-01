@@ -1,9 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Inbox, Search } from 'lucide-react'
+import { ClipboardList, Inbox, Music2, Search, User } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge } from '../../../../components/ui/badge'
 import { Input } from '../../../../components/ui/input'
 import { cn } from '../../../../lib/utils/cn'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
@@ -18,10 +17,13 @@ type Booking = Database['public']['Tables']['bookings']['Row'] & {
 
 type InquiryType = 'contact' | 'show-package' | 'artist-booking'
 
+// Bron-icoon per rij: artiest (muziek), klant (persoon), losse aanvraag (lijst).
+type IconKind = 'artist' | 'client' | 'request'
+
 // Genormaliseerde rij voor het "Wacht op jou"-blok.
 type FeedItem = {
   key: string
-  icon: '🎤' | '👤' | '📋'
+  iconKind: IconKind
   kind: 'booking' | 'inquiry'
   name: string
   email: string | null
@@ -37,6 +39,19 @@ type FeedItem = {
 
 const CONTACT_STATUSES = ['new', 'replied', 'closed'] as const
 const INQUIRY_STATUSES = ['new', 'contacted', 'quoted', 'booked', 'closed'] as const
+
+const ICON_LABEL: Record<IconKind, string> = {
+  artist: 'Artiest',
+  client: 'Klant',
+  request: 'Losse aanvraag',
+}
+
+function RowIcon({ kind }: { kind: IconKind }) {
+  const Icon = kind === 'artist' ? Music2 : kind === 'client' ? User : ClipboardList
+  return (
+    <Icon size={16} className="text-[var(--color-fg-muted)]" aria-label={ICON_LABEL[kind]} />
+  )
+}
 
 const KIND_FILTERS: { id: string; label: string }[] = [
   { id: 'all', label: 'Alles' },
@@ -104,7 +119,7 @@ export function WachtOpJou({
       for (const row of (b.data as Booking[]) ?? []) {
         items.push({
           key: `booking:${row.id}`,
-          icon: row.source === 'artist' ? '🎤' : '👤',
+          iconKind: row.source === 'artist' ? 'artist' : 'client',
           kind: 'booking',
           name: row.client_name ?? '(geen klantnaam)',
           email: row.client_email,
@@ -121,7 +136,7 @@ export function WachtOpJou({
       for (const row of (c.data as ContactRow[]) ?? []) {
         items.push({
           key: `contact:${row.id}`,
-          icon: '📋',
+          iconKind: 'request',
           kind: 'inquiry',
           name: row.name,
           email: row.email,
@@ -141,7 +156,7 @@ export function WachtOpJou({
       for (const row of (d.data as DiscoRow[]) ?? []) {
         items.push({
           key: `disco:${row.id}`,
-          icon: '📋',
+          iconKind: 'request',
           kind: 'inquiry',
           name: row.name,
           email: row.email,
@@ -161,7 +176,7 @@ export function WachtOpJou({
       for (const row of (a.data as ArtistRow[]) ?? []) {
         items.push({
           key: `artist-inquiry:${row.id}`,
-          icon: '🎤',
+          iconKind: 'artist',
           kind: 'inquiry',
           name: row.name,
           email: row.email,
@@ -289,8 +304,8 @@ export function WachtOpJou({
       ) : rows && rows.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="sticky top-0 bg-[var(--color-surface-1)]">
               <tr className="border-b border-[var(--color-border)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                 <th className="px-4 py-2 w-8" aria-label="Type" />
@@ -306,14 +321,10 @@ export function WachtOpJou({
               {(rows ?? []).map((item) => (
                 <tr
                   key={item.key}
-                  onClick={item.booking ? () => setSelected(item.booking!) : undefined}
-                  className={cn(
-                    'border-b border-[var(--color-border)] last:border-b-0',
-                    item.booking && 'cursor-pointer hover:bg-[var(--color-surface-1)]'
-                  )}
+                  className="border-b border-[var(--color-border)] last:border-b-0"
                 >
-                  <td className="px-4 py-3 text-base" aria-hidden>
-                    {item.icon}
+                  <td className="px-4 py-3">
+                    <RowIcon kind={item.iconKind} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-medium text-[var(--color-fg)]">{item.name}</div>
@@ -329,9 +340,15 @@ export function WachtOpJou({
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{item.need}</td>
                   <td className="px-4 py-3 text-[var(--color-fg-muted)]">{fmtAgo(item.createdAt)}</td>
-                  <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                    {item.kind === 'booking' ? (
-                      <Badge tone="pending">Bekijken</Badge>
+                  <td className="px-4 py-3 text-right">
+                    {item.booking ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelected(item.booking!)}
+                        className="rounded-full border border-[var(--color-border-strong)] px-3 py-1 text-xs font-medium text-[var(--color-fg)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                      >
+                        Bekijken
+                      </button>
                     ) : item.inquiryType && item.statusOptions ? (
                       <StatusSelect
                         value={item.status}
@@ -366,7 +383,7 @@ function EmptyState() {
     <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] bg-white px-6 py-12 text-center">
       <Inbox size={42} className="text-[var(--color-fg-muted)]" />
       <h3 className="font-[family-name:var(--font-display)] text-xl uppercase tracking-wide text-[var(--color-fg)]">
-        Niets wacht op jou. Lekker.
+        Niets wacht op je.
       </h3>
       <p className="max-w-sm text-sm text-[var(--color-fg-muted)]">
         Nieuwe boekingen en aanvragen vanaf de site verschijnen hier zodra ze binnenkomen.

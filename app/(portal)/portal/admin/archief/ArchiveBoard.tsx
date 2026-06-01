@@ -21,6 +21,13 @@ function formatDate(d?: string | null) {
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
 }
 
+function ymd(d: Date) {
+  // Lokale datum-componenten — NIET toISOString() (dat is UTC en schuift in
+  // tijdzones oost van UTC, bv. Amsterdam, de archiefgrens een dag terug).
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 export function ArchiveBoard() {
   const [rows, setRows] = useState<Row[]>([])
   const [hasMore, setHasMore] = useState(true)
@@ -33,7 +40,7 @@ export function ArchiveBoard() {
     setLoading(true)
     try {
       const supabase = createSupabaseBrowserClient()
-      const today = new Date().toISOString().slice(0, 10)
+      const today = ymd(new Date())
       const from = reset ? 0 : offset
       const { data } = await supabase
         .from('bookings')
@@ -73,6 +80,7 @@ export function ArchiveBoard() {
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-fg-muted)]" />
           <Input
+            aria-label="Zoeken in archief"
             placeholder="Zoeken..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -84,12 +92,12 @@ export function ArchiveBoard() {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
           {rows.length === 0
-            ? 'Nog niets in het archief — alle bookings zijn nog actueel.'
+            ? 'Nog niets in het archief — alle boekingen zijn nog actueel.'
             : 'Geen resultaten voor je zoekopdracht.'}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-white">
+          <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                 <th className="px-4 py-2">Datum</th>
@@ -105,8 +113,17 @@ export function ArchiveBoard() {
               {filtered.map((b) => (
                 <tr
                   key={b.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Boeking ${b.client_name ?? ''} openen`}
                   onClick={() => setSelected(b)}
-                  className="cursor-pointer border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-1)]"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setSelected(b)
+                    }
+                  }}
+                  className="cursor-pointer border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-inset"
                 >
                   <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
                   <td className="px-4 py-3">

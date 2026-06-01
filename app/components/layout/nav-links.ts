@@ -33,7 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-  { href: '/show-pakketten', label: 'Show pakketten', page: 'show-pakketten' },
+  { href: '/show-pakketten', label: 'Showpakketten', page: 'show-pakketten' },
   { href: '/artiesten', label: 'Artiesten', page: 'artiesten' },
   { href: '/projecten', label: 'Projecten', page: 'projecten' },
   { href: '/contact', label: 'Contact', page: 'contact' },

@@ -173,7 +173,7 @@ export function SubmitBookingForm({
         toast.error(data.error ?? `Versturen faalde (${res.status})`)
         return
       }
-      toast.success('Aanvraag verstuurd! Marnix neemt binnen 1 werkdag contact op.', {
+      toast.success('Aanvraag verstuurd. We nemen binnen 1 werkdag contact op.', {
         duration: 6000,
       })
       onSuccess()
@@ -208,7 +208,7 @@ export function SubmitBookingForm({
 
         <div className="mt-4 flex flex-col gap-2">
           <Label className="text-[var(--color-fg)]">Hoe laat begint het?</Label>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          <div role="group" aria-label="Begintijd" className="grid grid-cols-3 gap-2 sm:grid-cols-6">
             {QUICK_START_TIMES.map((t) => (
               <ChipButton
                 key={t}
@@ -254,7 +254,7 @@ export function SubmitBookingForm({
         {effectiveStart && (
           <div className="mt-4 flex flex-col gap-2">
             <Label className="text-[var(--color-fg)]">Hoe lang duurt &apos;t?</Label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+            <div role="group" aria-label="Duur" className="grid grid-cols-2 gap-2 sm:grid-cols-5">
               {DURATION_OPTIONS.map((d) => (
                 <ChipButton
                   key={d.id}
@@ -303,6 +303,9 @@ export function SubmitBookingForm({
       {/* Sectie: Waar */}
       <Section icon={<MapPin size={18} />} title="Waar speelt het?">
         <div className="flex flex-col gap-1.5">
+          <Label htmlFor="event_location" className="text-[var(--color-fg)]">
+            Locatie
+          </Label>
           <Input
             id="event_location"
             value={location}
@@ -324,7 +327,7 @@ export function SubmitBookingForm({
 
       {/* Sectie: Wat heb je nodig */}
       <Section icon={<Speaker size={18} />} title="Wat heb je nodig?" optional>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div role="group" aria-label="Wat heb je nodig" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {NEEDS.map((n) => {
             const Icon = n.icon
             const checked = needs.has(n.id)
@@ -333,6 +336,7 @@ export function SubmitBookingForm({
                 type="button"
                 key={n.id}
                 onClick={() => toggleNeed(n.id)}
+                aria-pressed={checked}
                 className={`flex min-h-[60px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
                   checked
                     ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
@@ -354,12 +358,13 @@ export function SubmitBookingForm({
 
       {/* Sectie: Hoeveel mensen */}
       <Section icon={<Users size={18} />} title="Hoeveel bezoekers verwacht je?" optional>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div role="group" aria-label="Aantal bezoekers" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {GUEST_RANGES.map((g) => (
             <button
               type="button"
               key={g.id}
               onClick={() => setGuestRange(guestRange === g.id ? '' : g.id)}
+              aria-pressed={guestRange === g.id}
               className={`flex min-h-[60px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
                 guestRange === g.id
                   ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
@@ -423,10 +428,10 @@ export function SubmitBookingForm({
       {/* Submit */}
       <div className="sticky bottom-0 -mx-2 flex flex-col gap-2 border-t border-[var(--color-border)] bg-white/95 px-2 pt-4 pb-2 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-[var(--color-fg-muted)]">
-          Marnix krijgt direct een mail. Reactie binnen 1 werkdag.
+          We ontvangen je aanvraag direct. Reactie binnen 1 werkdag.
         </p>
         <Button type="submit" disabled={submitting} className="h-12 text-base">
-          <Send size={16} /> {submitting ? 'Versturen…' : 'Verzenden naar Marnix'}
+          <Send size={16} /> {submitting ? 'Versturen…' : 'Aanvraag versturen'}
         </Button>
       </div>
     </form>
@@ -487,6 +492,7 @@ function ChipButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`${base} ${active ? activeClass : inactiveClass}`}
     >
       {children}

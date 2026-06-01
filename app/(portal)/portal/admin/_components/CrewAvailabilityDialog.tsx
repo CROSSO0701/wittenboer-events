@@ -45,9 +45,13 @@ export function CrewAvailabilityDialog({
   const [staff, setStaff] = useState<Staff[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      setConfirmDelete(false)
+      return
+    }
     ;(async () => {
       try {
         const supabase = createSupabaseBrowserClient()
@@ -125,7 +129,6 @@ export function CrewAvailabilityDialog({
 
   async function onDelete() {
     if (!availability) return
-    if (!window.confirm('Deze periode verwijderen?')) return
     setDeleting(true)
     try {
       const res = await fetch(`/api/admin/availability/${availability.id}`, { method: 'DELETE' })
@@ -135,6 +138,7 @@ export function CrewAvailabilityDialog({
         return
       }
       toast.success('Periode verwijderd.')
+      setConfirmDelete(false)
       onSaved()
       onOpenChange(false)
     } catch (err) {
@@ -149,6 +153,7 @@ export function CrewAvailabilityDialog({
     : null
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
@@ -230,8 +235,13 @@ export function CrewAvailabilityDialog({
 
           <DialogFooter className="sm:justify-between">
             {isEdit ? (
-              <Button type="button" variant="ghost" onClick={onDelete} disabled={deleting || submitting}>
-                <Trash2 size={14} /> {deleting ? 'Verwijderen…' : 'Verwijderen'}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setConfirmDelete(true)}
+                disabled={deleting || submitting}
+              >
+                <Trash2 size={14} /> Verwijderen
               </Button>
             ) : (
               <span />
@@ -248,5 +258,31 @@ export function CrewAvailabilityDialog({
         </form>
       </DialogContent>
     </Dialog>
+
+    <Dialog open={confirmDelete} onOpenChange={(o) => !deleting && setConfirmDelete(o)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Periode verwijderen</DialogTitle>
+          <DialogDescription>
+            Weet je zeker dat je deze vrij-/vakantieperiode wilt verwijderen? Dit kan niet
+            ongedaan worden gemaakt.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setConfirmDelete(false)}
+            disabled={deleting}
+          >
+            Toch niet
+          </Button>
+          <Button type="button" variant="danger" onClick={onDelete} disabled={deleting}>
+            <Trash2 size={14} /> {deleting ? 'Verwijderen…' : 'Verwijderen'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }

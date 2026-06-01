@@ -12,8 +12,8 @@ export function BookingDeclinedMail({
   reason: string
 }) {
   return (
-    <MailLayout title="Klus afgewezen" preheader={`${eventDate} · ${clientName}`}>
-      <p style={{ marginTop: 0 }}>Hoi {artistName},</p>
+    <MailLayout title="Aanvraag afgewezen" preheader={`${eventDate} · ${clientName}`}>
+      <p style={{ marginTop: 0 }}>Beste {artistName},</p>
       <p>
         We kunnen de klus voor <strong>{clientName}</strong> op {eventDate} helaas niet
         accepteren. De reden:
@@ -37,7 +37,7 @@ export function BookingDeclinedMail({
         </tbody>
       </table>
       <p style={{ marginTop: 24, color: '#636466', fontSize: 13 }}>
-        Vragen of bezwaar? Bel of mail Marnix direct.
+        Vragen? Neem gerust contact met ons op.
       </p>
     </MailLayout>
   )

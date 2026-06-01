@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { NAV_ITEMS } from './nav-links'
 
 type Props = {
@@ -10,35 +10,81 @@ type Props = {
   onClose: () => void
 }
 
+function ArrowRight() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="M13 6l6 6-6 6" />
+    </svg>
+  )
+}
+
 export default function MobileMenu({ open, onClose }: Props) {
   const pathname = usePathname()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/')
+
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
+      previouslyFocused?.focus?.()
     }
   }, [open, onClose])
 
   return (
     <div
+      ref={panelRef}
       className={`mobile-menu${open ? ' is-open' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Navigatie"
-      aria-hidden={!open}
+      inert={!open}
     >
       <div className="mobile-menu__head">
         <span className="mono" style={{ color: 'var(--color-fg-muted)' }}>Menu</span>
         <button
+          ref={closeRef}
           type="button"
           className="mobile-menu__close"
           aria-label="Sluit menu"
@@ -58,7 +104,7 @@ export default function MobileMenu({ open, onClose }: Props) {
           aria-current={isActive('/') ? 'page' : undefined}
         >
           Home
-          <span aria-hidden>→</span>
+          <ArrowRight />
         </Link>
         {NAV_ITEMS.map((item) =>
           item.submenu ? (
@@ -90,7 +136,7 @@ export default function MobileMenu({ open, onClose }: Props) {
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
               {item.label}
-              <span aria-hidden>→</span>
+              <ArrowRight />
             </Link>
           )
         )}

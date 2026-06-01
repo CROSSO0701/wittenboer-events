@@ -5,8 +5,9 @@ const config: NextConfig = {
   reactCompiler: true,
 
   experimental: {
-    // Turbopack is the default in Next 16 for both dev and build — no config needed here,
-    // but we keep this block for future opts
+    // Turbopack is the default in Next 16 for both dev and build — no config needed here.
+    // Tree-shake the lucide-react barrel (imported across ~25 files) to per-icon modules.
+    optimizePackageImports: ['lucide-react'],
   },
 
   images: {

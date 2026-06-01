@@ -26,7 +26,7 @@ const SERVICES: Service[] = [
     kicker: 'Geluid',
     title: 'Een systeem dat past bij de locatie.',
     lead: 'Goed geluid op een kantoorfeestje of een festival met 5000 bezoekers. Wij regelen beide.',
-    body: 'We verzorgen het complete audiosysteem. Van line-arrays en subs tot microfoontechniek en monitoring. Elk evenement krijgt een systeem dat bij de locatie past, met een geluidstechnicus die de show live mixt. Akoestisch uitdagende locaties? We rekenen het door en stellen een oplossing voor waarbij omgeving én publiek worden ontzien.',
+    body: 'Wij verzorgen het complete audiosysteem. Van line-arrays en subs tot microfoontechniek en monitoring. Elk evenement krijgt een systeem dat bij de locatie past, met een geluidstechnicus die de show live mixt. Akoestisch uitdagende locaties? Wij rekenen het door en stellen een oplossing voor waarbij omgeving én publiek worden ontzien.',
     bullets: [
       'Line-arrays en point-source systemen (A-merk: L-Acoustics, d&b, RCF)',
       'Digitale mixers met multi-track opname',
@@ -43,8 +43,8 @@ const SERVICES: Service[] = [
     cat: 'Visueel',
     kicker: 'Licht',
     title: 'Een lichtontwerp dat de show maakt.',
-    lead: 'Een goede belichting bepaalt de hele sfeer van jouw evenement.',
-    body: 'Van een intiem bedrijfsdiner tot een compleet festivalpodium. We ontwerpen het lichtplan, bouwen het op en programmeren de show. We werken met A-merk fixtures, moving heads en architecturale armaturen. Een van onze technici staat altijd aan de console om de show live te operaten.',
+    lead: 'Een goede belichting bepaalt de hele sfeer van uw evenement.',
+    body: 'Van een intiem bedrijfsdiner tot een compleet festivalpodium. Wij ontwerpen het lichtplan, bouwen het op en programmeren de show. Wij werken met A-merk fixtures, moving heads en architecturale armaturen. Een van onze technici staat altijd aan de console om de show live te operaten.',
     bullets: [
       'Volledig lichtontwerp op maat',
       'Moving heads, LED-wash, beams en architecturale verlichting',
@@ -62,7 +62,7 @@ const SERVICES: Service[] = [
     kicker: 'Stroomvoorziening',
     title: 'Het netwerk onder de show.',
     lead: 'Tijdelijke stroomvoorziening voor festivals, beurzen en bedrijfsevenementen.',
-    body: 'We leveren aggregaten, verdeelkasten, kabels en aansluitingen op maat. Voor kleine tuinfeesten tot grote festivalterreinen. Een van onze technici maakt vooraf de belastingsberekening en zorgt dat het op de dag probleemloos draait. Inclusief redundante failover voor hoofdpodia.',
+    body: 'Wij leveren aggregaten, verdeelkasten, kabels en aansluitingen op maat. Voor kleine tuinfeesten tot grote festivalterreinen. Een van onze technici maakt vooraf de belastingsberekening en zorgt dat het op de dag probleemloos draait. Inclusief redundante failover voor hoofdpodia.',
     bullets: [
       'Stille, EU-5 aggregaten (25kVA tot 500kVA)',
       'Complete verdeelkasten met CEE-aansluitingen',
@@ -79,7 +79,7 @@ const SERVICES: Service[] = [
     kicker: 'Artiesten',
     title: 'Boekingsadvies, tapes en backstage in één hand.',
     lead: 'Van aankomst tot laatste encore. Plus de tape-show als de artiest die nodig heeft.',
-    body: 'We werken al jaren met dezelfde groep Nederlandse zangers en kennen hun repertoires. Onze tape-operator staat naast de artiest op de bühne of in de techniek, afhankelijk van de wens. We zorgen voor tijdige aankomst, professionele backstage-faciliteiten, het programma en de aansluiting tussen artiest en techniek. Geen no-shows, geen chaos bij de wissels.',
+    body: 'Wij werken al jaren met dezelfde groep Nederlandse zangers en kennen hun repertoires. Onze tape-operator staat naast de artiest op de bühne of in de techniek, afhankelijk van de wens. Wij zorgen voor tijdige aankomst, professionele backstage-faciliteiten, het programma en de aansluiting tussen artiest en techniek. Geen no-shows, geen chaos bij de wissels.',
     bullets: [
       'Tape-begeleiding voor de meeste Nederlandse zangers',
       'Backstage-coördinatie en runner-rol',
@@ -97,7 +97,7 @@ const SERVICES: Service[] = [
     kicker: 'Productiebegeleiding',
     title: 'Eén aanspreekpunt voor het hele evenement.',
     lead: 'Van eerste gesprek tot en met de afbouw. End-to-end coördinatie.',
-    body: 'Wil je één aanspreekpunt voor je hele evenement? We nemen de volledige productie uit handen. Van locatie-inspectie, vergunningenadvies, leveranciersselectie, planning, techniek, artiesten en crewmanagement tot evaluatie. Jij hoeft alleen te genieten.',
+    body: 'Wilt u één aanspreekpunt voor uw hele evenement? Wij nemen de volledige productie uit handen. Van locatie-inspectie, vergunningenadvies, leveranciersselectie, planning, techniek, artiesten en crewmanagement tot evaluatie. U hoeft alleen te genieten.',
     bullets: [],
     ctaLabel: 'Plan een gesprek',
     ctaHref: '/contact',
@@ -215,7 +215,7 @@ export default async function ServicePage({
           </p>
           <h2 style={{ color: 'var(--color-fg-on-dark)' }}>Liever even bellen?</h2>
           <p style={{ color: 'var(--color-fg-on-dark-muted)', margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            Een korte belronde geeft vaak meer duidelijkheid dan een formulier. We nemen meestal
+            Een korte belronde geeft vaak meer duidelijkheid dan een formulier. Wij nemen meestal
             binnen een paar uur op.
           </p>
           <div className="closing__ctas">

@@ -78,7 +78,7 @@ export function BookingDetailSheet({
             </DialogDescription>
           </DialogHeader>
 
-          <dl className="grid grid-cols-2 gap-4 text-sm">
+          <dl className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
             <DetailRow label="Datum" value={formatDate(booking.event_date)} />
             <DetailRow label="Locatie" value={booking.event_location ?? '—'} />
             <DetailRow label="Aanvang" value={booking.event_start ? new Date(booking.event_start).toLocaleString('nl-NL') : '—'} />
@@ -132,7 +132,7 @@ export function BookingDetailSheet({
             {booking.status === 'accepted' && (
               <>
                 <Button variant="subtle" onClick={() => setAssignOpen(true)}>
-                  <UserPlus size={16} /> Personeel toewijzen
+                  <UserPlus size={16} /> Crew toewijzen
                 </Button>
                 <Button variant="ghost" onClick={() => setEditOpen(true)}>
                   <Pencil size={16} /> Bewerken
@@ -208,7 +208,7 @@ export function BookingDetailSheet({
         open={declineOpen}
         onOpenChange={setDeclineOpen}
         onDeclined={() => {
-          toast.success('Klus afgewezen.')
+          toast.success('Boeking afgewezen.')
           onChanged()
         }}
       />
@@ -217,7 +217,7 @@ export function BookingDetailSheet({
         open={assignOpen}
         onOpenChange={setAssignOpen}
         onAssigned={() => {
-          toast.success('Personeel toegewezen en geïnformeerd.')
+          toast.success('Crew toegewezen en geïnformeerd.')
           onChanged()
         }}
       />
