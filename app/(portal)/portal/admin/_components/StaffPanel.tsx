@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus, Send } from 'lucide-react'
+import { Pencil, UserPlus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -55,7 +55,7 @@ export function StaffPanel() {
       </div>
       {staff.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
-          Nog geen crewleden. Klik op &ldquo;Medewerker toevoegen&rdquo; om er een uit te nodigen.
+          Nog geen crewleden. Klik op &ldquo;Medewerker toevoegen&rdquo; om er een toe te voegen.
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
@@ -137,8 +137,8 @@ function InviteStaffDialog({
         toast.error(msg + detail, { duration: 8000 })
         return
       }
-      if (data.mailSent) toast.success(`${fullName} heeft een uitnodiging in de mail.`)
-      else toast.warning(`Account aangemaakt. Mail kon niet worden verstuurd: ${data.mailError ?? 'onbekend'}`)
+      if (data.reused) toast.success(`${fullName} stond al in het systeem — nu als crewlid gezet.`)
+      else toast.success(`${fullName} is toegevoegd als crewlid.`)
       setFullName('')
       setEmail('')
       setPhone('')
@@ -154,7 +154,8 @@ function InviteStaffDialog({
         <DialogHeader>
           <DialogTitle>Medewerker toevoegen</DialogTitle>
           <DialogDescription>
-            De medewerker krijgt direct een mail om in te loggen en een wachtwoord te kiezen.
+            Het account wordt meteen aangemaakt en is direct toewijsbaar aan shows. Geen
+            uitnodiging nodig.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
@@ -181,7 +182,7 @@ function InviteStaffDialog({
             Annuleren
           </Button>
           <Button onClick={submit} disabled={submitting || !fullName || !email}>
-            <Send size={14} /> {submitting ? 'Versturen…' : 'Verstuur uitnodiging'}
+            <UserPlus size={14} /> {submitting ? 'Bezig…' : 'Toevoegen'}
           </Button>
         </DialogFooter>
       </DialogContent>

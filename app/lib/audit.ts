@@ -16,6 +16,7 @@ export type AuditAction =
   | 'artist.updated'
   | 'artist.deleted'
   | 'staff.invited'
+  | 'staff.created'
 
 export async function logAudit(input: {
   actorId?: string | null
