@@ -298,14 +298,3 @@ function ResendCard({ connected }: { connected: boolean }) {
     </CardShell>
   )
 }
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3">
-      <dt className="text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
-        {label}
-      </dt>
-      <dd className="truncate text-right text-sm text-[var(--color-fg)]">{value}</dd>
-    </div>
-  )
-}

@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   // Insert in juiste tabel (best effort — als Supabase niet beschikbaar is, log en ga door)
   let inserted: { ok: boolean; error?: string } = { ok: false, error: 'skipped' }
-  let extra: { packageName?: string; artistName?: string } = {}
+  const extra: { packageName?: string; artistName?: string } = {}
   try {
     const supabase = createSupabaseAdminClient()
     if (parsed.type === 'contact') {

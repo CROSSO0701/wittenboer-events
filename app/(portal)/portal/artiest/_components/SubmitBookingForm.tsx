@@ -255,7 +255,7 @@ export function SubmitBookingForm({
 
         {effectiveStart && (
           <div className="mt-4 flex flex-col gap-2">
-            <Label className="text-[var(--color-fg)]">Hoe lang duurt 't?</Label>
+            <Label className="text-[var(--color-fg)]">Hoe lang duurt &apos;t?</Label>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
               {DURATION_OPTIONS.map((d) => (
                 <ChipButton
