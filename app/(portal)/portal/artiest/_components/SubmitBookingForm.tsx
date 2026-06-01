@@ -68,10 +68,8 @@ function addMinutesToTime(time: string, minutes: number): string {
 }
 
 export function SubmitBookingForm({
-  stageName,
   onSuccess,
 }: {
-  stageName: string
   onSuccess: () => void
 }) {
   const [submitting, setSubmitting] = useState(false)
@@ -148,7 +146,7 @@ export function SubmitBookingForm({
       .join('\n')
 
     const body = {
-      client_name: `Show: ${stageName} @ ${location}`,
+      client_name: location,
       client_phone: organiserPhone || undefined,
       event_date: date,
       event_start: eventStartISO,

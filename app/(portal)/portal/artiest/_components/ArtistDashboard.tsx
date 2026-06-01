@@ -129,7 +129,6 @@ export function ArtistDashboard({
                 </DialogDescription>
               </DialogHeader>
               <SubmitBookingForm
-                stageName={stageName}
                 onSuccess={() => {
                   setOpen(false)
                   load()
