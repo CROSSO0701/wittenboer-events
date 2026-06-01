@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
-import { UserPlus, Send, ShieldOff, Pencil, Trash2, Eye, EyeOff } from 'lucide-react'
+import { UserPlus, Send, ShieldOff, Pencil, Trash2, Eye, EyeOff, Copy, Link2 } from 'lucide-react'
 import { Button } from '../../../../components/ui/button'
 import {
   Dialog,
@@ -39,6 +39,16 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
   const [deleteTarget, setDeleteTarget] = useState<ArtistRow | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
 
+  const klusLink = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/klus-doorgeven`
+  async function copyKlusLink() {
+    try {
+      await navigator.clipboard.writeText(klusLink)
+      toast.success("Link gekopieerd — plak 'm in WhatsApp of mail.")
+    } catch {
+      toast.error('Kopiëren lukte niet; selecteer de link handmatig.')
+    }
+  }
+
   async function toggleActive(artist: ArtistRow) {
     setBusyId(artist.id)
     try {
@@ -61,6 +71,26 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
 
   return (
     <>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-1)] p-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-fg)]">
+            <Link2 size={15} className="text-[var(--color-primary)]" /> Aanmeldlink voor artiesten
+          </div>
+          <p className="mt-0.5 text-xs text-[var(--color-fg-muted)]">
+            Stuur deze link naar je artiesten (bijv. via WhatsApp). Ze geven hun klus door zonder
+            in te loggen — het komt direct bij &ldquo;Te doen&rdquo;.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <code className="hidden truncate rounded-md border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-xs text-[var(--color-fg-secondary)] sm:block sm:max-w-[260px]">
+            {klusLink}
+          </code>
+          <Button variant="ghost" size="sm" onClick={copyKlusLink}>
+            <Copy size={14} /> Kopieer link
+          </Button>
+        </div>
+      </div>
+
       <div className="mb-3 flex justify-end">
         <Button onClick={() => setInviteOpen(true)}>
           <UserPlus size={16} /> Artiest toevoegen
