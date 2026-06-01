@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { createCalendar, moveEvent } from '../../../../lib/integrations/google-calendar'
+import {
+  createCalendar,
+  createEvent,
+  calendarTitle,
+  eventExists,
+  deleteEventFrom,
+} from '../../../../lib/integrations/google-calendar'
 
 export const maxDuration = 300
 
@@ -43,29 +49,62 @@ export async function POST(request: Request) {
   if (!target) return NextResponse.json({ error: 'Geen doel-agenda.' }, { status: 500 })
   const targetCal: string = target
 
-  // Alle gesyncte events verhuizen van de huidige agenda naar de doel-agenda.
+  // Zorg dat elke gig op de doel-agenda staat. Events die al verplaatst zijn
+  // (zelfde ID, nu op de doel-agenda) blijven met rust. Events die nog op de
+  // primaire agenda staan (bv. niet-verplaatsbaar door attendees) worden FRIS
+  // opnieuw aangemaakt op de doel-agenda en de oude kopie wordt verwijderd.
   const { data: rows, error: selErr } = await supabase
     .from('bookings')
-    .select('id, google_event_id')
+    .select('id, google_event_id, source, client_name, event_start, event_end, event_location, notes')
     .not('google_event_id', 'is', null)
   if (selErr) return NextResponse.json({ error: 'Database-fout.', detail: selErr.message }, { status: 500 })
 
-  let moved = 0
+  type Row = {
+    id: string
+    google_event_id: string | null
+    source: string
+    client_name: string | null
+    event_start: string | null
+    event_end: string | null
+    event_location: string | null
+    notes: string | null
+  }
+
+  async function ensureOnTarget(b: Row): Promise<'ok' | 'skipped' | 'failed'> {
+    const oldId = b.google_event_id
+    if (!oldId) return 'failed'
+    if (await eventExists(targetCal, oldId)) return 'skipped' // al op de doel-agenda
+    if (!b.event_start || !b.event_end) return 'failed'
+    const summary = calendarTitle({ source: b.source, clientName: b.client_name, artistName: null })
+    const created = await createEvent({
+      summary,
+      description: b.notes ?? undefined,
+      location: b.event_location ?? undefined,
+      startISO: b.event_start,
+      endISO: b.event_end,
+    })
+    if (!created.ok || !created.id) return 'failed'
+    await deleteEventFrom('primary', oldId)
+    await supabase.from('bookings').update({ google_event_id: created.id }).eq('id', b.id)
+    return 'ok'
+  }
+
+  let rebuilt = 0
+  let skipped = 0
   let failed = 0
   const errors: string[] = []
-  const all = rows ?? []
+  const all = (rows ?? []) as Row[]
   const BATCH = 8
   for (let i = 0; i < all.length; i += BATCH) {
     const results = await Promise.all(
-      all
-        .slice(i, i + BATCH)
-        .map(async (r) => ({ id: r.id, res: await moveEvent(r.google_event_id as string, targetCal) }))
+      all.slice(i, i + BATCH).map(async (b) => ({ id: b.id, status: await ensureOnTarget(b) }))
     )
-    for (const { id, res } of results) {
-      if (res.ok) moved++
+    for (const { id, status } of results) {
+      if (status === 'ok') rebuilt++
+      else if (status === 'skipped') skipped++
       else {
         failed++
-        if (errors.length < 8) errors.push(`${id}: ${res.error}`)
+        if (errors.length < 8) errors.push(id)
       }
     }
   }
@@ -86,7 +125,8 @@ export async function POST(request: Request) {
     ok: true,
     target,
     total: rows?.length ?? 0,
-    moved,
+    rebuilt,
+    skipped,
     failed,
     repointed: !updErr,
     repointError: updErr?.message,

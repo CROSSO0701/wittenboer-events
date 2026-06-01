@@ -266,6 +266,40 @@ export async function listOverlapping(startISO: string, endISO: string): Promise
   }
 }
 
+// Bestaat dit event op de opgegeven agenda? (200 = ja)
+export async function eventExists(calendarId: string, eventId: string): Promise<boolean> {
+  const env = await readConfig()
+  if (!env) return false
+  const token = await getAccessToken(env)
+  if (!token) return false
+  try {
+    const res = await fetch(
+      `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?fields=id`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    return res.status === 200
+  } catch {
+    return false
+  }
+}
+
+// Verwijdert een event van een specifieke agenda (404/410 telt als geslaagd).
+export async function deleteEventFrom(calendarId: string, eventId: string): Promise<{ ok: boolean }> {
+  const env = await readConfig()
+  if (!env) return { ok: false }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false }
+  try {
+    const res = await fetch(
+      `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+      { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }
+    )
+    return { ok: res.ok || res.status === 404 || res.status === 410 }
+  } catch {
+    return { ok: false }
+  }
+}
+
 // ===========================================================
 // Titel-helpers — gedeeld door de Artwin-sync en de staff-toewijzing
 // ===========================================================
