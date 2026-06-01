@@ -51,7 +51,10 @@ function isToday(iso: string) {
   return d.getTime() === t.getTime()
 }
 function ymd(d: Date) {
-  return d.toISOString().slice(0, 10)
+  // Lokale datum-componenten — NIET toISOString() (dat is UTC en schuift in
+  // tijdzones oost van UTC, bv. Amsterdam, de dag een terug).
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 // Expandeer een datumbereik naar losse YYYY-MM-DD dagen binnen [from, to].
 function eachDateInRange(start: string, end: string, from: string, to: string): string[] {
