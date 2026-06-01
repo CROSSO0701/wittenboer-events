@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { AlertTriangle, Trash2 } from 'lucide-react'
+import { AlertTriangle, Settings2, Trash2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -16,11 +16,13 @@ import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
 import { Textarea } from '../../../../components/ui/textarea'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { KlusTypesManager } from './KlusTypesManager'
+import { LocationInput } from './LocationInput'
 
 export type KlusRow = {
   id: string
   title: string
-  kind: 'opbouw' | 'afbreken' | 'ophalen' | 'overig'
+  kind: string
   event_date: string
   event_start: string | null
   event_end: string | null
@@ -28,6 +30,8 @@ export type KlusRow = {
   notes: string | null
   booking_id: string | null
 }
+
+type KlusType = { id: string; label: string }
 
 type Staff = { id: string; full_name: string | null; email: string | null }
 type Pick = { role: string; channel: 'email' | 'whatsapp' }
@@ -39,13 +43,6 @@ const CONFLICT_ICON: Record<Conflict['kind'], string> = {
   klus: '🔧',
   unavailable: '🌴',
 }
-
-const KIND_OPTIONS: { value: KlusRow['kind']; label: string }[] = [
-  { value: 'opbouw', label: 'Opbouw' },
-  { value: 'afbreken', label: 'Afbreken' },
-  { value: 'ophalen', label: 'Ophalen' },
-  { value: 'overig', label: 'Overig' },
-]
 
 function localDateTimeFromISO(iso?: string | null): string {
   if (!iso) return ''
@@ -79,6 +76,28 @@ export function KlusDialog({
   const [deleting, setDeleting] = useState(false)
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null)
   const [override, setOverride] = useState(false)
+  const [kindOptions, setKindOptions] = useState<KlusType[]>([])
+  const [kind, setKind] = useState(klus?.kind ?? '')
+  const [typesOpen, setTypesOpen] = useState(false)
+
+  // Active klus-types laden (voor de dropdown). Apart van de open-effect zodat
+  // we ook na het sluiten van de beheer-dialog kunnen verversen.
+  async function loadKindOptions() {
+    try {
+      const res = await fetch('/api/admin/klus-types', { cache: 'no-store' })
+      const data = await res.json().catch(() => ({}))
+      const opts = ((data.types as KlusType[]) ?? []).map((t) => ({ id: t.id, label: t.label }))
+      setKindOptions(opts)
+      // Zet een geldige default als er nog niets gekozen is.
+      setKind((cur) => {
+        if (cur && opts.some((o) => o.label === cur)) return cur
+        if (cur && !opts.length) return cur
+        return opts[0]?.label ?? cur
+      })
+    } catch {
+      setKindOptions([])
+    }
+  }
 
   useEffect(() => {
     if (!open) {
@@ -87,6 +106,8 @@ export function KlusDialog({
       setPicked({})
       return
     }
+    setKind(klus?.kind ?? '')
+    loadKindOptions()
     ;(async () => {
       try {
         const supabase = createSupabaseBrowserClient()
@@ -139,7 +160,7 @@ export function KlusDialog({
     }))
     const body = {
       title: ((fd.get('title') as string) || '').trim() || undefined,
-      kind: (fd.get('kind') as string) || undefined,
+      kind: kind.trim() || undefined,
       event_date: ((fd.get('event_date') as string) || '').trim() || undefined,
       event_start: localToISO((fd.get('event_start') as string) || ''),
       event_end: localToISO((fd.get('event_end') as string) || ''),
@@ -197,6 +218,7 @@ export function KlusDialog({
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent wide>
         <DialogHeader>
@@ -234,15 +256,35 @@ export function KlusDialog({
             <Input id="klus-title" name="title" defaultValue={klus?.title ?? ''} required />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="klus-kind">Type</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="klus-kind">Type</Label>
+              <button
+                type="button"
+                onClick={() => setTypesOpen(true)}
+                className="inline-flex items-center gap-1 text-xs text-[var(--color-primary)] hover:underline"
+              >
+                <Settings2 size={13} aria-hidden /> Types beheren
+              </button>
+            </div>
             <select
               id="klus-kind"
               name="kind"
-              defaultValue={klus?.kind ?? 'opbouw'}
+              value={kind}
+              onChange={(e) => setKind(e.target.value)}
               className="h-10 rounded-md border border-[var(--color-border-strong)] bg-white px-3 text-sm"
             >
-              {KIND_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
+              {/* Toon de huidige waarde ook als ze (nog) niet in de active-lijst zit,
+                  bv. een type dat later verwijderd is maar nog op deze klus staat. */}
+              {kind && !kindOptions.some((o) => o.label === kind) && (
+                <option value={kind}>{kind}</option>
+              )}
+              {kindOptions.length === 0 && !kind && (
+                <option value="" disabled>
+                  Geen types — voeg er een toe
+                </option>
+              )}
+              {kindOptions.map((o) => (
+                <option key={o.id} value={o.label}>
                   {o.label}
                 </option>
               ))}
@@ -272,7 +314,13 @@ export function KlusDialog({
           </div>
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             <Label htmlFor="klus-location">Locatie</Label>
-            <Input id="klus-location" name="location" defaultValue={klus?.location ?? ''} />
+            <LocationInput
+              id="klus-location"
+              name="location"
+              defaultValue={klus?.location ?? ''}
+              placeholder="Adres, stad of venue"
+              className="flex h-10 w-full rounded-md border border-[var(--color-border-strong)] bg-white px-3 py-2 text-sm text-[var(--color-fg)] shadow-xs placeholder:text-[var(--color-fg-muted)] focus-visible:outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+            />
           </div>
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             <Label htmlFor="klus-notes">Notities</Label>
@@ -345,5 +393,12 @@ export function KlusDialog({
         </form>
       </DialogContent>
     </Dialog>
+
+    <KlusTypesManager
+      open={typesOpen}
+      onOpenChange={setTypesOpen}
+      onChanged={loadKindOptions}
+    />
+    </>
   )
 }

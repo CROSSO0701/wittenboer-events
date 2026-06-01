@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react'
 import { createSupabaseBrowserClient } from '../../lib/db/client'
+import { LocationInput } from '../../(portal)/portal/admin/_components/LocationInput'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 type Artist = { id: string; stage_name: string }
@@ -134,7 +135,12 @@ export function KlusForm() {
 
       <div className="field">
         <label htmlFor="event_location">Locatie</label>
-        <input id="event_location" name="event_location" type="text" placeholder="Adres / stad / venue" required />
+        <LocationInput
+          id="event_location"
+          name="event_location"
+          placeholder="Adres / stad / venue"
+          required
+        />
       </div>
 
       <div className="field">

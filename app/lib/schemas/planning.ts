@@ -22,10 +22,10 @@ const klusAssignment = z.object({
   notification_channel: z.enum(['email', 'whatsapp', 'sms']).default('email'),
 })
 
-// Klus aanmaken (logistiek: opbouw/afbreken/ophalen/overig).
+// Klus aanmaken (logistiek: type vrij beheerbaar via klus_types).
 export const createKlusSchema = z.object({
   title: z.string().trim().min(1, 'Geef een titel op').max(200),
-  kind: z.enum(KLUS_KINDS).default('opbouw'),
+  kind: z.string().trim().min(1, 'Kies een type').max(60),
   event_date: isoDate,
   event_start: optionalDateTime,
   event_end: optionalDateTime,
@@ -39,7 +39,7 @@ export const createKlusSchema = z.object({
 // Klus bewerken — alle velden optioneel.
 export const updateKlusSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
-  kind: z.enum(KLUS_KINDS).optional(),
+  kind: z.string().trim().min(1).max(60).optional(),
   event_date: optionalISODate,
   event_start: optionalDateTime,
   event_end: optionalDateTime,

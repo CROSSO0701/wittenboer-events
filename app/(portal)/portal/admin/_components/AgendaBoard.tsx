@@ -32,13 +32,6 @@ type DayGroup = {
   availability: Availability[]
 }
 
-const KLUS_KIND_LABEL: Record<string, string> = {
-  opbouw: 'Opbouw',
-  afbreken: 'Afbreken',
-  ophalen: 'Ophalen',
-  overig: 'Overig',
-}
-
 // Bron-filter: label per waarde (uit de hoofdbalk gehaald, nu in een dropdown).
 const SOURCE_OPTIONS = [
   ['all', 'Alle bronnen'],
@@ -448,7 +441,7 @@ export function AgendaBoard() {
                         .join(' · ') || 'Klus'}
                     </span>
                   </span>
-                  <Badge tone="neutral">{KLUS_KIND_LABEL[k.kind] ?? 'Klus'}</Badge>
+                  <Badge tone="neutral">{k.kind || 'Klus'}</Badge>
                 </button>
               ))}
             </div>

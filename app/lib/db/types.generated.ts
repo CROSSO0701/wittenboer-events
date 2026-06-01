@@ -647,6 +647,30 @@ export type Database = {
           },
         ]
       }
+      klus_types: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       klussen: {
         Row: {
           booking_id: string | null
@@ -656,7 +680,7 @@ export type Database = {
           event_end: string | null
           event_start: string | null
           id: string
-          kind: Database["public"]["Enums"]["klus_kind"]
+          kind: string
           location: string | null
           notes: string | null
           title: string
@@ -670,7 +694,7 @@ export type Database = {
           event_end?: string | null
           event_start?: string | null
           id?: string
-          kind?: Database["public"]["Enums"]["klus_kind"]
+          kind?: string
           location?: string | null
           notes?: string | null
           title: string
@@ -684,7 +708,7 @@ export type Database = {
           event_end?: string | null
           event_start?: string | null
           id?: string
-          kind?: Database["public"]["Enums"]["klus_kind"]
+          kind?: string
           location?: string | null
           notes?: string | null
           title?: string

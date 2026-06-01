@@ -21,6 +21,8 @@ export type AuditAction =
   | 'klus.updated'
   | 'klus.deleted'
   | 'klus.assigned'
+  | 'klustype.created'
+  | 'klustype.deleted'
   | 'availability.created'
   | 'availability.updated'
   | 'availability.deleted'
