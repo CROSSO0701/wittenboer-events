@@ -178,6 +178,15 @@ export async function createCalendar(summary: string): Promise<{ ok: boolean; id
   const token = await getAccessToken(env)
   if (!token) return { ok: false, error: 'Token refresh faalde' }
   try {
+    // Idempotent: hergebruik een bestaande agenda met dezelfde naam i.p.v. dupliceren.
+    const listRes = await fetch(`${API_BASE}/users/me/calendarList?maxResults=250`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (listRes.ok) {
+      const list = (await listRes.json()) as { items?: Array<{ id: string; summary?: string }> }
+      const existing = (list.items ?? []).find((c) => c.summary === summary)
+      if (existing) return { ok: true, id: existing.id }
+    }
     const res = await fetch(`${API_BASE}/calendars`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },

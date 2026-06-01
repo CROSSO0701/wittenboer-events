@@ -40,6 +40,8 @@ export async function POST(request: Request) {
     }
     target = created.id
   }
+  if (!target) return NextResponse.json({ error: 'Geen doel-agenda.' }, { status: 500 })
+  const targetCal: string = target
 
   // Alle gesyncte events verhuizen van de huidige agenda naar de doel-agenda.
   const { data: rows, error: selErr } = await supabase
@@ -51,12 +53,20 @@ export async function POST(request: Request) {
   let moved = 0
   let failed = 0
   const errors: string[] = []
-  for (const r of rows ?? []) {
-    const res = await moveEvent(r.google_event_id as string, target)
-    if (res.ok) moved++
-    else {
-      failed++
-      if (errors.length < 8) errors.push(`${r.id}: ${res.error}`)
+  const all = rows ?? []
+  const BATCH = 8
+  for (let i = 0; i < all.length; i += BATCH) {
+    const results = await Promise.all(
+      all
+        .slice(i, i + BATCH)
+        .map(async (r) => ({ id: r.id, res: await moveEvent(r.google_event_id as string, targetCal) }))
+    )
+    for (const { id, res } of results) {
+      if (res.ok) moved++
+      else {
+        failed++
+        if (errors.length < 8) errors.push(`${id}: ${res.error}`)
+      }
     }
   }
 
