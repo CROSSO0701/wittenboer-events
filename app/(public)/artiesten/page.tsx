@@ -5,10 +5,13 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Artiesten',
   description:
-    'Vast boekingsnetwerk: Jan Biggel, Ferry de Lits, Lars Brans en meer. Wij verzorgen tape-show, techniek en begeleiding.',
+    'Vast boekingsnetwerk: Jan Biggel, Mikey Wonder, Mo de Show en meer. Wij verzorgen tape-show, techniek en begeleiding.',
 }
 
-const ARTISTS = [
+type Artist = { name: string; photo: string; blurb?: string; href?: string }
+
+const ARTISTS: Artist[] = [
+  { name: 'Mikey Wonder', photo: '/photos/artist-mikey-wonder.jpg' },
   {
     name: 'Jan Biggel',
     photo: '/photos/artist-jan-biggel.jpg',
@@ -17,54 +20,19 @@ const ARTISTS = [
     href: 'https://www.janbiggel.nl',
   },
   {
-    name: 'Ferry de Lits',
-    photo: '/photos/artist-ferry-de-lits.jpg',
-    blurb:
-      'Meerdere chart-hits, samenwerkingen met Django Wagner. Debuutalbum "Ritme Van De Nacht".',
-    href: 'https://www.ferrydelits.nl',
-  },
-  {
-    name: 'Lars Brans',
-    photo: '/photos/artist-mo-de-show.jpg',
-    blurb:
-      'Sinds 2020 actief, met radio-hits als "Wil Je Met Me Dansen" en "Mijn Schat".',
-    href: 'https://www.deaprodukties.nl/boeken/lars-brans/',
-  },
-  {
-    name: 'Evert van Huigevoort',
-    photo: '/photos/artist-evert.jpg',
-    blurb:
-      'Een van de meest veelbelovende zangers in Nederland. Samenwerking op "Al Mijn Maten" met Wesley Klein en Roy Donders.',
-    href: 'https://www.casperjanssenmusicpromotion.nl/artiesten/evert-van-huygevoort/',
-  },
-  {
-    name: 'Jeffrey Lake',
-    photo: '/photos/artist-jeffrey.jpg',
-    blurb:
-      'Werkt met Rood-Hit-Blauw, optredens naast Django Wagner en Wesley Klein. Single "With Christmas".',
-    href: 'https://www.jeffreylake.nl',
-  },
-  {
-    name: 'Brian More',
-    photo: '/photos/artist-brian-more.jpg',
-    blurb:
-      'Energieke performer. Engels en Nederlands, van ballades tot dance. "In De Nacht", "Schuil dan maar bij mij".',
-    href: 'https://www.brianmore.nl',
-  },
-  {
     name: 'Mo de Show',
     photo: '/photos/artist-mo-de-show.jpg',
     blurb:
       'Veelzijdig entertainer met Nederlandse volksmuziek-stijl. Optredens vanaf de jeugd.',
     href: 'https://www.rjbookings.nl/artiesten/zangers/zanger-mo-de-show/',
   },
-  {
-    name: 'Dirk Drost',
-    photo: '/photos/artist-jeffrey.jpg',
-    blurb:
-      'Debuut "Ik Hou Van Jou" (2015), getekend bij Limbo-Power. Bekend van "Oranje Kampioen".',
-    href: 'https://www.dirkdrost.nl',
-  },
+  { name: 'Frank van Weert', photo: '/photos/artist-frank-van-weert.jpg' },
+  { name: 'Guus Doggen', photo: '/photos/artist-guus-doggen.jpg' },
+  { name: 'Daymian van Oss', photo: '/photos/artist-daymian-van-oss.jpg' },
+  { name: 'Mark van Veen', photo: '/photos/artist-mark-van-veen.jpg' },
+  { name: "Mark's Hazes Tribute", photo: '/photos/artist-marks-hazes-tribute.webp' },
+  { name: 'Remco Voets', photo: '/photos/artist-remco-voets.jpg' },
+  { name: 'Rienie van de Kerkhof', photo: '/photos/artist-rienie-van-de-kerkhof.jpg' },
 ]
 
 export default function ArtiestenPage() {
@@ -109,10 +77,12 @@ export default function ArtiestenPage() {
                   <Image src={a.photo} alt={a.name} width={600} height={800} />
                 </div>
                 <div className="artist__name">{a.name}</div>
-                <p className="artist__blurb">{a.blurb}</p>
-                <a className="artist__link" href={a.href} target="_blank" rel="noopener noreferrer">
-                  Boekingsinfo →
-                </a>
+                {a.blurb && <p className="artist__blurb">{a.blurb}</p>}
+                {a.href && (
+                  <a className="artist__link" href={a.href} target="_blank" rel="noopener noreferrer">
+                    Boekingsinfo →
+                  </a>
+                )}
               </div>
             ))}
           </div>
