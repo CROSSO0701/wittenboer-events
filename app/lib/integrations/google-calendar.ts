@@ -221,7 +221,15 @@ export function cleanArtwinSummary(summary: string): string {
     .trim()
 }
 
-// Bouwt de agenda-titel: schone naam + eventueel "(crewlid, crewlid)" erachter.
+// Splitst "Dorpsfeesten Aarle-Rixtel (Mikey Wonder Oud)" in evenement + artiest.
+function splitArtwinName(name: string): { artist: string | null; event: string | null } {
+  const m = name.match(/^(.*?)\s*\(([^)]+)\)\s*$/)
+  if (m) return { event: m[1]!.trim() || null, artist: m[2]!.trim() || null }
+  return { event: name.trim() || null, artist: null }
+}
+
+// Agenda-titel-volgorde: artiest → (toegewezen crew) → locatie/evenement.
+// Bv. "Mikey Wonder Oud (Glenn) — Dorpsfeesten Aarle-Rixtel".
 export function calendarTitle(opts: {
   source: string
   clientName?: string | null
@@ -229,10 +237,20 @@ export function calendarTitle(opts: {
   staffNames?: string[]
 }): string {
   const { source, clientName, artistName, staffNames = [] } = opts
-  let base =
-    source === 'artwinlive'
-      ? (clientName ?? '').trim()
-      : [clientName, artistName].filter(Boolean).join(' — ').trim()
-  if (!base) base = 'Boeking'
-  return staffNames.length > 0 ? `${base} (${staffNames.join(', ')})` : base
+  let artist: string | null
+  let event: string | null
+  if (source === 'artwinlive') {
+    const split = splitArtwinName(clientName ?? '')
+    artist = split.artist
+    event = split.event
+  } else {
+    artist = artistName ?? null
+    event = clientName ?? null
+  }
+  let head = (artist ?? '').trim()
+  if (staffNames.length > 0) {
+    head = head ? `${head} (${staffNames.join(', ')})` : `(${staffNames.join(', ')})`
+  }
+  const tail = (event ?? '').trim()
+  return [head, tail].filter(Boolean).join(' — ') || 'Boeking'
 }
