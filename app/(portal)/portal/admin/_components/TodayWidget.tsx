@@ -102,10 +102,10 @@ export function TodayWidget({ refreshKey = 0 }: { refreshKey?: number }) {
           </p>
           {next && (
             <Link
-              href="/portal/admin"
+              href="/portal/admin/agenda"
               className="inline-flex items-center gap-1 self-start text-xs font-medium text-[var(--color-primary)] hover:underline"
             >
-              Bekijk inbox <ArrowUpRight size={12} />
+              Naar agenda <ArrowUpRight size={12} />
             </Link>
           )}
         </div>

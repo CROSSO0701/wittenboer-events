@@ -205,7 +205,7 @@ function ArtwinCard({
           </p>
         )}
         <p className="text-xs text-[var(--color-fg-muted)]">
-          Nieuwe gigs verschijnen vanzelf in je inbox en Google Agenda.
+          Nieuwe gigs verschijnen vanzelf in de agenda en in Google Agenda.
           {updatedAt && <> Bijgewerkt op {fmt(updatedAt)}.</>}
         </p>
       </div>
