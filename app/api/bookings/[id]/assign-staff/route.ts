@@ -8,6 +8,7 @@ import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { StaffAssignedMail } from '../../../../lib/email/templates/staff-assigned'
 import { logAudit } from '../../../../lib/audit'
+import { findBookingConflicts } from '../../../../lib/booking-conflicts'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wittenboerevents.nl'
 const CALLMEBOT_KEY = process.env.CALLMEBOT_API_KEY
@@ -63,6 +64,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (fetchErr) return NextResponse.json({ error: 'Database-fout.' }, { status: 500 })
   if (!booking) return NextResponse.json({ error: 'Boeking niet gevonden.' }, { status: 404 })
+
+  // Dubbelboeking-check: staat een gekozen schuiver die dag al op een andere klus?
+  const conflicts = await findBookingConflicts(supabase, {
+    bookingId: id,
+    eventDate: booking.event_date,
+    staffIds: input.assignments.map((a) => a.staff_id),
+  })
+  if (conflicts.length > 0 && !input.override_overlap) {
+    return NextResponse.json(
+      { error: 'Mogelijke dubbelboeking — controleer en bevestig om door te gaan.', conflicts },
+      { status: 409 }
+    )
+  }
 
   // Upsert assignments
   const rows = input.assignments.map((a) => ({

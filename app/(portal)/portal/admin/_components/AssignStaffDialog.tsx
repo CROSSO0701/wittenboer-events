@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { AlertTriangle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 type Staff = { id: string; full_name: string | null; email: string | null }
 
 type Pick = { role: string; channel: 'email' | 'whatsapp' }
+type Conflict = { kind: 'artist' | 'staff'; label: string; detail: string }
 
 export function AssignStaffDialog({
   bookingId,
@@ -32,10 +34,14 @@ export function AssignStaffDialog({
   const [staff, setStaff] = useState<Staff[]>([])
   const [picked, setPicked] = useState<Record<string, Pick>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [conflicts, setConflicts] = useState<Conflict[] | null>(null)
+  const [override, setOverride] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setPicked({})
+      setConflicts(null)
+      setOverride(false)
       return
     }
     ;(async () => {
@@ -76,9 +82,14 @@ export function AssignStaffDialog({
       const res = await fetch(`/api/bookings/${bookingId}/assign-staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assignments: assigns }),
+        body: JSON.stringify({ assignments: assigns, override_overlap: override }),
       })
       const data = await res.json().catch(() => ({}))
+      if (res.status === 409 && data.conflicts) {
+        setConflicts(data.conflicts as Conflict[])
+        toast.warning('Mogelijke dubbelboeking — controleer en bevestig.')
+        return
+      }
       if (!res.ok) {
         toast.error(data.error ?? `Status ${res.status}`)
         return
@@ -101,6 +112,25 @@ export function AssignStaffDialog({
             De gekozen crewleden krijgen direct een mail of WhatsApp.
           </DialogDescription>
         </DialogHeader>
+        {conflicts && conflicts.length > 0 && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div className="mb-2 flex items-center gap-2 font-semibold">
+              <AlertTriangle size={16} /> Mogelijke dubbelboeking
+            </div>
+            <ul className="space-y-1">
+              {conflicts.map((c, i) => (
+                <li key={i}>
+                  <strong>{c.label}</strong>
+                  {c.detail ? ` · ${c.detail}` : ''}
+                </li>
+              ))}
+            </ul>
+            <label className="mt-3 flex items-center gap-2 text-xs">
+              <input type="checkbox" checked={override} onChange={(e) => setOverride(e.target.checked)} />
+              Toch toewijzen (dubbelboeking negeren)
+            </label>
+          </div>
+        )}
         {staff.length === 0 ? (
           <p className="text-sm text-[var(--color-fg-muted)]">Nog geen crewleden toegevoegd.</p>
         ) : (
@@ -151,7 +181,7 @@ export function AssignStaffDialog({
             Annuleren
           </Button>
           <Button onClick={submit} disabled={submitting}>
-            {submitting ? 'Bezig…' : 'Toewijzen & informeren'}
+            {submitting ? 'Bezig…' : conflicts && override ? 'Toch toewijzen' : 'Toewijzen & informeren'}
           </Button>
         </DialogFooter>
       </DialogContent>

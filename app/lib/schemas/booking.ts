@@ -35,6 +35,7 @@ export const assignStaffSchema = z.object({
     )
     .min(1, 'Minimaal één toewijzing')
     .max(20),
+  override_overlap: z.boolean().optional(),
 })
 
 const optionalISODate = z

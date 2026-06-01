@@ -17,7 +17,7 @@ import { Input } from '../../../../components/ui/input'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 
 type Staff = { id: string; full_name: string | null; email: string | null }
-type Conflict = { id: string; summary: string; startISO: string; endISO: string }
+type Conflict = { kind: 'artist' | 'staff'; label: string; detail: string }
 
 export function AcceptDialog({
   bookingId,
@@ -87,7 +87,7 @@ export function AcceptDialog({
       const data = await res.json().catch(() => ({}))
       if (res.status === 409 && data.conflicts) {
         setConflicts(data.conflicts as Conflict[])
-        toast.warning('Agenda-overlap gevonden. Bekijk en bevestig.')
+        toast.warning('Mogelijke dubbelboeking — controleer en bevestig.')
         return
       }
       if (!res.ok) {
@@ -138,19 +138,19 @@ export function AcceptDialog({
         {conflicts && conflicts.length > 0 && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
             <div className="mb-2 flex items-center gap-2 font-semibold">
-              <AlertTriangle size={16} /> Agenda-overlap op deze datum
+              <AlertTriangle size={16} /> Mogelijke dubbelboeking
             </div>
             <ul className="space-y-1">
-              {conflicts.map((c) => (
-                <li key={c.id}>
-                  <strong>{c.summary}</strong> · {new Date(c.startISO).toLocaleString('nl-NL')} –{' '}
-                  {new Date(c.endISO).toLocaleString('nl-NL')}
+              {conflicts.map((c, i) => (
+                <li key={i}>
+                  <strong>{c.label}</strong>
+                  {c.detail ? ` · ${c.detail}` : ''}
                 </li>
               ))}
             </ul>
             <label className="mt-3 flex items-center gap-2 text-xs">
               <input type="checkbox" checked={override} onChange={(e) => setOverride(e.target.checked)} />
-              Toch accepteren bij agenda-overlap
+              Toch accepteren (dubbelboeking negeren)
             </label>
           </div>
         )}

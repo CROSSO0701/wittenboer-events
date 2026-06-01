@@ -3,25 +3,18 @@ import { ZodError } from 'zod'
 import { acceptBookingSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { createEvent, listOverlapping, patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
+import { createEvent, patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { BookingAcceptedMail } from '../../../../lib/email/templates/booking-accepted'
 import { logAudit } from '../../../../lib/audit'
+import { findBookingConflicts } from '../../../../lib/booking-conflicts'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wittenboerevents.nl'
 
 function formatEUR(cents?: number | null): string | undefined {
   if (cents == null) return undefined
   return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
-}
-
-function dayBoundsISO(date: string): { startISO: string; endISO: string } {
-  // Hele dag in lokale TZ benadering — we vragen GCal events in [date 00:00, date+1 00:00].
-  return {
-    startISO: `${date}T00:00:00+02:00`,
-    endISO: `${date}T23:59:59+02:00`,
-  }
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -69,20 +62,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     )
   }
 
-  // Overlap check tegen Google Calendar
-  let conflicts: Array<{ id: string; summary: string; startISO: string; endISO: string }> = []
-  if (booking.event_date) {
-    const { startISO, endISO } = dayBoundsISO(booking.event_date)
-    const overlap = await listOverlapping(startISO, endISO)
-    conflicts = overlap.events
-  }
+  // Dubbelboeking-check (database, niet de volle agenda): is de artiest of een
+  // gekozen schuiver al bezet op die dag? Marnix kan met override_overlap toch door.
+  const conflicts = await findBookingConflicts(supabase, {
+    bookingId: id,
+    eventDate: booking.event_date,
+    artistId: booking.artist_id,
+    artistName: booking.artist?.stage_name ?? null,
+    staffIds: input.staff_ids,
+  })
 
   if (conflicts.length > 0 && !input.override_overlap) {
     return NextResponse.json(
-      {
-        error: 'Er staan al events op deze datum. Stuur opnieuw met override_overlap=true om door te gaan.',
-        conflicts,
-      },
+      { error: 'Mogelijke dubbelboeking — controleer en bevestig om door te gaan.', conflicts },
       { status: 409 }
     )
   }
