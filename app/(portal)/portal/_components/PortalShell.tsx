@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   Inbox,
+  CalendarDays,
   Briefcase,
   Users,
   UsersRound,
@@ -36,6 +37,7 @@ type NavItem = {
 
 const PAGE_TITLES: Record<string, string> = {
   '/portal/admin': 'Inbox',
+  '/portal/admin/agenda': 'Agenda',
   '/portal/admin/aanvragen': 'Aanvragen',
   '/portal/admin/klanten': 'Klanten',
   '/portal/admin/personeel': 'Crew',
@@ -117,6 +119,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const items: NavItem[] = inAdminArea || role === 'admin'
     ? [
         { href: '/portal/admin', label: 'Inbox', icon: Inbox },
+        { href: '/portal/admin/agenda', label: 'Agenda', icon: CalendarDays },
         { href: '/portal/admin/aanvragen', label: 'Aanvragen', icon: Briefcase },
         { href: '/portal/admin/klanten', label: 'Klanten', icon: UsersRound },
         { href: '/portal/admin/personeel', label: 'Crew', icon: Users },

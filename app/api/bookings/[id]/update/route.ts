@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { updateBookingSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { patchEvent } from '../../../../lib/integrations/google-calendar'
+import { patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
 import { logAudit } from '../../../../lib/audit'
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -38,7 +38,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const { data: existing, error: fetchErr } = await supabase
     .from('bookings')
-    .select('*')
+    .select('*, artist:artists(stage_name)')
     .eq('id', id)
     .maybeSingle()
   if (fetchErr || !existing) {
@@ -77,7 +77,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     existing.google_event_id &&
     (diff.event_start || diff.event_end || diff.event_location || diff.client_name)
   ) {
-    const summary = updated.client_name ?? existing.client_name ?? 'Boeking'
+    // Behoud de nette agenda-titel (artiest → (crew) → locatie) i.p.v. ruwe client_name
+    const { data: assigns } = await supabase
+      .from('booking_assignments')
+      .select('staff_id')
+      .eq('booking_id', id)
+    const staffIds = (assigns ?? []).map((a) => a.staff_id)
+    let staffNames: string[] = []
+    if (staffIds.length > 0) {
+      const { data: profs } = await supabase.from('profiles').select('full_name').in('id', staffIds)
+      staffNames = (profs ?? []).map((p) => p.full_name).filter((n): n is string => !!n)
+    }
+    const summary = calendarTitle({
+      source: existing.source,
+      clientName: updated.client_name ?? existing.client_name,
+      artistName: existing.artist?.stage_name ?? null,
+      staffNames,
+    })
     const result = await patchEvent(existing.google_event_id, {
       summary,
       location: updated.event_location ?? undefined,
