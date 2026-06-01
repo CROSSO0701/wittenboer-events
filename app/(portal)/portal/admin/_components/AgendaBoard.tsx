@@ -37,6 +37,7 @@ export function AgendaBoard() {
   const [bookings, setBookings] = useState<Booking[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [scope, setScope] = useState<'upcoming' | 'all'>('upcoming')
+  const [source, setSource] = useState<'all' | 'own' | 'artwinlive'>('all')
   const [selected, setSelected] = useState<Booking | null>(null)
 
   const load = useCallback(async () => {
@@ -68,6 +69,8 @@ export function AgendaBoard() {
     const t0 = new Date()
     t0.setHours(0, 0, 0, 0)
     const filtered = bookings.filter((b) => {
+      if (source === 'own' && b.source === 'artwinlive') return false
+      if (source === 'artwinlive' && b.source !== 'artwinlive') return false
       const isDead = b.status === 'cancelled' || b.status === 'declined'
       if (scope === 'upcoming') {
         if (isDead) return false
@@ -83,13 +86,13 @@ export function AgendaBoard() {
       map.set(key, arr)
     }
     return Array.from(map.entries())
-  }, [bookings, scope])
+  }, [bookings, scope, source])
 
   const total = groups?.reduce((n, [, v]) => n + v.length, 0) ?? 0
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {(['upcoming', 'all'] as const).map((s) => (
           <button
             key={s}
@@ -102,7 +105,23 @@ export function AgendaBoard() {
                 : 'border-[var(--color-border)] text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
             )}
           >
-            {s === 'upcoming' ? 'Aankomend' : 'Alles'}
+            {s === 'upcoming' ? 'Aankomend' : 'Ook verleden'}
+          </button>
+        ))}
+        <span className="mx-1 h-5 w-px bg-[var(--color-border)]" aria-hidden />
+        {([['all', 'Alle bronnen'], ['own', 'Eigen'], ['artwinlive', 'Artwin']] as const).map(([s, label]) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSource(s)}
+            className={cn(
+              'rounded-full border px-3 py-1 text-xs transition-colors',
+              source === s
+                ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
+                : 'border-[var(--color-border)] text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
+            )}
+          >
+            {label}
           </button>
         ))}
         <span className="ml-auto text-xs text-[var(--color-fg-muted)]">
