@@ -31,10 +31,19 @@ export async function GET(request: Request) {
   let inserted = 0
   let updated = 0
   let pushed = 0
+  let skipped = 0
   const errors: string[] = []
+
+  // De ArtwinLive-feed bevat ook ~1 jaar historie; alleen vandaag + toekomst
+  // importeren — verleden gigs zijn niet relevant voor agenda/beschikbaarheid.
+  const todayStr = new Date().toISOString().slice(0, 10)
 
   for (const ev of feed.events) {
     const eventDate = ev.startISO.slice(0, 10)
+    if (eventDate < todayStr) {
+      skipped += 1
+      continue
+    }
     const { data: existing } = await supabase
       .from('bookings')
       .select('id, google_event_id')
@@ -100,6 +109,7 @@ export async function GET(request: Request) {
     inserted,
     updated,
     pushed,
+    skipped,
     errors,
   })
 }
