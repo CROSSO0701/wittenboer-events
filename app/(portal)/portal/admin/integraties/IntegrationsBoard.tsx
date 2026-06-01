@@ -167,7 +167,7 @@ function ArtwinCard({
     <CardShell icon={<Rss size={18} />} title="ArtwinLive" ok={ok}>
       <p className="text-sm text-[var(--color-fg-secondary)]">
         Importeer je gigs van ArtwinLive. Plak de privé-link uit ArtwinLive hieronder. We
-        checken elk kwartier of er nieuwe gigs zijn.
+        halen elke ochtend automatisch nieuwe gigs op.
       </p>
       <div className="mt-3 flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
