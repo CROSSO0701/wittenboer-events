@@ -3,14 +3,11 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '../../../../../lib/db/server'
 import { StatusBadge } from '../../../_components/StatusBadge'
+import { formatEUR, sourceLabel } from '../../../../../lib/format'
 
 export const metadata: Metadata = { title: 'Klantdetail' }
 export const dynamic = 'force-dynamic'
 
-function formatEUR(cents?: number | null) {
-  if (cents == null) return '—'
-  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
-}
 function formatDate(d?: string | null) {
   if (!d) return '—'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
@@ -111,7 +108,7 @@ export default async function KlantDetail({ params }: { params: Promise<{ id: st
                     <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
                       {b.event_location ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.source}</td>
+                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{sourceLabel(b.source)}</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={b.status} />
                     </td>

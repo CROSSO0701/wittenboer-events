@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '../../../../lib/db/server'
-import { ArchiveBoard } from './ArchiveBoard'
+import { ArchiefTabs } from './ArchiefTabs'
 
 export const metadata: Metadata = { title: 'Archief' }
 export const dynamic = 'force-dynamic'
@@ -32,11 +32,11 @@ export default async function ArchiefPage() {
           Wat we hebben gedraaid
         </h1>
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
-          Bookings met een datum in het verleden, ongeacht status.
+          Gedraaide boekingen en het volledige aanvragen-archief per type.
         </p>
       </header>
 
-      <ArchiveBoard />
+      <ArchiefTabs />
     </div>
   )
 }

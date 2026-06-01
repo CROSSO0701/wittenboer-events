@@ -8,6 +8,7 @@ import { StatusBadge } from '../../_components/StatusBadge'
 import { BookingDetailSheet } from '../_components/BookingDetailSheet'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import type { Database } from '../../../../lib/db/types.generated'
+import { formatEUR, sourceLabel } from '../../../../lib/format'
 
 type Row = Database['public']['Tables']['bookings']['Row'] & {
   artist?: { stage_name: string | null } | null
@@ -18,10 +19,6 @@ const PAGE = 25
 function formatDate(d?: string | null) {
   if (!d) return '—'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
-}
-function formatEUR(cents?: number | null) {
-  if (cents == null) return '—'
-  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 }
 
 export function ArchiveBoard() {
@@ -113,7 +110,7 @@ export function ArchiveBoard() {
                 >
                   <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
                   <td className="px-4 py-3">
-                    <Badge tone="info">{b.source}</Badge>
+                    <Badge tone="info">{sourceLabel(b.source)}</Badge>
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '—'}</td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.artist?.stage_name ?? '—'}</td>

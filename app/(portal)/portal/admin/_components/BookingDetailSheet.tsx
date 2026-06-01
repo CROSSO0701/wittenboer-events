@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Check, X, UserPlus, Pencil, Ban } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../../../../components/ui/dialog'
@@ -13,15 +14,7 @@ import { EditBookingDialog } from './EditBookingDialog'
 import { CancelBookingDialog } from './CancelBookingDialog'
 import { BookingNotes } from './BookingNotes'
 import { StatusBadge } from '../../_components/StatusBadge'
-
-const SOURCE_LABELS: Record<string, string> = {
-  client: 'klant via website',
-  artist: 'artiest',
-  artwinlive: 'ArtwinLive feed',
-}
-function sourceLabel(s: string): string {
-  return SOURCE_LABELS[s] ?? s
-}
+import { formatEUR, sourceLabel } from '../../../../lib/format'
 import type { Database } from '../../../../lib/db/types.generated'
 
 type Booking = Database['public']['Tables']['bookings']['Row']
@@ -29,10 +22,6 @@ type Booking = Database['public']['Tables']['bookings']['Row']
 function formatDate(d?: string | null) {
   if (!d) return '—'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'full' }).format(new Date(d))
-}
-function formatEUR(cents?: number | null) {
-  if (cents == null) return '—'
-  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 }
 
 type Row = Booking & { artist?: { stage_name: string | null } | null }
@@ -48,6 +37,7 @@ export function BookingDetailSheet({
   onOpenChange: (o: boolean) => void
   onChanged: () => void
 }) {
+  const router = useRouter()
   const [acceptOpen, setAcceptOpen] = useState(false)
   const [declineOpen, setDeclineOpen] = useState(false)
   const [assignOpen, setAssignOpen] = useState(false)
@@ -202,7 +192,7 @@ export function BookingDetailSheet({
                 : `Geaccepteerd. Agenda-sync faalde: ${googleError}`,
               {
                 action: noConfig
-                  ? { label: 'Verbinden', onClick: () => window.open('/portal/admin/integraties', '_blank') }
+                  ? { label: 'Verbinden', onClick: () => router.push('/portal/admin/integraties') }
                   : undefined,
                 duration: 6000,
               }

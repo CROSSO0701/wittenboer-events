@@ -8,6 +8,7 @@ import { Input } from '../../../../components/ui/input'
 import { BookingDetailSheet } from './BookingDetailSheet'
 import type { Database } from '../../../../lib/db/types.generated'
 import { cn } from '../../../../lib/utils/cn'
+import { formatEUR, sourceLabel } from '../../../../lib/format'
 
 type Booking = Database['public']['Tables']['bookings']['Row'] & {
   artist?: { stage_name: string | null } | null
@@ -24,17 +25,6 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'client', label: 'Van klanten' },
   { id: 'artwinlive', label: 'ArtwinLive' },
 ]
-
-function formatEUR(cents?: number | null) {
-  if (cents == null) return '—'
-  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
-}
-
-const SOURCE_LABEL: Record<string, string> = {
-  artist: 'Artiest',
-  client: 'Klant via website',
-  artwinlive: 'ArtwinLive',
-}
 
 export function InboxBoard({
   bookings,
@@ -180,7 +170,7 @@ export function InboxBoard({
                 >
                   <td className="px-4 py-3 text-[var(--color-fg)]">{relativeDate(b.event_date)}</td>
                   <td className="px-4 py-3">
-                    <Badge tone="info">{SOURCE_LABEL[b.source] ?? b.source}</Badge>
+                    <Badge tone="info">{sourceLabel(b.source)}</Badge>
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '—'}</td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">

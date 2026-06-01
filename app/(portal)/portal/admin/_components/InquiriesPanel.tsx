@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '../../../../components/ui/badge'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { CONTACT_STATUS_LABEL, INQUIRY_STATUS_LABEL } from '../../../../lib/format'
+import { StatusSelect } from './StatusSelect'
 
 type InquiryType = 'contact' | 'show-package' | 'artist-booking'
 
@@ -127,6 +129,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <StatusSelect
                       value={r.status}
                       options={CONTACT_STATUSES as readonly string[]}
+                      labels={CONTACT_STATUS_LABEL}
                       onChange={(v) => updateStatus('contact', r.id, v)}
                     />
                   </Td>
@@ -169,6 +172,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <StatusSelect
                       value={r.status}
                       options={INQUIRY_STATUSES as readonly string[]}
+                      labels={INQUIRY_STATUS_LABEL}
                       onChange={(v) => updateStatus('show-package', r.id, v)}
                     />
                   </Td>
@@ -207,6 +211,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <StatusSelect
                       value={r.status}
                       options={INQUIRY_STATUSES as readonly string[]}
+                      labels={INQUIRY_STATUS_LABEL}
                       onChange={(v) => updateStatus('artist-booking', r.id, v)}
                     />
                   </Td>
@@ -264,28 +269,5 @@ function Empty() {
     <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-fg-muted)]">
       Niets binnen.
     </div>
-  )
-}
-function StatusSelect({
-  value,
-  options,
-  onChange,
-}: {
-  value: string
-  options: readonly string[]
-  onChange: (v: string) => void
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="h-8 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs"
-    >
-      {options.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
-      ))}
-    </select>
   )
 }

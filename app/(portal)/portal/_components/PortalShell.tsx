@@ -7,7 +7,6 @@ import { useEffect, useState, type ReactNode } from 'react'
 import {
   Inbox,
   CalendarDays,
-  Briefcase,
   Users,
   UsersRound,
   Music,
@@ -16,6 +15,7 @@ import {
   UserCog,
   Archive,
   Activity,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -30,28 +30,18 @@ type Session = { email: string | null; fullName: string | null; role: Role } | n
 type NavItem = {
   href: string
   label: string
+  /** Header-titel voor deze route. Standaard gelijk aan `label`. */
+  title?: string
   icon: typeof Inbox
-  match?: (pathname: string) => boolean
-  count?: number
 }
 
-const PAGE_TITLES: Record<string, string> = {
-  '/portal/admin': 'Inbox',
-  '/portal/admin/agenda': 'Agenda',
-  '/portal/admin/aanvragen': 'Aanvragen',
-  '/portal/admin/klanten': 'Klanten',
-  '/portal/admin/personeel': 'Crew',
-  '/portal/admin/artiesten': 'Artiesten',
-  '/portal/admin/integraties': 'Integraties',
-  '/portal/admin/archief': 'Archief',
-  '/portal/admin/log': 'Activiteit',
-  '/portal/artiest': 'Mijn aanvragen',
-  '/portal/account': 'Account',
-}
-
-function pageTitleFor(pathname: string): string {
-  if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname]!
+/** Header-titel afgeleid uit de (samengevoegde) nav-array — één bron, geen losse map. */
+function pageTitleFor(pathname: string, nav: NavItem[]): string {
+  const exact = nav.find((item) => item.href === pathname)
+  if (exact) return exact.title ?? exact.label
+  // Expliciete fallbacks voor routes zonder eigen nav-item.
   if (pathname.startsWith('/portal/admin/klanten/')) return 'Klantdetail'
+  if (pathname === '/portal/account') return 'Account'
   return 'Portal'
 }
 
@@ -116,26 +106,35 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const inAdminArea = pathname.startsWith('/portal/admin')
   const inArtistArea = pathname.startsWith('/portal/artiest')
 
-  const items: NavItem[] = inAdminArea || role === 'admin'
+  const isAdmin = inAdminArea || role === 'admin'
+  const isArtist = !isAdmin && (inArtistArea || role === 'artist')
+
+  // Primaire nav (dagelijks gebruik) — bovenaan de sidebar.
+  const primaryItems: NavItem[] = isAdmin
     ? [
-        { href: '/portal/admin', label: 'Inbox', icon: Inbox },
+        { href: '/portal/admin', label: 'Te doen', icon: Inbox },
         { href: '/portal/admin/agenda', label: 'Agenda', icon: CalendarDays },
-        { href: '/portal/admin/aanvragen', label: 'Aanvragen', icon: Briefcase },
         { href: '/portal/admin/klanten', label: 'Klanten', icon: UsersRound },
         { href: '/portal/admin/personeel', label: 'Crew', icon: Users },
         { href: '/portal/admin/artiesten', label: 'Artiesten', icon: Music },
-        { href: '/portal/admin/archief', label: 'Archief', icon: Archive },
-        { href: '/portal/admin/log', label: 'Activiteit', icon: Activity },
-        { href: '/portal/admin/integraties', label: 'Integraties', icon: Plug },
       ]
-    : inArtistArea || role === 'artist'
-      ? [
-          { href: '/portal/artiest', label: 'Mijn klussen', icon: Music2 },
-          { href: '/portal/account', label: 'Account', icon: UserCog },
-        ]
-      : [
-          { href: '/portal/account', label: 'Account', icon: UserCog },
-        ]
+    : isArtist
+      ? [{ href: '/portal/artiest', label: 'Mijn klussen', icon: Music2 }]
+      : []
+
+  // Instellingen (zelden gebruikt) — ingetogen sectie in de sidebar-footer.
+  // Account schuift mee in deze groep.
+  const settingsItems: NavItem[] = isAdmin
+    ? [
+        { href: '/portal/admin/integraties', label: 'Integraties', icon: Plug },
+        { href: '/portal/admin/log', label: 'Activiteit', icon: Activity },
+        { href: '/portal/admin/archief', label: 'Archief', icon: Archive },
+        { href: '/portal/account', label: 'Account', icon: UserCog },
+      ]
+    : [{ href: '/portal/account', label: 'Account', icon: UserCog }]
+
+  // Eén samengevoegde array voor titel-afleiding (primair + instellingen).
+  const allNavItems: NavItem[] = [...primaryItems, ...settingsItems]
 
   // Subtitle kiest dezelfde logica
   const subtitleRole = inAdminArea
@@ -199,10 +198,8 @@ export function PortalShell({ children }: { children: ReactNode }) {
 
         <nav className="flex-1 px-3 pb-4">
           <ul className="flex flex-col gap-0.5">
-            {items.map((item) => {
-              const isHashLink = item.href.includes('#')
-              const baseHref = item.href.split('#')[0]!
-              const active = isHashLink ? pathname === baseHref : pathname === item.href
+            {primaryItems.map((item) => {
+              const active = pathname === item.href
               const Icon = item.icon
               return (
                 <li key={item.href}>
@@ -225,7 +222,38 @@ export function PortalShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="border-t border-white/10 p-3">
-          <div className="flex items-center gap-3 rounded-lg p-2">
+          {/* Instellingen — ingetogen, kleiner lettertype, gescheiden van de primaire nav. */}
+          <div>
+            <div className="flex items-center gap-2 px-3 pb-1 text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-on-dark-muted)]">
+              <Settings size={12} className="shrink-0" />
+              <span>Instellingen</span>
+            </div>
+            <ul className="flex flex-col gap-0.5">
+              {settingsItems.map((item) => {
+                const active = pathname === item.href
+                const Icon = item.icon
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        'group flex items-center gap-2.5 rounded-md px-3 py-1.5 text-xs transition-colors',
+                        active
+                          ? 'bg-[var(--color-primary)]/15 text-[var(--color-fg-on-dark)] shadow-[inset_2px_0_0_var(--color-primary)]'
+                          : 'text-[var(--color-fg-on-dark-muted)] hover:bg-white/5 hover:text-[var(--color-fg-on-dark)]'
+                      )}
+                    >
+                      <Icon size={13} className="shrink-0" />
+                      <span className="flex-1">{item.label}</span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+
+          {/* Account-identiteit + uitloggen. */}
+          <div className="mt-3 flex items-center gap-3 rounded-lg p-2">
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-primary)] text-sm font-semibold text-white">
               {initial}
             </div>
@@ -239,20 +267,14 @@ export function PortalShell({ children }: { children: ReactNode }) {
                 </div>
               )}
             </div>
-          </div>
-          <div className="mt-2 flex flex-col gap-1">
-            <Link
-              href="/portal/account"
-              className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs text-[var(--color-fg-on-dark-muted)] hover:bg-white/5 hover:text-[var(--color-fg-on-dark)]"
-            >
-              <UserCog size={13} /> Account
-            </Link>
             <button
               type="button"
               onClick={logout}
-              className="flex items-center gap-2 rounded-md px-3 py-1.5 text-left text-xs text-[var(--color-fg-on-dark-muted)] hover:bg-white/5 hover:text-[var(--color-fg-on-dark)]"
+              aria-label="Uitloggen"
+              title="Uitloggen"
+              className="shrink-0 rounded-md p-1.5 text-[var(--color-fg-on-dark-muted)] hover:bg-white/5 hover:text-[var(--color-fg-on-dark)]"
             >
-              <LogOut size={13} /> Uitloggen
+              <LogOut size={15} />
             </button>
           </div>
         </div>
@@ -271,7 +293,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
               <Menu size={18} />
             </button>
             <h1 className="font-[family-name:var(--font-display)] text-lg uppercase tracking-wide text-[var(--color-fg)]">
-              {pageTitleFor(pathname)}
+              {pageTitleFor(pathname, allNavItems)}
             </h1>
           </div>
           <div className="flex items-center gap-2 text-xs text-[var(--color-fg-muted)]">

@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Check, SlidersHorizontal, ChevronDown } from 'lucide-react'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { cn } from '../../../../lib/utils/cn'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '../../../../components/ui/dropdown-menu'
 
 type LogRow = {
   id: string
@@ -115,31 +124,36 @@ export function ActivityFeed() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setFilter('')}
-          className={`rounded-full border px-3 py-1 text-xs ${
-            filter === ''
-              ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
-              : 'border-[var(--color-border)] text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
-          }`}
-        >
-          Alles
-        </button>
-        {Object.keys(ACTION_LABELS).map((a) => (
-          <button
-            key={a}
-            type="button"
-            onClick={() => setFilter(a)}
-            className={`rounded-full border px-3 py-1 text-xs ${
-              filter === a
-                ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
-                : 'border-[var(--color-border)] text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
-            }`}
-          >
-            {ACTION_LABELS[a]}
-          </button>
-        ))}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors',
+                filter === ''
+                  ? 'border-[var(--color-border)] bg-white text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
+                  : 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
+              )}
+            >
+              <SlidersHorizontal size={13} className="shrink-0" aria-hidden />
+              {filter === '' ? 'Type: alles' : ACTION_LABELS[filter] ?? filter}
+              <ChevronDown size={13} className="shrink-0 opacity-60" aria-hidden />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="max-h-80 overflow-y-auto">
+            <DropdownMenuLabel>Type activiteit</DropdownMenuLabel>
+            <DropdownMenuItem onSelect={() => setFilter('')}>
+              <Check size={14} className={cn('shrink-0', filter === '' ? 'opacity-100' : 'opacity-0')} aria-hidden />
+              Alles
+            </DropdownMenuItem>
+            {Object.keys(ACTION_LABELS).map((a) => (
+              <DropdownMenuItem key={a} onSelect={() => setFilter(a)}>
+                <Check size={14} className={cn('shrink-0', filter === a ? 'opacity-100' : 'opacity-0')} aria-hidden />
+                {ACTION_LABELS[a]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {rows.length === 0 && !loading ? (

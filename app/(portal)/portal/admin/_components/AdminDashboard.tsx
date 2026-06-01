@@ -1,16 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
-import { ArrowUpRight, Sparkles } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { Sparkles } from 'lucide-react'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
-import type { Database } from '../../../../lib/db/types.generated'
-import { InboxBoard } from './InboxBoard'
+import { fmtAgo } from '../../../../lib/format'
 import { TodayWidget } from './TodayWidget'
-
-type Booking = Database['public']['Tables']['bookings']['Row'] & {
-  artist?: { stage_name: string | null } | null
-}
+import { WachtOpJou } from './WachtOpJou'
 
 type Stats = {
   pending: number
@@ -22,39 +17,9 @@ type Stats = {
 
 type ActivityItem = { id: string; text: string; when: string }
 
-const isoDate = (d: Date) => d.toISOString().slice(0, 10)
-const addDays = (d: Date, n: number) => {
-  const x = new Date(d)
-  x.setDate(x.getDate() + n)
-  return x
-}
-
-function relativeDate(iso?: string | null) {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const diff = Math.round((d.getTime() - today.getTime()) / 86400000)
-  if (diff === 0) return 'Vandaag'
-  if (diff === 1) return 'Morgen'
-  if (diff === -1) return 'Gisteren'
-  if (diff > 0 && diff < 7) {
-    return new Intl.DateTimeFormat('nl-NL', { weekday: 'long' }).format(d)
-  }
-  return new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' }).format(d)
-}
-
-function fmtAgo(iso: string) {
-  const diff = Math.round((Date.now() - new Date(iso).getTime()) / 1000)
-  if (diff < 60) return 'zojuist'
-  if (diff < 3600) return `${Math.floor(diff / 60)} min`
-  if (diff < 86400) return `${Math.floor(diff / 3600)} u`
-  if (diff < 86400 * 7) return `${Math.floor(diff / 86400)} d`
-  return new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' }).format(new Date(iso))
-}
+const TODO_ANCHOR = 'wacht-op-jou'
 
 export function AdminDashboard() {
-  const [bookings, setBookings] = useState<Booking[] | null>(null)
   const [stats, setStats] = useState<Stats>({
     pending: 0,
     thisWeek: 0,
@@ -62,20 +27,12 @@ export function AdminDashboard() {
     weekend: 0,
     staffPlanned: 0,
   })
+  const [todoCount, setTodoCount] = useState<number | null>(null)
   const [activity, setActivity] = useState<ActivityItem[]>([])
-  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     try {
       const supabase = createSupabaseBrowserClient()
-
-      const { data: pendingBookings, error: bErr } = await supabase
-        .from('bookings')
-        .select('*, artist:artists(stage_name)')
-        .eq('status', 'pending')
-        .order('event_date', { ascending: true, nullsFirst: false })
-      if (bErr) throw bErr
-      setBookings((pendingBookings as Booking[]) ?? [])
 
       // Eén RPC-call voor alle stats — ontwijkt PostgREST HEAD-quirks
       const { data: rows, error: statsErr } = await supabase.rpc('dashboard_stats')
@@ -124,8 +81,8 @@ export function AdminDashboard() {
         return { id: r.id, text, when: fmtAgo(r.updated_at) }
       })
       setActivity(items)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+    } catch {
+      // RLS / geen sessie — stats/activiteit blijven leeg, niet kritisch
     }
   }, [])
 
@@ -133,65 +90,24 @@ export function AdminDashboard() {
     load()
   }, [load])
 
-  const calendarRows = useMemo(() => {
-    const days: { iso: string; label: string; isWeekend: boolean }[] = []
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    for (let i = 0; i < 14; i++) {
-      const d = addDays(today, i)
-      const dow = d.getDay()
-      days.push({
-        iso: isoDate(d),
-        label: new Intl.DateTimeFormat('nl-NL', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-        }).format(d),
-        isWeekend: dow === 0 || dow === 6,
-      })
-    }
-    return days
+  const scrollToTodo = useCallback(() => {
+    document.getElementById(TODO_ANCHOR)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
+
+  // Live aantal openstaande to-do-items (boekingen + losse aanvragen).
+  // Valt terug op de RPC-waarde zolang de lijst nog laadt.
+  const waiting = todoCount ?? stats.pending
 
   return (
     <div className="space-y-8">
       <TodayWidget />
-      <StatsRow stats={stats} />
+
+      <WachtOpJou anchorId={TODO_ANCHOR} onCount={setTodoCount} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <section>
-          <header className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-[family-name:var(--font-display)] text-xl uppercase tracking-wide text-[var(--color-fg)]">
-              Inbox
-            </h2>
-            <span className="text-xs text-[var(--color-fg-muted)]">
-              {bookings == null ? 'Laden…' : `${bookings.length} openstaand`}
-            </span>
-          </header>
-          <InboxBoard
-            bookings={bookings}
-            error={error}
-            relativeDate={relativeDate}
-            onChanged={load}
-          />
-        </section>
+        <StatsRow stats={stats} waiting={waiting} onWaitingClick={scrollToTodo} />
 
-        <aside className="space-y-6 lg:sticky lg:top-20 lg:self-start">
-          <Card title="Komende 14 dagen">
-            <ul className="divide-y divide-[var(--color-border)]">
-              {calendarRows.map((row) => (
-                <li
-                  key={row.iso}
-                  className={`flex items-center justify-between px-3 py-1.5 text-sm ${
-                    row.isWeekend ? 'bg-[var(--color-tertiary-soft)]/40' : ''
-                  }`}
-                >
-                  <span className="capitalize text-[var(--color-fg-secondary)]">{row.label}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
+        <aside>
           <Card title="Recente activiteit" icon={<Sparkles size={14} />}>
             {activity.length === 0 ? (
               <p className="px-3 py-3 text-xs text-[var(--color-fg-muted)]">Nog geen activiteit.</p>
@@ -209,25 +125,23 @@ export function AdminDashboard() {
               </ul>
             )}
           </Card>
-
-          <Link
-            href="/portal/admin/integraties"
-            className="block rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-4 text-sm text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-          >
-            <span className="flex items-center justify-between">
-              Integraties beheren
-              <ArrowUpRight size={14} />
-            </span>
-          </Link>
         </aside>
       </div>
     </div>
   )
 }
 
-function StatsRow({ stats }: { stats: Stats }) {
+function StatsRow({
+  stats,
+  waiting,
+  onWaitingClick,
+}: {
+  stats: Stats
+  waiting: number
+  onWaitingClick: () => void
+}) {
   const cards = [
-    { label: 'Wacht op antwoord', value: stats.pending, sub: 'aanvragen' },
+    { label: 'Wacht op antwoord', value: waiting, sub: 'open · naar lijst', onClick: onWaitingClick },
     {
       label: 'Deze week op pad',
       value: stats.thisWeek,
@@ -242,21 +156,36 @@ function StatsRow({ stats }: { stats: Stats }) {
     { label: 'Crew ingepland', value: stats.staffPlanned, sub: 'komende 7 dagen' },
   ]
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((c) => (
-        <div
-          key={c.label}
-          className="rounded-2xl border border-[var(--color-border-strong)] bg-white p-5 transition-shadow hover:shadow-md"
-        >
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-fg-muted)]">
-            {c.label}
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {cards.map((c) => {
+        const base =
+          'rounded-2xl border border-[var(--color-border-strong)] bg-white p-4 text-left transition-shadow'
+        const inner = (
+          <>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-fg-muted)]">
+              {c.label}
+            </div>
+            <div className="mt-1 font-[family-name:var(--font-display)] text-4xl leading-none text-[var(--color-fg)]">
+              {c.value}
+            </div>
+            <div className="mt-1.5 text-xs text-[var(--color-fg-muted)]">{c.sub}</div>
+          </>
+        )
+        return c.onClick ? (
+          <button
+            key={c.label}
+            type="button"
+            onClick={c.onClick}
+            className={`${base} hover:border-[var(--color-primary)] hover:shadow-md`}
+          >
+            {inner}
+          </button>
+        ) : (
+          <div key={c.label} className={`${base} hover:shadow-md`}>
+            {inner}
           </div>
-          <div className="mt-1 font-[family-name:var(--font-display)] text-5xl leading-none text-[var(--color-fg)]">
-            {c.value}
-          </div>
-          <div className="mt-2 text-xs text-[var(--color-fg-muted)]">{c.sub}</div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
