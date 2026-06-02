@@ -2,16 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { toast } from 'sonner'
 import { Check, X, UserPlus, Pencil, Ban } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../../../../components/ui/dialog'
 import { Badge } from '../../../../components/ui/badge'
 import { Button } from '../../../../components/ui/button'
-import { AcceptDialog } from './AcceptDialog'
-import { DeclineDialog } from './DeclineDialog'
-import { AssignStaffDialog } from './AssignStaffDialog'
-import { EditBookingDialog } from './EditBookingDialog'
-import { CancelBookingDialog } from './CancelBookingDialog'
+// Actie-dialogs lazy laden: ze horen niet in elke lijst-bundel, alleen wanneer
+// de sheet/actie wordt geopend. ssr:false want ze zijn puur client-interactief.
+const AcceptDialog = dynamic(() => import('./AcceptDialog').then((m) => m.AcceptDialog), { ssr: false })
+const DeclineDialog = dynamic(() => import('./DeclineDialog').then((m) => m.DeclineDialog), { ssr: false })
+const AssignStaffDialog = dynamic(() => import('./AssignStaffDialog').then((m) => m.AssignStaffDialog), { ssr: false })
+const EditBookingDialog = dynamic(() => import('./EditBookingDialog').then((m) => m.EditBookingDialog), { ssr: false })
+const CancelBookingDialog = dynamic(() => import('./CancelBookingDialog').then((m) => m.CancelBookingDialog), { ssr: false })
 import { BookingNotes } from './BookingNotes'
 import { StatusBadge } from '../../_components/StatusBadge'
 import { formatEUR, sourceLabel } from '../../../../lib/format'

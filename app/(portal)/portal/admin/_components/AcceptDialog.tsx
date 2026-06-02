@@ -15,9 +15,8 @@ import {
 import { Button } from '../../../../components/ui/button'
 import { Label } from '../../../../components/ui/label'
 import { Input } from '../../../../components/ui/input'
-import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { useStaffList } from './useStaffList'
 
-type Staff = { id: string; full_name: string | null; email: string | null }
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
 
 const CONFLICT_ICON: Record<Conflict['kind'], ComponentType<{ size?: number; className?: string }>> = {
@@ -44,7 +43,7 @@ export function AcceptDialog({
   }) => void
 }) {
   const fieldId = useId()
-  const [staff, setStaff] = useState<Staff[]>([])
+  const { staff } = useStaffList({ enabled: open, ordered: false })
   const [picked, setPicked] = useState<Record<string, { role: string; channel: 'email' | 'whatsapp' }>>({})
   const [submitting, setSubmitting] = useState(false)
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null)
@@ -55,21 +54,7 @@ export function AcceptDialog({
       setPicked({})
       setConflicts(null)
       setOverride(false)
-      return
     }
-    ;(async () => {
-      try {
-        const supabase = createSupabaseBrowserClient()
-        const { data } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .eq('role', 'staff')
-        setStaff(((data as Staff[]) ?? []))
-      } catch {
-        // RLS may block — okay to leave empty
-        setStaff([])
-      }
-    })()
   }, [open])
 
   function toggle(id: string) {

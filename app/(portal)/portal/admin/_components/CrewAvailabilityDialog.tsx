@@ -15,7 +15,7 @@ import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
 import { Textarea } from '../../../../components/ui/textarea'
-import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { useStaffList } from './useStaffList'
 
 export type AvailabilityRow = {
   id: string
@@ -25,8 +25,6 @@ export type AvailabilityRow = {
   kind: 'vrij' | 'vakantie'
   note: string | null
 }
-
-type Staff = { id: string; full_name: string | null; email: string | null }
 
 export function CrewAvailabilityDialog({
   availability,
@@ -42,7 +40,7 @@ export function CrewAvailabilityDialog({
   onSaved: () => void
 }) {
   const isEdit = !!availability
-  const [staff, setStaff] = useState<Staff[]>([])
+  const { staff } = useStaffList({ enabled: open })
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -50,21 +48,7 @@ export function CrewAvailabilityDialog({
   useEffect(() => {
     if (!open) {
       setConfirmDelete(false)
-      return
     }
-    ;(async () => {
-      try {
-        const supabase = createSupabaseBrowserClient()
-        const { data } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .eq('role', 'staff')
-          .order('full_name', { ascending: true })
-        setStaff((data as Staff[]) ?? [])
-      } catch {
-        setStaff([])
-      }
-    })()
   }, [open])
 
   const lockedStaff = staffId ?? availability?.staff_id

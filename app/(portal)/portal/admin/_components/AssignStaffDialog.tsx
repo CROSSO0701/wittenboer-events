@@ -14,9 +14,7 @@ import {
 } from '../../../../components/ui/dialog'
 import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
-import { createSupabaseBrowserClient } from '../../../../lib/db/client'
-
-type Staff = { id: string; full_name: string | null; email: string | null }
+import { useStaffList } from './useStaffList'
 
 type Pick = { role: string; channel: 'email' | 'whatsapp' }
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
@@ -40,7 +38,7 @@ export function AssignStaffDialog({
   onAssigned: () => void
 }) {
   const fieldId = useId()
-  const [staff, setStaff] = useState<Staff[]>([])
+  const { staff } = useStaffList({ enabled: open, ordered: false })
   const [picked, setPicked] = useState<Record<string, Pick>>({})
   const [submitting, setSubmitting] = useState(false)
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null)
@@ -51,20 +49,7 @@ export function AssignStaffDialog({
       setPicked({})
       setConflicts(null)
       setOverride(false)
-      return
     }
-    ;(async () => {
-      try {
-        const supabase = createSupabaseBrowserClient()
-        const { data } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .eq('role', 'staff')
-        setStaff((data as Staff[]) ?? [])
-      } catch {
-        setStaff([])
-      }
-    })()
   }, [open])
 
   function toggle(id: string) {

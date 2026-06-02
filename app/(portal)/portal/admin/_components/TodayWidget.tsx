@@ -15,6 +15,16 @@ type BookingRow = Database['public']['Tables']['bookings']['Row'] & {
   }>
 }
 
+type NextUp = { date: string; client_name: string | null }
+
+/**
+ * Server-voorgeladen begintoestand voor het Vandaag-blok: de geaccepteerde
+ * boekingen van vandaag plus (als die leeg is) de eerstvolgende klus.
+ * Best-effort meegegeven door de server-page; ontbreekt deze, dan laadt het
+ * blok zoals voorheen client-side.
+ */
+export type TodayInitial = { today: BookingRow[]; next: NextUp | null }
+
 function ymd(d: Date) {
   // Lokale datum-componenten — NIET toISOString() (dat is UTC en schuift in
   // tijdzones oost van UTC, bv. Amsterdam, de dag een terug).
@@ -42,9 +52,15 @@ function staffNames(rows: BookingRow['assignments']): string[] {
     .filter((n): n is string => !!n && n.length > 0)
 }
 
-export function TodayWidget({ refreshKey = 0 }: { refreshKey?: number }) {
-  const [today, setToday] = useState<BookingRow[] | null>(null)
-  const [next, setNext] = useState<{ date: string; client_name: string | null } | null>(null)
+export function TodayWidget({
+  refreshKey = 0,
+  initial,
+}: {
+  refreshKey?: number
+  initial?: TodayInitial
+}) {
+  const [today, setToday] = useState<BookingRow[] | null>(initial?.today ?? null)
+  const [next, setNext] = useState<NextUp | null>(initial?.next ?? null)
   const [selected, setSelected] = useState<BookingRow | null>(null)
 
   const load = useCallback(async () => {

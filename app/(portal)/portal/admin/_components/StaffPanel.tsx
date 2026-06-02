@@ -15,6 +15,7 @@ import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
+import { useStaffList } from './useStaffList'
 
 type StaffProfile = {
   id: string
@@ -24,27 +25,11 @@ type StaffProfile = {
 }
 
 export function StaffPanel() {
-  const [staff, setStaff] = useState<StaffProfile[]>([])
+  // Gedeelde crew-lijst (#120): zelfde query/volgorde als voorheen, nu via de hook.
+  // refresh() na invite/edit haalt de lijst opnieuw op én werkt de andere consumers bij.
+  const { staff, refresh } = useStaffList()
   const [editing, setEditing] = useState<StaffProfile | null>(null)
   const [inviting, setInviting] = useState(false)
-
-  async function load() {
-    try {
-      const supabase = createSupabaseBrowserClient()
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, phone')
-        .eq('role', 'staff')
-        .order('full_name', { ascending: true })
-      setStaff((data as StaffProfile[]) ?? [])
-    } catch {
-      setStaff([])
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   return (
     <>
@@ -92,7 +77,7 @@ export function StaffPanel() {
         onOpenChange={(o) => !o && setEditing(null)}
         onSaved={() => {
           setEditing(null)
-          load()
+          void refresh()
         }}
       />
 
@@ -101,7 +86,7 @@ export function StaffPanel() {
         onOpenChange={setInviting}
         onSuccess={() => {
           setInviting(false)
-          load()
+          void refresh()
         }}
       />
     </>

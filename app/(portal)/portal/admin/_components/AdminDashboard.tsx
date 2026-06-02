@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import { fmtAgo } from '../../../../lib/format'
-import { TodayWidget } from './TodayWidget'
-import { WachtOpJou } from './WachtOpJou'
+import { TodayWidget, type TodayInitial } from './TodayWidget'
+import { WachtOpJou, type FeedInitial } from './WachtOpJou'
 
-type Stats = {
+export type Stats = {
   pending: number
   thisWeek: number
   thisWeekDelta: number | null
@@ -15,20 +15,34 @@ type Stats = {
   staffPlanned: number
 }
 
-type ActivityItem = { id: string; text: string; when: string }
+export type ActivityItem = { id: string; text: string; when: string }
+
+const EMPTY_STATS: Stats = {
+  pending: 0,
+  thisWeek: 0,
+  thisWeekDelta: null,
+  weekend: 0,
+  staffPlanned: 0,
+}
 
 const TODO_ANCHOR = 'wacht-op-jou'
 
-export function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({
-    pending: 0,
-    thisWeek: 0,
-    thisWeekDelta: null,
-    weekend: 0,
-    staffPlanned: 0,
-  })
+export function AdminDashboard({
+  initialStats,
+  initialActivity,
+  initialToday,
+  initialFeed,
+}: {
+  // Server-voorgeladen data (best-effort). Ontbreekt deze, dan gedraagt het
+  // dashboard zich exact als voorheen: skeleton/leeg → client-fetch in useEffect.
+  initialStats?: Stats
+  initialActivity?: ActivityItem[]
+  initialToday?: TodayInitial
+  initialFeed?: FeedInitial
+} = {}) {
+  const [stats, setStats] = useState<Stats>(initialStats ?? EMPTY_STATS)
   const [todoCount, setTodoCount] = useState<number | null>(null)
-  const [activity, setActivity] = useState<ActivityItem[]>([])
+  const [activity, setActivity] = useState<ActivityItem[]>(initialActivity ?? [])
 
   const load = useCallback(async () => {
     try {
@@ -100,9 +114,9 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <TodayWidget />
+      <TodayWidget initial={initialToday} />
 
-      <WachtOpJou anchorId={TODO_ANCHOR} onCount={setTodoCount} />
+      <WachtOpJou anchorId={TODO_ANCHOR} onCount={setTodoCount} initial={initialFeed} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <StatsRow stats={stats} waiting={waiting} onWaitingClick={scrollToTodo} />

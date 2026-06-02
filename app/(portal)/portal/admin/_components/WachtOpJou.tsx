@@ -21,7 +21,7 @@ type InquiryType = 'contact' | 'show-package' | 'artist-booking'
 type IconKind = 'artist' | 'client' | 'request'
 
 // Genormaliseerde rij voor het "Wacht op jou"-blok.
-type FeedItem = {
+export type FeedItem = {
   key: string
   iconKind: IconKind
   kind: 'booking' | 'inquiry'
@@ -36,6 +36,10 @@ type FeedItem = {
   inquiryType?: InquiryType
   statusOptions?: readonly string[]
 }
+
+// Server-voorgeladen begintoestand: de al-genormaliseerde feed-rijen.
+// Best-effort; ontbreekt deze, dan toont het blok skeleton → client-fetch.
+export type FeedInitial = FeedItem[]
 
 const CONTACT_STATUSES = ['new', 'replied', 'closed'] as const
 const INQUIRY_STATUSES = ['new', 'contacted', 'quoted', 'booked', 'closed'] as const
@@ -73,11 +77,13 @@ const KIND_FILTERS: { id: string; label: string }[] = [
 export function WachtOpJou({
   anchorId,
   onCount,
+  initial,
 }: {
   anchorId?: string
   onCount?: (n: number) => void
+  initial?: FeedInitial
 }) {
-  const [feed, setFeed] = useState<FeedItem[] | null>(null)
+  const [feed, setFeed] = useState<FeedItem[] | null>(initial ?? null)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<string>('all')
   const [query, setQuery] = useState('')
@@ -89,22 +95,28 @@ export function WachtOpJou({
       const [b, c, d, a] = await Promise.all([
         supabase
           .from('bookings')
-          .select('*, artist:artists(stage_name)')
+          // Expliciete kolommen i.p.v. '*': de feed-mapping plus alles wat de
+          // BookingDetailSheet/EditBookingDialog later van de rij rendert.
+          .select(
+            'id, source, status, client_id, client_name, client_email, client_phone, ' +
+              'event_date, event_start, event_end, event_location, fee_cents, notes, ' +
+              'decline_reason, created_at, artist:artists(stage_name)'
+          )
           .eq('status', 'pending')
           .order('event_date', { ascending: true, nullsFirst: false }),
         supabase
           .from('contact_inquiries')
-          .select('*')
+          .select('id, name, email, subject, status, created_at')
           .eq('status', 'new')
           .order('created_at', { ascending: false }),
         supabase
           .from('disco_inquiries')
-          .select('*, package:disco_packages(name)')
+          .select('id, name, email, event_date, location, status, created_at, package:disco_packages(name)')
           .eq('status', 'new')
           .order('created_at', { ascending: false }),
         supabase
           .from('artist_booking_inquiries')
-          .select('*, artist:artists(stage_name)')
+          .select('id, name, email, event_date, event_location, status, created_at, artist:artists(stage_name)')
           .eq('status', 'new')
           .order('created_at', { ascending: false }),
       ])
@@ -116,7 +128,10 @@ export function WachtOpJou({
 
       const items: FeedItem[] = []
 
-      for (const row of (b.data as Booking[]) ?? []) {
+      // Cast via unknown: de expliciete kolommenlijst + relationele embed laat
+      // PostgREST's type-inference naar een error-union vallen; b.error is hierboven
+      // al afgevangen, dus de rij-vorm is run-time gegarandeerd Booking.
+      for (const row of (b.data as unknown as Booking[]) ?? []) {
         items.push({
           key: `booking:${row.id}`,
           iconKind: row.source === 'artist' ? 'artist' : 'client',
@@ -201,6 +216,15 @@ export function WachtOpJou({
   useEffect(() => {
     load()
   }, [load])
+
+  // Server-seed: meld het beginaantal direct, zodat de stat-kaart op de eerste
+  // paint al klopt met de zichtbare lijst (vóór de client-fetch terugkomt).
+  // Zonder `initial` is dit een no-op — `load()` rapporteert het aantal sowieso.
+  useEffect(() => {
+    if (initial) onCount?.(initial.length)
+    // Alleen op mount; verse tellingen lopen via load().
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function updateInquiryStatus(type: InquiryType, id: string, status: string) {
     try {
