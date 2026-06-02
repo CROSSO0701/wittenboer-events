@@ -3,6 +3,10 @@ import { createSupabaseAdminClient } from '../../../lib/db/server'
 import { fetchFeed } from '../../../lib/integrations/artwinlive'
 import { createEvent, patchEvent, cleanArtwinSummary, calendarTitle } from '../../../lib/integrations/google-calendar'
 
+// "Evenement (Artiest Oud)" -> "Evenement (Artiest)": de "Oud"-suffix die
+// Artwin's dubbele profielen toevoegen weghalen, zodat dezelfde gig matcht.
+const baseName = (n: string | null) => (n ?? '').replace(/\s*Oud\)\s*$/, ')').trim()
+
 export async function GET(request: Request) {
   const auth = request.headers.get('authorization')
   const expected = process.env.CRON_SECRET
@@ -88,22 +92,18 @@ export async function GET(request: Request) {
         })
       }
     } else {
-      // Inhoud-ontdubbeling: staat er al een Artwin-gig op exact dezelfde
-      // datum + tijd + locatie? Dan is dit een dubbele feed-entry (andere UID,
-      // zelfde gig) — overslaan zodat 'm niet dubbel in de agenda komt.
-      if (ev.location) {
-        const { data: dupe } = await supabase
-          .from('bookings')
-          .select('id')
-          .eq('source', 'artwinlive')
-          .eq('event_date', eventDate)
-          .eq('event_start', ev.startISO)
-          .eq('event_location', ev.location)
-          .limit(1)
-        if (dupe && dupe.length > 0) {
-          skipped += 1
-          continue
-        }
+      // Inhoud-ontdubbeling: staat er al een Artwin-gig op deze datum met
+      // dezelfde (genormaliseerde) naam? Dan is dit een dubbele feed-entry —
+      // Artwin levert dezelfde gig soms met net andere tijd/locatie — overslaan.
+      const base = baseName(cleanName)
+      const { data: sameDay } = await supabase
+        .from('bookings')
+        .select('client_name')
+        .eq('source', 'artwinlive')
+        .eq('event_date', eventDate)
+      if ((sameDay ?? []).some((r) => baseName(r.client_name) === base)) {
+        skipped += 1
+        continue
       }
       const { data: created, error } = await supabase
         .from('bookings')

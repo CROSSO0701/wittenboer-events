@@ -57,10 +57,12 @@ export async function POST(request: Request) {
   if (selErr) return NextResponse.json({ error: 'Database-fout.', detail: selErr.message }, { status: 500 })
   const rows = (data ?? []) as Row[]
 
-  // Groepeer per gig: datum + tijd + locatie + genormaliseerde naam ("Oud" weg).
+  // Groepeer per gig op datum + genormaliseerde naam ("Oud" weg). Bewust NIET
+  // op tijd/locatie: Artwin's dubbele profielen geven dezelfde gig soms met een
+  // net andere starttijd of locatie-spelling, dus die zouden de match breken.
   const groups = new Map<string, Row[]>()
   for (const r of rows) {
-    const key = [r.event_date, r.event_start, r.event_location ?? '', baseName(r.client_name)].join('|')
+    const key = [r.event_date, baseName(r.client_name)].join('|')
     const arr = groups.get(key)
     if (arr) arr.push(r)
     else groups.set(key, [r])
