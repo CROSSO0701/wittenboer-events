@@ -34,94 +34,6 @@ const FAQ = [
   },
 ]
 
-function CompactSchema() {
-  return (
-    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet">
-      <line x1="20" y1="170" x2="300" y2="170" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-      <rect x="130" y="120" width="60" height="40" fill="rgba(217,197,178,0.22)" stroke="rgba(217,197,178,0.5)" strokeWidth="1" />
-      <rect x="138" y="128" width="44" height="6" fill="rgba(21,122,140,0.6)" />
-      <rect x="138" y="138" width="44" height="6" fill="rgba(21,122,140,0.4)" />
-      <text x="160" y="156" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontFamily="var(--font-mono), monospace" fontSize="6" letterSpacing="1">PIONEER</text>
-      <circle cx="135" cy="115" r="3" fill="rgba(255,180,90,0.85)" />
-      <circle cx="150" cy="115" r="3" fill="rgba(255,90,160,0.85)" />
-      <circle cx="170" cy="115" r="3" fill="rgba(90,180,255,0.85)" />
-      <circle cx="185" cy="115" r="3" fill="rgba(160,255,120,0.85)" />
-      <line x1="100" y1="60" x2="220" y2="60" stroke="rgba(217,197,178,0.7)" strokeWidth="2" />
-      <rect x="115" y="55" width="10" height="10" fill="rgba(255,200,80,0.8)" />
-      <rect x="145" y="55" width="10" height="10" fill="rgba(160,90,255,0.8)" />
-      <rect x="175" y="55" width="10" height="10" fill="rgba(80,200,255,0.8)" />
-      <rect x="205" y="55" width="10" height="10" fill="rgba(255,120,80,0.8)" />
-      <path d="M120,68 L70,170 L170,170 Z" fill="rgba(255,200,80,0.08)" />
-      <path d="M210,68 L150,170 L250,170 Z" fill="rgba(80,200,255,0.08)" />
-    </svg>
-  )
-}
-
-function BoothSchema() {
-  return (
-    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet">
-      <line x1="20" y1="170" x2="300" y2="170" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-      <rect x="120" y="115" width="80" height="45" fill="rgba(217,197,178,0.22)" stroke="rgba(217,197,178,0.55)" strokeWidth="1" />
-      <rect x="130" y="123" width="60" height="6" fill="rgba(21,122,140,0.6)" />
-      <rect x="130" y="133" width="60" height="6" fill="rgba(21,122,140,0.4)" />
-      <circle cx="128" cy="110" r="3" fill="rgba(255,180,90,0.85)" />
-      <circle cx="148" cy="110" r="3" fill="rgba(255,90,160,0.85)" />
-      <circle cx="172" cy="110" r="3" fill="rgba(90,180,255,0.85)" />
-      <circle cx="192" cy="110" r="3" fill="rgba(160,255,120,0.85)" />
-      <polygon points="205,160 220,160 215,150 210,150" fill="rgba(217,197,178,0.4)" stroke="rgba(217,197,178,0.6)" />
-      <rect x="60" y="120" width="22" height="40" fill="rgba(60,80,90,0.95)" stroke="rgba(217,197,178,0.55)" />
-      <circle cx="71" cy="135" r="5" fill="rgba(0,0,0,0.45)" />
-      <circle cx="71" cy="150" r="3" fill="rgba(0,0,0,0.45)" />
-      <rect x="238" y="120" width="22" height="40" fill="rgba(60,80,90,0.95)" stroke="rgba(217,197,178,0.55)" />
-      <circle cx="249" cy="135" r="5" fill="rgba(0,0,0,0.45)" />
-      <circle cx="249" cy="150" r="3" fill="rgba(0,0,0,0.45)" />
-      <line x1="80" y1="55" x2="160" y2="55" stroke="rgba(217,197,178,0.7)" strokeWidth="2" />
-      <line x1="160" y1="55" x2="240" y2="55" stroke="rgba(217,197,178,0.7)" strokeWidth="2" />
-      <rect x="92" y="50" width="8" height="8" fill="rgba(255,200,80,0.85)" />
-      <rect x="116" y="50" width="8" height="8" fill="rgba(160,90,255,0.85)" />
-      <rect x="140" y="50" width="8" height="8" fill="rgba(80,200,255,0.85)" />
-      <rect x="172" y="50" width="8" height="8" fill="rgba(255,120,80,0.85)" />
-      <rect x="196" y="50" width="8" height="8" fill="rgba(160,255,120,0.85)" />
-      <rect x="220" y="50" width="8" height="8" fill="rgba(255,90,160,0.85)" />
-      <path d="M100,60 L60,170 L160,170 Z" fill="rgba(255,200,80,0.07)" />
-      <path d="M220,60 L160,170 L260,170 Z" fill="rgba(80,200,255,0.07)" />
-    </svg>
-  )
-}
-
-function ShowWitSchema() {
-  return (
-    <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet">
-      <line x1="20" y1="170" x2="300" y2="170" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-      <line x1="55" y1="60" x2="55" y2="170" stroke="rgba(245,245,246,0.85)" strokeWidth="3" />
-      <line x1="115" y1="55" x2="115" y2="170" stroke="rgba(245,245,246,0.85)" strokeWidth="3" />
-      <line x1="205" y1="55" x2="205" y2="170" stroke="rgba(245,245,246,0.85)" strokeWidth="3" />
-      <line x1="265" y1="60" x2="265" y2="170" stroke="rgba(245,245,246,0.85)" strokeWidth="3" />
-      <circle cx="55" cy="58" r="6" fill="rgba(245,245,246,0.95)" />
-      <circle cx="115" cy="53" r="6" fill="rgba(245,245,246,0.95)" />
-      <circle cx="205" cy="53" r="6" fill="rgba(245,245,246,0.95)" />
-      <circle cx="265" cy="58" r="6" fill="rgba(245,245,246,0.95)" />
-      <rect x="51" y="100" width="8" height="14" fill="rgba(255,180,90,0.8)" />
-      <rect x="111" y="95" width="8" height="14" fill="rgba(160,90,255,0.8)" />
-      <rect x="201" y="95" width="8" height="14" fill="rgba(80,200,255,0.8)" />
-      <rect x="261" y="100" width="8" height="14" fill="rgba(255,120,80,0.8)" />
-      <rect x="135" y="125" width="50" height="35" fill="rgba(245,245,246,0.92)" stroke="rgba(245,245,246,1)" strokeWidth="1" />
-      <rect x="143" y="132" width="34" height="5" fill="rgba(60,80,90,0.6)" />
-      <rect x="143" y="141" width="34" height="5" fill="rgba(60,80,90,0.4)" />
-      <rect x="80" y="125" width="22" height="40" fill="rgba(60,80,90,0.95)" stroke="rgba(245,245,246,0.65)" />
-      <circle cx="91" cy="140" r="5" fill="rgba(0,0,0,0.45)" />
-      <circle cx="91" cy="155" r="3" fill="rgba(0,0,0,0.45)" />
-      <rect x="218" y="125" width="22" height="40" fill="rgba(60,80,90,0.95)" stroke="rgba(245,245,246,0.65)" />
-      <circle cx="229" cy="140" r="5" fill="rgba(0,0,0,0.45)" />
-      <circle cx="229" cy="155" r="3" fill="rgba(0,0,0,0.45)" />
-      <path d="M55,64 L40,170 L70,170 Z" fill="rgba(255,255,255,0.06)" />
-      <path d="M115,59 L100,170 L130,170 Z" fill="rgba(255,255,255,0.06)" />
-      <path d="M205,59 L190,170 L220,170 Z" fill="rgba(255,255,255,0.06)" />
-      <path d="M265,64 L250,170 L280,170 Z" fill="rgba(255,255,255,0.06)" />
-    </svg>
-  )
-}
-
 export default function ShowPakkettenPage() {
   return (
     <main>
@@ -224,9 +136,10 @@ export default function ShowPakkettenPage() {
             <article className="pkg-card">
               <div className="pkg-card__media">
                 <span className="pkg-card__badge">Instap</span>
-                <div className="pkg-card__schema" aria-hidden="true">
-                  <CompactSchema />
-                </div>
+                <div
+                  className="pkg-card__media-photo"
+                  style={{ backgroundImage: "url('/photos/show-packages/compact.jpg')" }}
+                />
               </div>
               <div className="pkg-card__body">
                 <div className="pkg-card__head">
@@ -253,9 +166,10 @@ export default function ShowPakkettenPage() {
             <article className="pkg-card">
               <div className="pkg-card__media">
                 <span className="pkg-card__badge">Compleet</span>
-                <div className="pkg-card__schema" aria-hidden="true">
-                  <BoothSchema />
-                </div>
+                <div
+                  className="pkg-card__media-photo"
+                  style={{ backgroundImage: "url('/photos/show-packages/booth.jpg')" }}
+                />
               </div>
               <div className="pkg-card__body">
                 <div className="pkg-card__head">
@@ -286,7 +200,7 @@ export default function ShowPakkettenPage() {
                 <span className="pkg-card__badge">Populairste</span>
                 <div
                   className="pkg-card__media-photo"
-                  style={{ backgroundImage: "url('/photos/park-lounge-2.jpg')" }}
+                  style={{ backgroundImage: "url('/photos/show-packages/truss-show.jpg')" }}
                 />
               </div>
               <div className="pkg-card__body">
@@ -325,12 +239,9 @@ export default function ShowPakkettenPage() {
                   Premium · wit
                 </span>
                 <div
-                  className="pkg-card__schema"
-                  aria-hidden="true"
-                  style={{ background: 'linear-gradient(180deg, #2A3036, #1A2128)' }}
-                >
-                  <ShowWitSchema />
-                </div>
+                  className="pkg-card__media-photo"
+                  style={{ backgroundImage: "url('/photos/show-packages/show-wit.jpg')" }}
+                />
               </div>
               <div className="pkg-card__body">
                 <div className="pkg-card__head">
