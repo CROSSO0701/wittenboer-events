@@ -53,6 +53,14 @@ export async function GET(request: Request) {
       skipped += 1
       continue
     }
+    const cleanName = cleanArtwinSummary(ev.summary)
+    // Artwin heeft sommige acts dubbel in de agenda (een oude + nieuwe
+    // profielnaam "… Oud"); die "Oud"-variant is steeds een duplicaat van
+    // dezelfde gig — niet importeren.
+    if (/\sOud\)\s*$/.test(cleanName)) {
+      skipped += 1
+      continue
+    }
     const { data: existing } = await supabase
       .from('bookings')
       .select('id, google_event_id')
@@ -60,7 +68,6 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (existing) {
-      const cleanName = cleanArtwinSummary(ev.summary)
       const { error } = await supabase
         .from('bookings')
         .update({
@@ -81,6 +88,23 @@ export async function GET(request: Request) {
         })
       }
     } else {
+      // Inhoud-ontdubbeling: staat er al een Artwin-gig op exact dezelfde
+      // datum + tijd + locatie? Dan is dit een dubbele feed-entry (andere UID,
+      // zelfde gig) — overslaan zodat 'm niet dubbel in de agenda komt.
+      if (ev.location) {
+        const { data: dupe } = await supabase
+          .from('bookings')
+          .select('id')
+          .eq('source', 'artwinlive')
+          .eq('event_date', eventDate)
+          .eq('event_start', ev.startISO)
+          .eq('event_location', ev.location)
+          .limit(1)
+        if (dupe && dupe.length > 0) {
+          skipped += 1
+          continue
+        }
+      }
       const { data: created, error } = await supabase
         .from('bookings')
         .insert({
@@ -92,7 +116,7 @@ export async function GET(request: Request) {
           event_end: ev.endISO,
           event_location: ev.location ?? null,
           notes: ev.description ?? null,
-          client_name: cleanArtwinSummary(ev.summary),
+          client_name: cleanName,
         })
         .select('id')
         .maybeSingle()
@@ -104,7 +128,7 @@ export async function GET(request: Request) {
 
       // Push naar Google Calendar
       const gcal = await createEvent({
-        summary: calendarTitle({ source: 'artwinlive', clientName: cleanArtwinSummary(ev.summary) }),
+        summary: calendarTitle({ source: 'artwinlive', clientName: cleanName }),
         description: ev.description,
         location: ev.location,
         startISO: ev.startISO,
