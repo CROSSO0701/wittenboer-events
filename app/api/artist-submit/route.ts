@@ -10,11 +10,10 @@ import { InquiryReceivedMail } from '../../lib/email/templates/inquiry-received'
 const ADMIN_EMAIL = process.env.NOTIFY_ADMIN_EMAIL || 'info@wittenboerevents.nl'
 
 /**
- * Publieke artiest-aanmelding — GEEN login. Een artiest geeft via /klus-doorgeven
- * een optreden door; het wordt een pending booking (source='artist') die Marnix
- * in "Te doen" beoordeelt. Beveiliging: rate-limit per IP, honeypot, en de
- * artiest moet een bestaande ACTIEVE artiest zijn. Niks wordt zichtbaar tot
- * Marnix goedkeurt.
+ * Publieke artiest-aanmelding: geen login, geen roster. Een artiest typt zelf
+ * z'n naam en geeft een optreden door; het wordt een pending booking
+ * (source='artist') die Marnix in "Te doen" beoordeelt. Beveiliging: rate-limit
+ * per IP + honeypot. Niks wordt zichtbaar tot Marnix goedkeurt.
  */
 export async function POST(request: Request) {
   const ip = ipFromRequest(request)
@@ -53,26 +52,22 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient()
 
-  // Artiest moet bestaan én actief zijn.
-  const { data: artist, error: artistErr } = await supabase
-    .from('artists')
-    .select('id, stage_name, active')
-    .eq('id', input.artist_id)
-    .maybeSingle()
-  if (artistErr || !artist || !artist.active) {
-    return NextResponse.json({ error: 'Onbekende artiest. Ververs de pagina en probeer opnieuw.' }, { status: 400 })
-  }
+  // Geen roster: de artiest typte zelf z'n naam. Naam + evenement samen in de
+  // titel, net als de Artwin-gigs ("Evenement (Artiest)") zodat de weergave
+  // overal consistent blijft.
+  const title = `${input.event} (${input.artist_name})`
 
   const { data: created, error: insertErr } = await supabase
     .from('bookings')
     .insert({
       source: 'artist',
-      artist_id: artist.id,
+      artist_id: null,
       created_by: null,
-      client_name: input.client_name,
+      client_name: title,
       client_phone: input.client_phone ?? null,
       event_date: input.event_date,
       event_start: input.event_start ?? null,
+      event_end: input.event_end ?? null,
       event_location: input.event_location,
       notes: input.notes ?? null,
       status: 'pending',
@@ -92,10 +87,10 @@ export async function POST(request: Request) {
     const mail = await renderEmail(
       InquiryReceivedMail({
         type: 'artist-booking',
-        name: input.client_name,
+        name: input.event,
         email: 'niet opgegeven',
         phone: input.client_phone,
-        artistName: artist.stage_name,
+        artistName: input.artist_name,
         eventDate: input.event_date,
         location: input.event_location,
         message: input.notes,
@@ -103,7 +98,7 @@ export async function POST(request: Request) {
     )
     await sendResend({
       to: ADMIN_EMAIL,
-      subject: `Nieuwe klus aangemeld door ${artist.stage_name}`,
+      subject: `Nieuwe klus aangemeld door ${input.artist_name}`,
       html: mail.html,
       text: mail.text,
     })

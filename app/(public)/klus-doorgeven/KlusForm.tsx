@@ -1,32 +1,13 @@
 'use client'
 
-import { useEffect, useState, type FormEvent } from 'react'
-import { createSupabaseBrowserClient } from '../../lib/db/client'
+import { useState, type FormEvent } from 'react'
 import { LocationInput } from '../../(portal)/portal/admin/_components/LocationInput'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
-type Artist = { id: string; stage_name: string }
 
 export function KlusForm() {
   const [status, setStatus] = useState<Status>('idle')
-  const [artists, setArtists] = useState<Artist[]>([])
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const supabase = createSupabaseBrowserClient()
-        const { data } = await supabase
-          .from('artists')
-          .select('id, stage_name')
-          .eq('active', true)
-          .order('stage_name', { ascending: true })
-        setArtists((data as Artist[]) ?? [])
-      } catch {
-        setArtists([])
-      }
-    })()
-  }, [])
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -34,13 +15,25 @@ export function KlusForm() {
     setErrorMsg(null)
     const data = new FormData(e.currentTarget)
 
-    // Datum + (optionele) tijd → ISO-datetime voor event_start.
+    // Datum + (optionele) tijden naar ISO-datetime voor aanvang/einde.
     const date = (data.get('event_date') as string) || ''
-    const time = (data.get('event_start_time') as string) || ''
+    const startT = (data.get('event_start_time') as string) || ''
+    const endT = (data.get('event_end_time') as string) || ''
+
     let event_start: string | undefined
-    if (date && time) {
-      const d = new Date(`${date}T${time}`)
+    if (date && startT) {
+      const d = new Date(`${date}T${startT}`)
       if (!Number.isNaN(d.getTime())) event_start = d.toISOString()
+    }
+
+    let event_end: string | undefined
+    if (date && endT) {
+      const d = new Date(`${date}T${endT}`)
+      if (!Number.isNaN(d.getTime())) {
+        // Eindigt het optreden vóór de aanvang? Dan loopt het door na middernacht.
+        if (event_start && d.toISOString() <= event_start) d.setDate(d.getDate() + 1)
+        event_end = d.toISOString()
+      }
     }
 
     try {
@@ -48,11 +41,12 @@ export function KlusForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          artist_id: data.get('artist_id') || '',
-          client_name: data.get('client_name') || '',
+          artist_name: data.get('artist_name') || '',
+          event: data.get('event') || '',
           client_phone: data.get('client_phone') || '',
           event_date: date,
           event_start,
+          event_end,
           event_location: data.get('event_location') || '',
           notes: data.get('notes') || '',
           website: data.get('website') || '',
@@ -87,7 +81,7 @@ export function KlusForm() {
 
   return (
     <form className="contact-form" onSubmit={onSubmit}>
-      {/* Honeypot — verborgen voor mensen */}
+      {/* Honeypot, verborgen voor mensen */}
       <input
         type="text"
         name="website"
@@ -98,38 +92,41 @@ export function KlusForm() {
       />
 
       <div className="field">
-        <label htmlFor="artist_id">Wie ben je?</label>
-        <select id="artist_id" name="artist_id" defaultValue="" required>
-          <option value="" disabled>
-            Kies je artiestennaam…
-          </option>
-          {artists.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.stage_name}
-            </option>
-          ))}
-        </select>
+        <label htmlFor="artist_name">Jouw artiestennaam</label>
+        <input
+          id="artist_name"
+          name="artist_name"
+          type="text"
+          placeholder="Bijv. Mikey Wonder"
+          autoComplete="off"
+          required
+        />
       </div>
 
       <div className="field">
-        <label htmlFor="client_name">Voor wie / welk evenement?</label>
+        <label htmlFor="event">Voor wie / welk evenement?</label>
         <input
-          id="client_name"
-          name="client_name"
+          id="event"
+          name="event"
           type="text"
           placeholder="Bijv. Bruiloft Jansen, Kermis Oss, Café De Kroeg"
           required
         />
       </div>
 
+      <div className="field">
+        <label htmlFor="event_date">Datum</label>
+        <input id="event_date" name="event_date" type="date" required />
+      </div>
+
       <div className="field--row">
-        <div className="field">
-          <label htmlFor="event_date">Datum</label>
-          <input id="event_date" name="event_date" type="date" required />
-        </div>
         <div className="field">
           <label htmlFor="event_start_time">Aanvang (optioneel)</label>
           <input id="event_start_time" name="event_start_time" type="time" />
+        </div>
+        <div className="field">
+          <label htmlFor="event_end_time">Einde (optioneel)</label>
+          <input id="event_end_time" name="event_end_time" type="time" />
         </div>
       </div>
 
