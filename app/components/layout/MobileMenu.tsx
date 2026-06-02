@@ -75,6 +75,7 @@ export default function MobileMenu({ open, onClose }: Props) {
   return (
     <div
       ref={panelRef}
+      id="mobile-menu"
       className={`mobile-menu${open ? ' is-open' : ''}`}
       role="dialog"
       aria-modal="true"

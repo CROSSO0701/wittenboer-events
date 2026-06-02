@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SplitText from '../components/shared/SplitText'
+import { HeroLights } from '../components/shared/HeroLights'
 
 const ICON_ARROW_RIGHT = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -57,6 +58,7 @@ export default function Page() {
         />
         <div className="hero__overlay-1" />
         <div className="hero__overlay-2" />
+        <HeroLights />
         <div className="hero__content container">
           <p className="hero__kicker" data-reveal>
             <span />
@@ -318,7 +320,7 @@ export default function Page() {
           </div>
           <div className="artists__bottom">
             <Link href="/artiesten">
-              <span>Alle 10 artiesten</span>
+              <span>Alle artiesten</span>
               {ICON_ARROW_RIGHT}
             </Link>
             <p className="artists__bottom-list">Guus Doggen · Daymian van Oss · Mark van Veen · Remco Voets</p>
@@ -431,7 +433,7 @@ export default function Page() {
               </div>
               <span className="channel__corner" aria-hidden="true">{ICON_NORTHEAST_18}</span>
             </a>
-            <a href="https://wa.me/31627172876" target="_blank" rel="noopener" className="channel">
+            <a href="https://wa.me/31627172876" target="_blank" rel="noopener noreferrer" className="channel">
               <span className="channel__icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
@@ -465,7 +467,7 @@ export default function Page() {
             <a
               href="https://maps.google.com/?q=Het+Schild+35+Den+Dungen"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               className="contact-cta__map-link"
             >
               Route op Maps

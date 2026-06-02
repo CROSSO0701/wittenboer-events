@@ -151,7 +151,12 @@ export default function ProjectenPage() {
           <div className="more-grid__cards" data-reveal-stagger>
             {MORE.map((m) => (
               <article key={m.title} className="mini">
-                <div className="mini__photo" style={{ backgroundImage: `url('${m.photo}')` }} />
+                <div
+                  className="mini__photo"
+                  role="img"
+                  aria-label={m.title}
+                  style={{ backgroundImage: `url('${m.photo}')` }}
+                />
                 <div className="mini__inner">
                   <span className="mini__meta">{m.meta}</span>
                   <div className="mini__title">{m.title}</div>

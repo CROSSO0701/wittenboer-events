@@ -41,7 +41,7 @@ function CompactSchema() {
       <rect x="130" y="120" width="60" height="40" fill="rgba(217,197,178,0.22)" stroke="rgba(217,197,178,0.5)" strokeWidth="1" />
       <rect x="138" y="128" width="44" height="6" fill="rgba(21,122,140,0.6)" />
       <rect x="138" y="138" width="44" height="6" fill="rgba(21,122,140,0.4)" />
-      <text x="160" y="156" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1">PIONEER</text>
+      <text x="160" y="156" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontFamily="var(--font-mono), monospace" fontSize="6" letterSpacing="1">PIONEER</text>
       <circle cx="135" cy="115" r="3" fill="rgba(255,180,90,0.85)" />
       <circle cx="150" cy="115" r="3" fill="rgba(255,90,160,0.85)" />
       <circle cx="170" cy="115" r="3" fill="rgba(90,180,255,0.85)" />
@@ -163,7 +163,7 @@ export default function ShowPakkettenPage() {
           </div>
           <ul className="pkg-intro__bullets" data-reveal data-reveal-delay="2">
             <li className="pkg-intro__bullet">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 <polyline points="9,22 9,12 15,12 15,22" />
               </svg>
@@ -173,7 +173,7 @@ export default function ShowPakkettenPage() {
               </div>
             </li>
             <li className="pkg-intro__bullet">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12,6 12,12 16,14" />
               </svg>
@@ -183,7 +183,7 @@ export default function ShowPakkettenPage() {
               </div>
             </li>
             <li className="pkg-intro__bullet">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                 <polyline points="22,4 12,14.01 9,11.01" />
               </svg>
@@ -193,7 +193,7 @@ export default function ShowPakkettenPage() {
               </div>
             </li>
             <li className="pkg-intro__bullet">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
               <div>
@@ -374,7 +374,7 @@ export default function ShowPakkettenPage() {
           <div className="incl__grid" data-reveal-stagger>
             <div className="incl__item">
               <div className="incl__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <rect x="1" y="3" width="15" height="13" />
                   <polygon points="16,8 20,8 23,11 23,16 16,16" />
                   <circle cx="5.5" cy="18.5" r="2.5" />
@@ -386,7 +386,7 @@ export default function ShowPakkettenPage() {
             </div>
             <div className="incl__item">
               <div className="incl__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M12 2L2 7l10 5 10-5-10-5z" />
                   <polyline points="2,17 12,22 22,17" />
                   <polyline points="2,12 12,17 22,12" />
@@ -397,7 +397,7 @@ export default function ShowPakkettenPage() {
             </div>
             <div className="incl__item">
               <div className="incl__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
                 </svg>
@@ -407,7 +407,7 @@ export default function ShowPakkettenPage() {
             </div>
             <div className="incl__item">
               <div className="incl__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" />
                 </svg>
               </div>

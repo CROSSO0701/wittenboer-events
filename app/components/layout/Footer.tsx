@@ -36,7 +36,7 @@ export default function Footer() {
             <ul>
               <li><a href="tel:+31627172876">06 27 17 28 76</a></li>
               <li><a href="mailto:info@wittenboerevents.nl">info@wittenboerevents.nl</a></li>
-              <li><a href="https://wa.me/31627172876" target="_blank" rel="noopener">WhatsApp</a></li>
+              <li><a href="https://wa.me/31627172876" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
             </ul>
           </div>
           <div className="footer__col">
@@ -48,7 +48,7 @@ export default function Footer() {
                 <a
                   href="https://maps.google.com/?q=Het+Schild+35+Den+Dungen"
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
                 >
                   Op de kaart

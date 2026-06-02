@@ -177,7 +177,7 @@ export default async function ServicePage({
             )}
             {svc.photo && (
               <div className="svc__photo" data-img-zoom>
-                <Image src={svc.photo} alt={svc.kicker} width={1600} height={900} />
+                <Image src={svc.photo} alt="" width={1600} height={900} />
               </div>
             )}
             <div className="svc__cta-row">
@@ -187,7 +187,7 @@ export default async function ServicePage({
             <div className="svc__nav">
               {prev ? (
                 <Link href={`/aanbod/${prev.slug}`} className="svc__nav-prev">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                     <path d="M5 12h14" />
                     <path d="M13 6l6 6-6 6" />
                   </svg>
@@ -197,7 +197,7 @@ export default async function ServicePage({
               {next ? (
                 <Link href={`/aanbod/${next.slug}`}>
                   Volgende: {next.kicker}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                     <path d="M5 12h14" />
                     <path d="M13 6l6 6-6 6" />
                   </svg>
