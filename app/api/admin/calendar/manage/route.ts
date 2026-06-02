@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { listCalendars, deleteCalendar } from '../../../../lib/integrations/google-calendar'
+import { listCalendars, deleteCalendar, renameCalendar } from '../../../../lib/integrations/google-calendar'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,8 +47,17 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const deny = await authorize(request)
   if (deny) return deny
-  const body = (await request.json().catch(() => ({}))) as { action?: string; calendarId?: string }
+  const body = (await request.json().catch(() => ({}))) as {
+    action?: string
+    calendarId?: string
+    name?: string
+  }
   const supabase = createSupabaseAdminClient()
+
+  if (body.action === 'rename' && body.calendarId && body.name) {
+    const res = await renameCalendar(body.calendarId, body.name)
+    return NextResponse.json({ ok: res.ok, error: res.error })
+  }
 
   if (body.action === 'set-active' && body.calendarId) {
     const { data: cred } = await supabase

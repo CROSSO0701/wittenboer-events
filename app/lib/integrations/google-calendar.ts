@@ -432,6 +432,32 @@ export async function listCalendars(): Promise<{
   }
 }
 
+// Hernoemt een agenda (titel). Werkt op een eigen (secundaire) agenda; de
+// primary-agenda kan niet hernoemd worden via de API.
+export async function renameCalendar(
+  calendarId: string,
+  summary: string
+): Promise<{ ok: boolean; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+  try {
+    const res = await fetch(`${API_BASE}/calendars/${encodeURIComponent(calendarId)}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ summary }),
+    })
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${body}` }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 // Verwijdert een (secundaire) agenda volledig, inclusief al z'n events. De
 // hoofdagenda (primary) kan niet verwijderd worden.
 export async function deleteCalendar(calendarId: string): Promise<{ ok: boolean; error?: string }> {
