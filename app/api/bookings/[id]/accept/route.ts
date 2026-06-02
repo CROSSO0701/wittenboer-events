@@ -79,21 +79,44 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     )
   }
 
-  // Maak Google event (best effort)
+  // Pas (optioneel) aangepaste details toe op de definitieve booking-waarden.
+  // Deze gaan zowel naar de booking-update als naar het Google-event.
+  const finalEventDate = input.event_date !== undefined ? input.event_date : booking.event_date
+  const finalEventStart = input.event_start !== undefined ? input.event_start : booking.event_start
+  const finalEventEnd = input.event_end !== undefined ? input.event_end : booking.event_end
+  const finalEventLocation =
+    input.event_location !== undefined ? input.event_location : booking.event_location
+  const finalNotes = input.notes !== undefined ? input.notes : booking.notes
+
+  // Maak Google event (best effort) van de definitieve booking-waarden.
   let googleEventId: string | null = null
   let googleError: string | undefined
-  if (booking.event_start && booking.event_end) {
-    const summary = calendarTitle({
-      source: booking.source,
-      clientName: booking.client_name,
-      artistName: booking.artist?.stage_name ?? null,
-    })
+  const summary = calendarTitle({
+    source: booking.source,
+    clientName: booking.client_name,
+    artistName: booking.artist?.stage_name ?? null,
+  })
+  if (finalEventStart && finalEventEnd) {
+    // Getimed event.
     const created = await createEvent({
       summary,
-      description: booking.notes ?? undefined,
-      location: booking.event_location ?? undefined,
-      startISO: booking.event_start,
-      endISO: booking.event_end,
+      description: finalNotes ?? undefined,
+      location: finalEventLocation ?? undefined,
+      startISO: finalEventStart,
+      endISO: finalEventEnd,
+    })
+    if (created.ok && created.id) {
+      googleEventId = created.id
+    } else {
+      googleError = created.error
+    }
+  } else if (finalEventDate) {
+    // Hele-dag-event.
+    const created = await createEvent({
+      summary,
+      description: finalNotes ?? undefined,
+      location: finalEventLocation ?? undefined,
+      allDayDate: finalEventDate,
     })
     if (created.ok && created.id) {
       googleEventId = created.id
@@ -101,10 +124,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       googleError = created.error
     }
   } else {
-    googleError = 'Geen event_start/event_end op de booking; agenda overgeslagen.'
+    googleError = 'Geen event_start/event_end of event_date op de booking; agenda overgeslagen.'
   }
 
-  // Update booking
+  // Update booking — inclusief eventueel aangepaste details.
   const { data: updated, error: updateErr } = await supabase
     .from('bookings')
     .update({
@@ -112,6 +135,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       decided_at: new Date().toISOString(),
       decided_by: admin.id,
       google_event_id: googleEventId,
+      event_date: finalEventDate,
+      event_start: finalEventStart,
+      event_end: finalEventEnd,
+      event_location: finalEventLocation,
+      notes: finalNotes,
     })
     .eq('id', id)
     .select()

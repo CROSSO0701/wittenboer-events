@@ -71,11 +71,22 @@ export type GCalEventInput = {
   summary: string
   description?: string
   location?: string
-  startISO: string
-  endISO: string
+  startISO?: string
+  endISO?: string
+  // Hele-dag-event: "YYYY-MM-DD". Gebruikt als er geen start/eind-tijd is.
+  allDayDate?: string
   attendees?: string[]
   // Source IDs (artwinlive) zodat we kunnen tracken in extendedProperties
   sourceId?: string
+}
+
+// "YYYY-MM-DD" + 1 dag, kale datum (geen tijdzone-truc). Google verwacht voor
+// hele-dag-events een exclusieve einddatum (de dag erna).
+function nextDay(ymd: string): string {
+  const [y, m, d] = ymd.split('-').map(Number)
+  const dt = new Date(Date.UTC(y, m - 1, d))
+  dt.setUTCDate(dt.getUTCDate() + 1)
+  return dt.toISOString().slice(0, 10)
 }
 
 export async function createEvent(input: GCalEventInput): Promise<{ ok: boolean; id?: string; error?: string }> {
@@ -89,6 +100,14 @@ export async function createEvent(input: GCalEventInput): Promise<{ ok: boolean;
   const token = await getAccessToken(env)
   if (!token) return { ok: false, error: 'Token refresh faalde' }
 
+  const isAllDay = !(input.startISO && input.endISO) && !!input.allDayDate
+  const start = isAllDay
+    ? { date: input.allDayDate! }
+    : { dateTime: input.startISO, timeZone: env.timezone }
+  const end = isAllDay
+    ? { date: nextDay(input.allDayDate!) }
+    : { dateTime: input.endISO, timeZone: env.timezone }
+
   try {
     const res = await fetch(`${API_BASE}/calendars/${encodeURIComponent(env.calendarId)}/events?sendUpdates=none`, {
       method: 'POST',
@@ -97,8 +116,8 @@ export async function createEvent(input: GCalEventInput): Promise<{ ok: boolean;
         summary: input.summary,
         description: input.description,
         location: input.location,
-        start: { dateTime: input.startISO, timeZone: env.timezone },
-        end: { dateTime: input.endISO, timeZone: env.timezone },
+        start,
+        end,
         attendees: input.attendees?.map((email) => ({ email })),
         extendedProperties: input.sourceId
           ? { private: { artwinliveId: input.sourceId } }

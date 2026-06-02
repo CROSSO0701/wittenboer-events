@@ -172,6 +172,11 @@ export function BookingDetailSheet({
         bookingId={booking.id}
         open={acceptOpen}
         onOpenChange={setAcceptOpen}
+        eventDate={booking.event_date}
+        eventStart={booking.event_start}
+        eventEnd={booking.event_end}
+        eventLocation={booking.event_location}
+        notes={booking.notes}
         onAccepted={({ googleEventId, googleError, staffAssigned, staffNames }) => {
           // Bouw een mensentaal-toast op
           const parts: string[] = ['Geaccepteerd.']

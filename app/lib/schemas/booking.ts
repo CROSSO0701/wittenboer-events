@@ -18,6 +18,12 @@ export const artistSubmitBookingSchema = z.object({
 export const acceptBookingSchema = z.object({
   staff_ids: z.array(z.string().uuid()).max(20).optional(),
   override_overlap: z.boolean().optional(),
+  // Optioneel aangepaste details die mee naar Google gaan.
+  event_date: isoDate.optional().or(z.literal('').transform(() => undefined)),
+  event_start: isoDateTime.optional().or(z.literal('').transform(() => undefined)),
+  event_end: isoDateTime.optional().or(z.literal('').transform(() => undefined)),
+  event_location: z.string().trim().min(1).max(500).optional(),
+  notes: z.string().trim().max(5000).optional().or(z.literal('').transform(() => undefined)),
 })
 
 export const declineBookingSchema = z.object({

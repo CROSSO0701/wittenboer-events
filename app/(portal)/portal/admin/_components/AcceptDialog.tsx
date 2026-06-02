@@ -15,9 +15,19 @@ import {
 import { Button } from '../../../../components/ui/button'
 import { Label } from '../../../../components/ui/label'
 import { Input } from '../../../../components/ui/input'
+import { Textarea } from '../../../../components/ui/textarea'
 import { useStaffList } from './useStaffList'
 
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
+
+// Lokale "HH:MM" uit een ISO-datetime (met offset). Leeg bij geen/ongeldige waarde.
+function localTimeFromISO(iso?: string | null): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 const CONFLICT_ICON: Record<Conflict['kind'], ComponentType<{ size?: number; className?: string }>> = {
   artist: Music2,
@@ -31,6 +41,11 @@ export function AcceptDialog({
   open,
   onOpenChange,
   onAccepted,
+  eventDate = null,
+  eventStart = null,
+  eventEnd = null,
+  eventLocation = null,
+  notes = null,
 }: {
   bookingId: string
   open: boolean
@@ -41,6 +56,11 @@ export function AcceptDialog({
     staffAssigned: number
     staffNames: string[]
   }) => void
+  eventDate?: string | null
+  eventStart?: string | null
+  eventEnd?: string | null
+  eventLocation?: string | null
+  notes?: string | null
 }) {
   const fieldId = useId()
   const { staff } = useStaffList({ enabled: open, ordered: false })
@@ -49,12 +69,27 @@ export function AcceptDialog({
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null)
   const [override, setOverride] = useState(false)
 
+  // Bewerkbare agenda-velden, voorgevuld uit de huidige booking-waarden.
+  const [date, setDate] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [location, setLocation] = useState('')
+  const [description, setDescription] = useState('')
+
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      // Voorvullen bij openen zodat wijzigingen aan de booking meekomen.
+      setDate(eventDate ?? '')
+      setStartTime(localTimeFromISO(eventStart))
+      setEndTime(localTimeFromISO(eventEnd))
+      setLocation(eventLocation ?? '')
+      setDescription(notes ?? '')
+    } else {
       setPicked({})
       setConflicts(null)
       setOverride(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   function toggle(id: string) {
@@ -69,9 +104,36 @@ export function AcceptDialog({
   async function submit() {
     setSubmitting(true)
     try {
-      const body = {
+      // Agenda-tijden bouwen uit datum + tijden. Zonder tijd: weglaten zodat de
+      // backend een hele-dag-event maakt. Eind <= begin → dag erna.
+      let event_start: string | undefined
+      let event_end: string | undefined
+      if (date && startTime && endTime) {
+        const start = new Date(`${date}T${startTime}`)
+        let end = new Date(`${date}T${endTime}`)
+        if (end.getTime() <= start.getTime()) {
+          end = new Date(end.getTime() + 24 * 60 * 60 * 1000)
+        }
+        event_start = start.toISOString()
+        event_end = end.toISOString()
+      }
+
+      const body: {
+        staff_ids: string[]
+        override_overlap: boolean
+        event_date?: string
+        event_start?: string
+        event_end?: string
+        event_location?: string
+        notes?: string
+      } = {
         staff_ids: Object.keys(picked),
         override_overlap: override,
+        event_date: date || undefined,
+        event_start,
+        event_end,
+        event_location: location.trim() || undefined,
+        notes: description.trim() || undefined,
       }
       const res = await fetch(`/api/bookings/${bookingId}/accept`, {
         method: 'POST',
@@ -164,6 +226,61 @@ export function AcceptDialog({
             </label>
           </div>
         )}
+
+        <div className="space-y-3 rounded-xl border border-[var(--color-border)] p-3">
+          <div>
+            <Label>Naar Google Agenda</Label>
+            <p className="text-xs text-[var(--color-fg-muted)]">Deze tekst komt in de agenda.</p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="space-y-1">
+              <Label htmlFor={`${fieldId}-date`}>Datum</Label>
+              <Input
+                id={`${fieldId}-date`}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${fieldId}-start`}>Aanvang</Label>
+              <Input
+                id={`${fieldId}-start`}
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${fieldId}-end`}>Einde</Label>
+              <Input
+                id={`${fieldId}-end`}
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor={`${fieldId}-location`}>Locatie</Label>
+            <Input
+              id={`${fieldId}-location`}
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Adres of locatie"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor={`${fieldId}-description`}>Beschrijving</Label>
+            <Textarea
+              id={`${fieldId}-description`}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              placeholder="Beschrijving voor in de agenda"
+            />
+          </div>
+        </div>
 
         {staff.length === 0 ? (
           <p className="text-sm text-[var(--color-fg-muted)]">
