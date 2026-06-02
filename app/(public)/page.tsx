@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import SplitText from '../components/shared/SplitText'
 import { HeroLights } from '../components/shared/HeroLights'
+import { HeroKinetic } from '../components/shared/HeroKinetic'
 
 const ICON_ARROW_RIGHT = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -66,9 +67,9 @@ export default function Page() {
           </p>
           <div className="hero__head">
             <h1 className="hero__h1">
-              <SplitText text="Licht, geluid" />
+              <SplitText text="Wij regelen je" />
               <span className="accent">
-                <SplitText text="en een show die knalt." perWordDelay={0.06} />
+                <HeroKinetic words={['licht', 'geluid', 'podium', 'crew']} />
               </span>
             </h1>
             <div className="hero__body-row">
