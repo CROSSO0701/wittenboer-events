@@ -2,14 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ClipboardList, Inbox, Music2, Search, User } from 'lucide-react'
-import { toast } from 'sonner'
 import { Input } from '../../../../components/ui/input'
 import { cn } from '../../../../lib/utils/cn'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import type { Database } from '../../../../lib/db/types.generated'
-import { relativeDate, fmtAgo, CONTACT_STATUS_LABEL, INQUIRY_STATUS_LABEL } from '../../../../lib/format'
+import { relativeDate, fmtAgo } from '../../../../lib/format'
 import { BookingDetailSheet } from './BookingDetailSheet'
-import { StatusSelect } from './StatusSelect'
+import { InquiryDetailSheet } from './InquiryDetailSheet'
 
 type Booking = Database['public']['Tables']['bookings']['Row'] & {
   artist?: { stage_name: string | null } | null
@@ -88,6 +87,7 @@ export function WachtOpJou({
   const [filter, setFilter] = useState<string>('all')
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Booking | null>(null)
+  const [selectedInquiry, setSelectedInquiry] = useState<{ type: InquiryType; id: string } | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -226,25 +226,6 @@ export function WachtOpJou({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function updateInquiryStatus(type: InquiryType, id: string, status: string) {
-    try {
-      const res = await fetch(`/api/admin/inquiries/${type}/${id}/status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) {
-        toast.error(data.error ?? `Status ${res.status}`)
-        return
-      }
-      toast.success('Status bijgewerkt')
-      load()
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Bijwerken faalde')
-    }
-  }
-
   const rows = useMemo(() => {
     if (!feed) return null
     return feed.filter((item) => {
@@ -373,13 +354,16 @@ export function WachtOpJou({
                       >
                         Bekijken
                       </button>
-                    ) : item.inquiryType && item.statusOptions ? (
-                      <StatusSelect
-                        value={item.status}
-                        options={item.statusOptions}
-                        labels={item.inquiryType === 'contact' ? CONTACT_STATUS_LABEL : INQUIRY_STATUS_LABEL}
-                        onChange={(v) => updateInquiryStatus(item.inquiryType!, item.key.split(':')[1], v)}
-                      />
+                    ) : item.inquiryType ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedInquiry({ type: item.inquiryType!, id: item.key.split(':')[1] })
+                        }
+                        className="rounded-full border border-[var(--color-border-strong)] px-3 py-1 text-xs font-medium text-[var(--color-fg)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                      >
+                        Bekijken
+                      </button>
                     ) : null}
                   </td>
                 </tr>
@@ -397,6 +381,13 @@ export function WachtOpJou({
           setSelected(null)
           load()
         }}
+      />
+
+      <InquiryDetailSheet
+        inquiry={selectedInquiry}
+        open={!!selectedInquiry}
+        onOpenChange={(o) => !o && setSelectedInquiry(null)}
+        onChanged={() => load()}
       />
     </section>
   )
