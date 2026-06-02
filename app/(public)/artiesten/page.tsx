@@ -91,9 +91,9 @@ export default function ArtiestenPage() {
             <div>
               <h3>Hoe werkt boeken?</h3>
               <p>
-                De artiesten boekt u rechtstreeks via hun eigen kanalen. Wij zorgen voor de
-                tape-show, technische begeleiding en backstage-coördinatie als u dat wilt. Bel
-                ons als u wilt sparren over een line-up of een combinatie van artiesten op één
+                De artiesten boek je rechtstreeks via hun eigen kanalen. Wij zorgen voor de
+                tape-show, technische begeleiding en backstage-coördinatie als je dat wilt. Bel
+                ons als je wilt sparren over een line-up of een combinatie van artiesten op één
                 avond &mdash; wij kennen de meeste werkschema&apos;s.
               </p>
             </div>

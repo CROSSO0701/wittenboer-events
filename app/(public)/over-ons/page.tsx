@@ -25,19 +25,19 @@ const WHY = [
     n: '03',
     title: 'Meedenken op voorhand',
     body:
-      'Wij komen langs op de locatie, meten na en stellen alternatieven voor. Het plan dat u krijgt is al door een technisch oog gehaald, niet alleen door een verkoper.',
+      'We komen langs op de locatie, meten na en stellen alternatieven voor. Het plan dat je krijgt is al door een technisch oog gehaald, niet alleen door een verkoper.',
   },
   {
     n: '04',
     title: 'Persoonlijk contact',
     body:
-      'U belt met een van onze vaste technici, niet met een planner. De crew die het plan maakt, staat ook op de dag zelf naast u.',
+      'Je belt met een van onze vaste technici, niet met een planner. De crew die het plan maakt, staat ook op de dag zelf naast je.',
   },
   {
     n: '05',
     title: 'Flexibel',
     body:
-      'Een artiest valt uit, een opbouw schuift, de weersvoorspelling verandert. Dat lossen wij op zonder dat u er wakker van ligt.',
+      'Een artiest valt uit, een opbouw schuift, de weersvoorspelling verandert. Dat lossen we op zonder dat je er wakker van ligt.',
   },
   {
     n: '06',
@@ -91,20 +91,20 @@ export default function OverOnsPage() {
             </p>
             <p>
               De vaste kern is klein: drie technici die elkaar door en door kennen, plus een
-              netwerk van vaste freelancers waarmee wij al jaren werken. Geen wisselende
-              invalkrachten op uw opbouwdag, geen onbekende gezichten achter de mengtafel. Wie
-              u in de offerte ziet, staat er op de avond zelf.
+              netwerk van vaste freelancers waarmee we al jaren werken. Geen wisselende
+              invalkrachten op je opbouwdag, geen onbekende gezichten achter de mengtafel. Wie
+              je in de offerte ziet, staat er op de avond zelf.
             </p>
             <p>
               Wat ons onderscheidt is niet het materiaal &mdash; A-merk apparatuur is wat
-              iedereen gebruikt. Wat ons onderscheidt is hoe wij een evenement benaderen: als een
-              puzzel die wij voor u oplossen. Wij denken mee over locatie, omgeving en publiek.
-              Wij rekenen geluidsbelasting door voordat de gemeente erom vraagt. Wij bellen de
+              iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een
+              puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek.
+              We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de
               leverancier terug als een stekker niet klopt.
             </p>
             <p style={{ color: 'var(--color-fg)' }}>
               <strong>
-                U hoort ons pas als er iets is, en meestal is er dan al een oplossing.
+                Je hoort ons pas als er iets is, en meestal is er dan al een oplossing.
               </strong>
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function OverOnsPage() {
       <section className="closing">
         <div className="container">
           <p className="kicker" style={{ marginBottom: 16 }}>Aan de slag</p>
-          <h2>Klaar om mee te denken over uw evenement?</h2>
+          <h2>Klaar om mee te denken over je evenement?</h2>
           <div className="closing__ctas">
             <Link className="btn-primary" href="/contact">Neem contact op</Link>
             <Link className="btn-ghost" href="/aanbod">Bekijk het aanbod</Link>

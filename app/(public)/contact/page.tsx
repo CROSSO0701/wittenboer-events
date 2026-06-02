@@ -23,7 +23,7 @@ export default function ContactPage() {
             Bel, app, <span className="accent">of loop binnen.</span>
           </h1>
           <p className="page-header__lead">
-            Elk evenement is anders. Wij denken graag vroeg mee. Hoe eerder u belt, hoe strakker
+            Elk evenement is anders. We denken graag vroeg mee. Hoe eerder je belt, hoe strakker
             het wordt.
           </p>
         </div>
@@ -73,10 +73,10 @@ export default function ContactPage() {
         <div className="container form-grid">
           <div className="form-side" data-reveal>
             <p className="kicker">Of stuur een aanvraag</p>
-            <h2>Vertel ons kort over uw evenement.</h2>
+            <h2>Vertel ons kort over je evenement.</h2>
             <p>
-              Wij reageren binnen één werkdag. Hoe meer u nu deelt &mdash; datum, locatie,
-              aantal gasten, wat u nodig hebt &mdash; hoe gerichter wij meedenken.
+              We reageren binnen één werkdag. Hoe meer je nu deelt &mdash; datum, locatie,
+              aantal gasten, wat je nodig hebt &mdash; hoe gerichter we meedenken.
             </p>
             <div className="form-side__meta">
               <div className="form-side__row">

@@ -144,8 +144,8 @@ export default function ProjectenPage() {
               <h2>Een greep uit het archief.</h2>
             </div>
             <p className="section-head__lead">
-              Korte impressies. Vraag een uitgebreide referentie als u iets vergelijkbaars
-              overweegt &mdash; wij hebben de detail-draaiboeken nog liggen.
+              Korte impressies. Vraag een uitgebreide referentie als je iets vergelijkbaars
+              overweegt &mdash; we hebben de detail-draaiboeken nog liggen.
             </p>
           </div>
           <div className="more-grid__cards" data-reveal-stagger>
@@ -173,8 +173,8 @@ export default function ProjectenPage() {
           </p>
           <h2 style={{ color: 'var(--color-fg-on-dark)' }}>Vraag een referentie aan.</h2>
           <p style={{ color: 'var(--color-fg-on-dark-muted)', margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            Wij bellen vorige opdrachtgevers graag voor u. Of stuur ons een korte beschrijving
-            en wij kijken welke case het dichtst bij ligt.
+            We bellen vorige opdrachtgevers graag voor je. Of stuur ons een korte beschrijving
+            en we kijken welke case het dichtst bij ligt.
           </p>
           <div className="closing__ctas">
             <Link className="btn-primary" href="/contact">Neem contact op</Link>

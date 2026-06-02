@@ -84,7 +84,8 @@ export function KlusTypesManager({
   }
 
   async function onRemove(t: KlusType) {
-    if (!window.confirm(`Type "${t.label}" verwijderen?`)) return
+    // Geen native confirm (die bevriest + is lelijk); types zijn laag-risico en
+    // makkelijk opnieuw toe te voegen. De rode trash-knop is de affordance.
     setDeletingId(t.id)
     try {
       const res = await fetch(`/api/admin/klus-types/${t.id}`, { method: 'DELETE' })

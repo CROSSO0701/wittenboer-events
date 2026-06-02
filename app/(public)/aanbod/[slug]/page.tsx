@@ -43,7 +43,7 @@ const SERVICES: Service[] = [
     cat: 'Visueel',
     kicker: 'Licht',
     title: 'Een lichtontwerp dat de show maakt.',
-    lead: 'Een goede belichting bepaalt de hele sfeer van uw evenement.',
+    lead: 'Een goede belichting bepaalt de hele sfeer van je evenement.',
     body: 'Van een intiem bedrijfsdiner tot een compleet festivalpodium. Wij ontwerpen het lichtplan, bouwen het op en programmeren de show. Wij werken met A-merk fixtures, moving heads en architecturale armaturen. Een van onze technici staat altijd aan de console om de show live te operaten.',
     bullets: [
       'Volledig lichtontwerp op maat',
@@ -97,7 +97,7 @@ const SERVICES: Service[] = [
     kicker: 'Productiebegeleiding',
     title: 'Eén aanspreekpunt voor het hele evenement.',
     lead: 'Van eerste gesprek tot en met de afbouw. End-to-end coördinatie.',
-    body: 'Wilt u één aanspreekpunt voor uw hele evenement? Wij nemen de volledige productie uit handen. Van locatie-inspectie, vergunningenadvies, leveranciersselectie, planning, techniek, artiesten en crewmanagement tot evaluatie. U hoeft alleen te genieten.',
+    body: 'Wil je één aanspreekpunt voor je hele evenement? We nemen de volledige productie uit handen. Van locatie-inspectie, vergunningenadvies, leveranciersselectie, planning, techniek, artiesten en crewmanagement tot evaluatie. Jij hoeft alleen te genieten.',
     bullets: [],
     ctaLabel: 'Plan een gesprek',
     ctaHref: '/contact',

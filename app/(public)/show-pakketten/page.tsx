@@ -10,27 +10,27 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: 'Zit een DJ bij de prijs?',
-    a: 'Nee, de pakketten zijn de techniek (licht, geluid, opbouw). Een DJ kunt u via ons boeken als losse aanvulling, of u regelt er zelf één. Wij werken samen met meerdere DJ\'s en kunnen er één voorstellen die bij uw avond past.',
+    a: 'Nee, de pakketten zijn de techniek (licht, geluid, opbouw). Een DJ kun je via ons boeken als losse aanvulling, of je regelt er zelf één. We werken samen met meerdere DJ\'s en kunnen er één voorstellen die bij je avond past.',
   },
   {
     q: 'Wat als de locatie geen stroom heeft?',
-    a: 'Geen probleem. Wij leveren een aggregaat als losse upgrade. Geef bij de aanvraag aan dat de locatie buiten of zonder vaste stroom is, dan krijgt u het meteen meegerekend in de offerte.',
+    a: 'Geen probleem. We leveren een aggregaat als losse upgrade. Geef bij de aanvraag aan dat de locatie buiten of zonder vaste stroom is, dan krijg je het meteen meegerekend in de offerte.',
   },
   {
-    q: 'Hoe ver van \'s-Hertogenbosch werkt u?',
-    a: 'Heel Noord-Brabant en daarbuiten. Binnen 50 km geen voorrijkosten. Daarbuiten rekenen wij een vaste reisvergoeding mee. Wij zijn al in Limburg, Zeeland, Gelderland en Antwerpen geweest met deze pakketten.',
+    q: 'Hoe ver van \'s-Hertogenbosch werken jullie?',
+    a: 'Heel Noord-Brabant en daarbuiten. Binnen 50 km geen voorrijkosten. Daarbuiten rekenen we een vaste reisvergoeding mee. We zijn al in Limburg, Zeeland, Gelderland en Antwerpen geweest met deze pakketten.',
   },
   {
     q: 'Wanneer moet ik reserveren?',
-    a: 'Voor zaterdagen in mei–oktober en december: liefst 3–6 maanden vooruit. Doordeweekse data of buiten het seizoen kan vaak nog binnen 2–4 weken. Bel ons gerust, soms hebben wij last-minute capaciteit.',
+    a: 'Voor zaterdagen in mei–oktober en december: liefst 3–6 maanden vooruit. Doordeweekse data of buiten het seizoen kan vaak nog binnen 2–4 weken. Bel ons gerust, soms hebben we last-minute capaciteit.',
   },
   {
-    q: 'Kunnen wij een pakket aanpassen?',
-    a: 'Zeker. De pakketten zijn een vertrekpunt. Een extra moving head, andere DJ-set, een rookmachine, confetti: laat het weten en wij passen aan. Bij grotere wensen kijken wij of een maatwerk-offerte beter past.',
+    q: 'Kunnen we een pakket aanpassen?',
+    a: 'Zeker. De pakketten zijn een vertrekpunt. Een extra moving head, andere DJ-set, een rookmachine, confetti: laat het weten en we passen aan. Bij grotere wensen kijken we of een maatwerk-offerte beter past.',
   },
   {
     q: 'Hoe zit het met annuleren?',
-    a: 'Tot 6 weken voor de datum kosteloos. Daarna afhankelijk van de termijn (staat in de offerte). Bij overmacht of ziekte zoeken wij altijd naar een redelijke oplossing.',
+    a: 'Tot 6 weken voor de datum kosteloos. Daarna afhankelijk van de termijn (staat in de offerte). Bij overmacht of ziekte zoeken we altijd naar een redelijke oplossing.',
   },
 ]
 
@@ -139,8 +139,8 @@ export default function ShowPakkettenPage() {
             Vier shows, <span className="accent">één telefoontje.</span>
           </h1>
           <p className="page-header__lead">
-            Kant-en-klare disco-opbouwsets voor bruiloften en privéfeesten. Wij brengen, bouwen
-            op, draaien de show, breken af. U hoeft alleen de datum te bevestigen.
+            Kant-en-klare disco-opbouwsets voor bruiloften en privéfeesten. We brengen, bouwen
+            op, draaien de show, breken af. Je hoeft alleen de datum te bevestigen.
           </p>
         </div>
       </header>
@@ -151,14 +151,14 @@ export default function ShowPakkettenPage() {
             <p className="kicker">Showpakketten</p>
             <h2>Vooraf samengesteld. Op de avond perfect.</h2>
             <p>
-              Vier vaste setups die wij draaien op bruiloften, jubilea, verjaardagen en
-              bedrijfsfeesten. Elk pakket is een complete licht- en geluidsproductie waar wij
-              honderden keren mee gewerkt hebben, en die wij in een paar uur staan te bouwen.
+              Vier vaste setups die we draaien op bruiloften, jubilea, verjaardagen en
+              bedrijfsfeesten. Elk pakket is een complete licht- en geluidsproductie waar we
+              honderden keren mee gewerkt hebben, en die we in een paar uur staan te bouwen.
             </p>
             <p>
               Prijzen zijn <em>vanaf</em>: de definitieve prijs hangt af van locatie,
-              opbouwtijd, en of u nog een DJ via ons wilt boeken. Vraag een offerte voor de
-              exacte prijs voor uw datum.
+              opbouwtijd, en of je nog een DJ via ons wilt boeken. Vraag een offerte voor de
+              exacte prijs voor je datum.
             </p>
           </div>
           <ul className="pkg-intro__bullets" data-reveal data-reveal-delay="2">
@@ -168,7 +168,7 @@ export default function ShowPakkettenPage() {
                 <polyline points="9,22 9,12 15,12 15,22" />
               </svg>
               <div>
-                <strong>Wij bouwen op en breken af</strong>
+                <strong>We bouwen op en breken af</strong>
                 <span>Inclusief transport, montage, programmering en demontage.</span>
               </div>
             </li>
@@ -189,7 +189,7 @@ export default function ShowPakkettenPage() {
               </svg>
               <div>
                 <strong>Locatie-check als het nodig is</strong>
-                <span>Onbekende zaal of strakke opbouwtijd? Wij komen vooraf langs of bellen de locatiehouder.</span>
+                <span>Onbekende zaal of strakke opbouwtijd? We komen vooraf langs of bellen de locatiehouder.</span>
               </div>
             </li>
             <li className="pkg-intro__bullet">
@@ -198,7 +198,7 @@ export default function ShowPakkettenPage() {
               </svg>
               <div>
                 <strong>Vragen over een upgrade?</strong>
-                <span>Niet zeker wat u nodig hebt? Bel ons gerust, wij adviseren eerlijk, ook als dat een kleiner pakket is.</span>
+                <span>Niet zeker wat je nodig hebt? Bel ons gerust, we adviseren eerlijk, ook als dat een kleiner pakket is.</span>
               </div>
             </li>
           </ul>
@@ -210,7 +210,7 @@ export default function ShowPakkettenPage() {
           <div className="compare__inner">
             <div>
               <div className="compare__label">Niet zeker welk pakket past?</div>
-              <div className="compare__title">Stuur een korte beschrijving en wij adviseren binnen een dag.</div>
+              <div className="compare__title">Stuur een korte beschrijving en we adviseren binnen een dag.</div>
             </div>
             <Link className="compare__cta" href="/contact">Vraag advies</Link>
           </div>
@@ -366,7 +366,7 @@ export default function ShowPakkettenPage() {
             <p className="kicker">Bij elk pakket inbegrepen</p>
             <h2>Eén prijs. Geen verrassingen.</h2>
             <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-fg-secondary)' }}>
-              Alles wat hieronder staat zit standaard in elk showpakket. U betaalt alleen extra
+              Alles wat hieronder staat zit standaard in elk showpakket. Je betaalt alleen extra
               voor: een DJ via ons (op aanvraag), een tweede dag, of speciale wensen zoals
               rookmachine of confetti.
             </p>
@@ -382,7 +382,7 @@ export default function ShowPakkettenPage() {
                 </svg>
               </div>
               <h3>Transport</h3>
-              <p>Wij brengen alles in onze eigen bus. Aanrijden vanuit &lsquo;s-Hertogenbosch e.o. binnen 50 km gratis.</p>
+              <p>We brengen alles in onze eigen bus. Aanrijden vanuit &lsquo;s-Hertogenbosch e.o. binnen 50 km gratis.</p>
             </div>
             <div className="incl__item">
               <div className="incl__icon">
@@ -393,7 +393,7 @@ export default function ShowPakkettenPage() {
                 </svg>
               </div>
               <h3>Opbouw &amp; afbouw</h3>
-              <p>Twee technici komen 2–4 uur voor aanvang. Na afloop alles weer mee. U hoeft niets.</p>
+              <p>Twee technici komen 2–4 uur voor aanvang. Na afloop alles weer mee. Je hoeft niets.</p>
             </div>
             <div className="incl__item">
               <div className="incl__icon">
@@ -412,7 +412,7 @@ export default function ShowPakkettenPage() {
                 </svg>
               </div>
               <h3>Aanspreekpunt</h3>
-              <p>Eén nummer voor de hele avond. Iets gaat fout? Wij lossen het op zonder dat u merkt dat het er was.</p>
+              <p>Eén nummer voor de hele avond. Iets gaat fout? We lossen het op zonder dat je merkt dat het er was.</p>
             </div>
           </div>
         </div>
@@ -448,7 +448,7 @@ export default function ShowPakkettenPage() {
             <div className="pkg-flow__step">
               <span className="pkg-flow__num">04 / Showtime</span>
               <h3>Wij doen de rest</h3>
-              <p>Opbouw, programmering, show, afbouw. U hoeft alleen te genieten van de avond.</p>
+              <p>Opbouw, programmering, show, afbouw. Je hoeft alleen te genieten van de avond.</p>
             </div>
           </div>
         </div>
@@ -476,11 +476,11 @@ export default function ShowPakkettenPage() {
       <section className="closing" style={{ background: 'var(--color-surface-dark)', color: 'var(--color-fg-on-dark)' }}>
         <div className="container">
           <p className="kicker" style={{ color: 'var(--color-tertiary)', marginBottom: 16 }}>
-            Klaar voor uw avond?
+            Klaar voor je avond?
           </p>
           <h2 style={{ color: 'var(--color-fg-on-dark)' }}>Reserveer een pakket. Wij bouwen.</h2>
           <p style={{ color: 'var(--color-fg-on-dark-muted)', margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
-            Korte aanvraag is genoeg. Datum, locatie, welk pakket u in gedachten hebt. Wij
+            Korte aanvraag is genoeg. Datum, locatie, welk pakket je in gedachten hebt. We
             sturen binnen één werkdag een offerte met vaste prijs.
           </p>
           <div className="closing__ctas">

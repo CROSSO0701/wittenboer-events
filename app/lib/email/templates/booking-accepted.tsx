@@ -19,7 +19,7 @@ export function BookingAcceptedMail({
 }) {
   return (
     <MailLayout title="Klus geaccepteerd" preheader={`${eventDate} · ${eventLocation}`}>
-      <p style={{ marginTop: 0 }}>Beste {artistName},</p>
+      <p style={{ marginTop: 0 }}>Hoi {artistName},</p>
       <p>
         Je aanvraag voor <strong>{clientName}</strong> is bevestigd. De datum
         staat in de agenda en je krijgt nog bericht zodra er techniek/personeel is toegewezen.

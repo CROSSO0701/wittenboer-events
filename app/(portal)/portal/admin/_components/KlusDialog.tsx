@@ -79,6 +79,7 @@ export function KlusDialog({
   const [kindOptions, setKindOptions] = useState<KlusType[]>([])
   const [kind, setKind] = useState(klus?.kind ?? '')
   const [typesOpen, setTypesOpen] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   // Active klus-types laden (voor de dropdown). Apart van de open-effect zodat
   // we ook na het sluiten van de beheer-dialog kunnen verversen.
@@ -104,6 +105,7 @@ export function KlusDialog({
       setConflicts(null)
       setOverride(false)
       setPicked({})
+      setConfirmDelete(false)
       return
     }
     setKind(klus?.kind ?? '')
@@ -198,7 +200,10 @@ export function KlusDialog({
 
   async function onDelete() {
     if (!klus) return
-    if (!window.confirm('Deze klus verwijderen?')) return
+    if (!confirmDelete) {
+      setConfirmDelete(true)
+      return
+    }
     setDeleting(true)
     try {
       const res = await fetch(`/api/admin/klussen/${klus.id}`, { method: 'DELETE' })
@@ -375,8 +380,14 @@ export function KlusDialog({
 
           <DialogFooter className="sm:col-span-2 sm:justify-between">
             {isEdit ? (
-              <Button type="button" variant="ghost" onClick={onDelete} disabled={deleting || submitting}>
-                <Trash2 size={14} /> {deleting ? 'Verwijderen…' : 'Verwijderen'}
+              <Button
+                type="button"
+                variant={confirmDelete ? 'danger' : 'ghost'}
+                onClick={onDelete}
+                disabled={deleting || submitting}
+              >
+                <Trash2 size={14} />{' '}
+                {deleting ? 'Verwijderen…' : confirmDelete ? 'Echt verwijderen?' : 'Verwijderen'}
               </Button>
             ) : (
               <span />

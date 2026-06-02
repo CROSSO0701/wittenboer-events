@@ -73,7 +73,7 @@ export default function Page() {
               <div>
                 <p className="hero__lead" data-reveal data-reveal-delay="2">
                   Van drive-in tot festival voor 5000 bezoekers. Eén team, A-merk materiaal,
-                  en techniek die u vergeet omdat alles werkt.
+                  en techniek die je vergeet omdat alles werkt.
                 </p>
               </div>
               <div className="hero__cta-row" data-reveal data-reveal-delay="3">
@@ -155,10 +155,10 @@ export default function Page() {
           <div className="section-head" data-reveal>
             <div>
               <p className="kicker">Wat wij doen</p>
-              <h2>Alles voor uw evenement, in één bus.</h2>
+              <h2>Alles voor je evenement, in één bus.</h2>
             </div>
             <p className="section-head__lead">
-              Geluid, licht, stroom, artiesten. Los of compleet. Kies wat u nodig hebt, of laat
+              Geluid, licht, stroom, artiesten. Los of compleet. Kies wat je nodig hebt, of laat
               ons het hele plaatje doen.
             </p>
           </div>
@@ -183,7 +183,7 @@ export default function Page() {
                   <h3>Licht</h3>
                   <span className="service-card__arrow" aria-hidden="true">{ICON_NORTHEAST}</span>
                 </div>
-                <p>Een goede belichting bepaalt de hele sfeer van uw evenement.</p>
+                <p>Een goede belichting bepaalt de hele sfeer van je evenement.</p>
               </div>
             </Link>
             <Link href="/aanbod/artiestenbegeleiding" className="service-card service-card--flat span-5">
@@ -389,7 +389,7 @@ export default function Page() {
             <div className="approach__step">
               <span className="approach__num">01 / Bellen</span>
               <h3>Bellen<span className="dot" /></h3>
-              <p>U belt of mailt. Wij komen langs of regelen het telefonisch — en denken meteen mee.</p>
+              <p>Je belt of mailt. Wij komen langs of regelen het telefonisch — en denken meteen mee.</p>
             </div>
             <div className="approach__step">
               <span className="approach__num">02 / Plan</span>
@@ -399,7 +399,7 @@ export default function Page() {
             <div className="approach__step">
               <span className="approach__num">03 / Knallen</span>
               <h3>Knallen<span className="dot" /></h3>
-              <p>Wij bouwen op, draaien de show, breken af. U bij de gasten. Wij op de techniek.</p>
+              <p>Wij bouwen op, draaien de show, breken af. Jij bij de gasten. Wij op de techniek.</p>
             </div>
           </div>
         </div>
@@ -414,7 +414,7 @@ export default function Page() {
               <h2>Bel, app, of loop binnen.</h2>
             </div>
             <p data-reveal data-reveal-delay="2">
-              Elk evenement is anders. Wij denken graag vroeg mee. Hoe eerder u belt, hoe strakker
+              Elk evenement is anders. We denken graag vroeg mee. Hoe eerder je belt, hoe strakker
               het wordt.
             </p>
           </div>

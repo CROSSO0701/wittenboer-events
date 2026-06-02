@@ -13,7 +13,7 @@ export function BookingDeclinedMail({
 }) {
   return (
     <MailLayout title="Aanvraag afgewezen" preheader={`${eventDate} · ${clientName}`}>
-      <p style={{ marginTop: 0 }}>Beste {artistName},</p>
+      <p style={{ marginTop: 0 }}>Hoi {artistName},</p>
       <p>
         We kunnen de klus voor <strong>{clientName}</strong> op {eventDate} helaas niet
         accepteren. De reden:

@@ -15,7 +15,7 @@ export function BookingCancelledMail({
 }) {
   return (
     <MailLayout title="Boeking geannuleerd" preheader={`${eventDate} · ${clientName}`}>
-      <p style={{ marginTop: 0 }}>Beste {name},</p>
+      <p style={{ marginTop: 0 }}>Hoi {name},</p>
       <p>
         De klus voor <strong>{clientName}</strong> op {eventDate} is geannuleerd. De agenda is
         bijgewerkt.

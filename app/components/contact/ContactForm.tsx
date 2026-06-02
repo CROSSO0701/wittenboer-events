@@ -92,7 +92,7 @@ export function ContactForm() {
     return (
       <div className="contact-form">
         <div className="form__success" role="status" tabIndex={-1} ref={successRef}>
-          Bedankt, wij nemen binnen één werkdag contact op. Voor spoed:
+          Bedankt, we nemen binnen één werkdag contact op. Voor spoed:
           {' '}
           <a href="tel:+31627172876" style={{ color: 'inherit', textDecoration: 'underline' }}>
             06 27 17 28 76
@@ -164,11 +164,11 @@ export function ContactForm() {
         </div>
       </div>
       <div className="field">
-        <label htmlFor="bericht">Vertel ons over uw evenement</label>
+        <label htmlFor="bericht">Vertel ons over je evenement</label>
         <textarea
           id="bericht"
           name="bericht"
-          placeholder="Wat zoekt u? Welke onderdelen? Locatie-bijzonderheden? Hoe meer info, hoe gerichter wij meedenken."
+          placeholder="Wat zoek je? Welke onderdelen? Locatie-bijzonderheden? Hoe meer info, hoe gerichter we meedenken."
           required
         />
       </div>
@@ -178,7 +178,7 @@ export function ContactForm() {
         </p>
       )}
       <div className="form__submit-row">
-        <span className="field__hint">Wij reageren binnen 1 werkdag.</span>
+        <span className="field__hint">We reageren binnen 1 werkdag.</span>
         <button className="btn-primary" type="submit" disabled={status === 'submitting'}>
           {status === 'submitting' ? 'Versturen...' : 'Verstuur aanvraag'}
         </button>

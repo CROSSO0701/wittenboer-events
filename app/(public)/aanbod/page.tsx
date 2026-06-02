@@ -38,9 +38,9 @@ export default function AanbodPage() {
           <div className="aanbod__intro" data-reveal>
             <p className="kicker">Wat wij doen</p>
             <p>
-              Wij werken met A-merk materiaal en sturen onze eigen technici aan. Of u nu één
+              We werken met A-merk materiaal en sturen onze eigen technici aan. Of je nu één
               microfoon nodig hebt voor een toespraak, of een complete festivalproductie.
-              Onderstaande diensten kunt u los boeken of als pakket. Klik op een kaart voor
+              Onderstaande diensten kun je los boeken of als pakket. Klik op een kaart voor
               de details.
             </p>
           </div>
@@ -152,9 +152,9 @@ export default function AanbodPage() {
                   <h3 style={{ marginTop: 8 }}>Productiebegeleiding</h3>
                 </div>
                 <p style={{ fontSize: 16 }}>
-                  Wilt u één aanspreekpunt voor uw hele evenement? Locatie-inspectie,
+                  Wil je één aanspreekpunt voor je hele evenement? Locatie-inspectie,
                   vergunningenadvies, leveranciers, planning, techniek, artiesten en
-                  crewmanagement. U hoeft alleen te genieten.
+                  crewmanagement. Jij hoeft alleen te genieten.
                 </p>
                 <div
                   className="a-card__foot"
@@ -171,11 +171,11 @@ export default function AanbodPage() {
 
       <section className="closing" style={{ background: 'var(--color-surface-1)' }}>
         <div className="container">
-          <p className="kicker" style={{ marginBottom: 16 }}>Niet zeker wat u nodig hebt?</p>
+          <p className="kicker" style={{ marginBottom: 16 }}>Niet zeker wat je nodig hebt?</p>
           <h2>Bel ons en wij denken mee.</h2>
           <p style={{ margin: '0 auto 32px', maxInlineSize: '52ch', fontSize: 17 }}>
             Een korte belronde, een locatie-inspectie als dat nuttig is, en een plan dat past bij
-            wat u écht zoekt.
+            wat je écht zoekt.
           </p>
           <div className="closing__ctas">
             <Link className="btn-primary" href="/contact">Neem contact op</Link>

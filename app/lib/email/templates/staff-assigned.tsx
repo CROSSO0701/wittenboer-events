@@ -21,7 +21,7 @@ export function StaffAssignedMail({
 }) {
   return (
     <MailLayout title="Je staat ingepland" preheader={`${eventDate} · ${eventLocation}`}>
-      <p style={{ marginTop: 0 }}>Beste {staffName},</p>
+      <p style={{ marginTop: 0 }}>Hoi {staffName},</p>
       <p>
         Je bent toegevoegd aan een klus{artistName ? ` met ${artistName}` : ''}. Hieronder de
         details. Bevestig in het portaal of neem contact op als het niet uitkomt.

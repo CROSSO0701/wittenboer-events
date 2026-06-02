@@ -23,10 +23,10 @@ export default function KlusDoorgevenPage() {
             <span>Klus doorgeven</span>
           </div>
           <h1>
-            Uw optreden, <span className="accent">wij regelen de rest.</span>
+            Jouw optreden, <span className="accent">wij regelen de rest.</span>
           </h1>
           <p className="page-header__lead">
-            Hebt u een boeking? Geef de details hier door, dan regelen wij licht, geluid, podium
+            Heb je een boeking? Geef de details hier door, dan regelen we licht, geluid, podium
             en crew.
           </p>
         </div>
@@ -36,10 +36,10 @@ export default function KlusDoorgevenPage() {
         <div className="container form-grid">
           <div className="form-side" data-reveal>
             <p className="kicker">Even doorgeven</p>
-            <h2>Vul kort uw klus in.</h2>
+            <h2>Vul kort je klus in.</h2>
             <p>
-              Kies uw naam, vul datum en locatie in en vertel wat u nodig hebt. Wij bevestigen
-              de details en plannen de crew. Hoe meer u deelt, hoe strakker wij het maken.
+              Kies je naam, vul datum en locatie in en vertel wat je nodig hebt. We bevestigen
+              de details en plannen de crew. Hoe meer je deelt, hoe strakker we het maken.
             </p>
             <div className="form-side__meta">
               <div className="form-side__row">

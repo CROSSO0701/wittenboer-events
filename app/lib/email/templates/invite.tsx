@@ -11,7 +11,7 @@ export function InviteMail({
 }) {
   return (
     <MailLayout title="Welkom bij Wittenboer Events" preheader="Stel je wachtwoord in en log in">
-      <p style={{ marginTop: 0 }}>Beste {name},</p>
+      <p style={{ marginTop: 0 }}>Hoi {name},</p>
       <p>
         Je bent toegevoegd aan het portaal van Wittenboer Events {role === 'artiest' ? 'als artiest' : 'als crewlid'}. Stel hieronder je
         wachtwoord in om in te loggen.
