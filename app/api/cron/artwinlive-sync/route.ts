@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '../../../lib/db/server'
 import { fetchFeed } from '../../../lib/integrations/artwinlive'
-import { createEvent, patchEvent, cleanArtwinSummary, calendarTitle } from '../../../lib/integrations/google-calendar'
+import { patchEvent, cleanArtwinSummary, calendarTitle } from '../../../lib/integrations/google-calendar'
 
 // "Evenement (Artiest Oud)" -> "Evenement (Artiest)": de "Oud"-suffix die
 // Artwin's dubbele profielen toevoegen weghalen, zodat dezelfde gig matcht.
@@ -37,7 +37,6 @@ export async function GET(request: Request) {
 
   let inserted = 0
   let updated = 0
-  let pushed = 0
   let skipped = 0
   const errors: string[] = []
 
@@ -105,12 +104,15 @@ export async function GET(request: Request) {
         skipped += 1
         continue
       }
-      const { data: created, error } = await supabase
+      // Nieuwe Artwin-gig komt binnen als 'pending' ("inkomend"): NIET meer
+      // automatisch op de agenda. Marnix beoordeelt/past aan en accepteert 'm,
+      // pas dán wordt het Google-event aangemaakt (zie de accept-flow).
+      const { error } = await supabase
         .from('bookings')
         .insert({
           source: 'artwinlive',
           artwinlive_id: ev.uid,
-          status: 'accepted',
+          status: 'pending',
           event_date: eventDate,
           event_start: ev.startISO,
           event_end: ev.endISO,
@@ -118,29 +120,11 @@ export async function GET(request: Request) {
           notes: ev.description ?? null,
           client_name: cleanName,
         })
-        .select('id')
-        .maybeSingle()
-      if (error || !created) {
-        errors.push(`insert ${ev.uid}: ${error?.message ?? 'no row'}`)
+      if (error) {
+        errors.push(`insert ${ev.uid}: ${error.message}`)
         continue
       }
       inserted += 1
-
-      // Push naar Google Calendar
-      const gcal = await createEvent({
-        summary: calendarTitle({ source: 'artwinlive', clientName: cleanName }),
-        description: ev.description,
-        location: ev.location,
-        startISO: ev.startISO,
-        endISO: ev.endISO,
-        sourceId: ev.uid,
-      })
-      if (gcal.ok && gcal.id) {
-        await supabase.from('bookings').update({ google_event_id: gcal.id }).eq('id', created.id)
-        pushed += 1
-      } else if (gcal.error) {
-        errors.push(`gcal ${ev.uid}: ${gcal.error}`)
-      }
     }
   }
 
@@ -149,7 +133,6 @@ export async function GET(request: Request) {
     total: feed.events.length,
     inserted,
     updated,
-    pushed,
     skipped,
     errors,
   })

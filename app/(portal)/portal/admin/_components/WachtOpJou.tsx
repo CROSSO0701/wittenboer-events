@@ -103,6 +103,9 @@ export function WachtOpJou({
               'decline_reason, created_at, artist:artists(stage_name)'
           )
           .eq('status', 'pending')
+          // Artwin-gigs hebben hun eigen "Inkomend"-lijst (kunnen er honderden
+          // zijn); die zouden deze to-do-lijst overspoelen.
+          .neq('source', 'artwinlive')
           .order('event_date', { ascending: true, nullsFirst: false }),
         supabase
           .from('contact_inquiries')

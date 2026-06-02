@@ -78,6 +78,7 @@ async function preload(supabase: DB): Promise<{
             'decline_reason, created_at, artist:artists(stage_name)'
         )
         .eq('status', 'pending')
+        .neq('source', 'artwinlive')
         .order('event_date', { ascending: true, nullsFirst: false }),
       supabase
         .from('contact_inquiries')

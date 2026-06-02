@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   Inbox,
+  Download,
   CalendarDays,
   Users,
   UsersRound,
@@ -113,6 +114,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const primaryItems: NavItem[] = isAdmin
     ? [
         { href: '/portal/admin', label: 'Te doen', icon: Inbox },
+        { href: '/portal/admin/inkomend', label: 'Inkomend', icon: Download },
         { href: '/portal/admin/agenda', label: 'Agenda', icon: CalendarDays },
         { href: '/portal/admin/klanten', label: 'Klanten', icon: UsersRound },
         { href: '/portal/admin/personeel', label: 'Crew', icon: Users },
