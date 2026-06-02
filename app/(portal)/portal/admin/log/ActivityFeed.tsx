@@ -188,7 +188,7 @@ export function ActivityFeed() {
                       {ACTION_LABELS[r.action] ?? r.action}
                     </td>
                     <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                      {r.actor?.full_name ?? r.actor?.email ?? (r.actor_id ? 'systeem' : '—')}
+                      {r.actor?.full_name ?? r.actor?.email ?? (r.actor_id ? 'systeem' : '-')}
                     </td>
                     <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
                       {link ? (

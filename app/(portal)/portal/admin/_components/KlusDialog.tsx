@@ -180,7 +180,7 @@ export function KlusDialog({
       const data = await res.json().catch(() => ({}))
       if (res.status === 409 && data.conflicts) {
         setConflicts(data.conflicts as Conflict[])
-        toast.warning('Mogelijke dubbelboeking — controleer en bevestig.')
+        toast.warning('Mogelijke dubbelboeking, controleer en bevestig.')
         return
       }
       if (!res.ok) {
@@ -285,7 +285,7 @@ export function KlusDialog({
               )}
               {kindOptions.length === 0 && !kind && (
                 <option value="" disabled>
-                  Geen types — voeg er een toe
+                  Geen types, voeg er een toe
                 </option>
               )}
               {kindOptions.map((o) => (

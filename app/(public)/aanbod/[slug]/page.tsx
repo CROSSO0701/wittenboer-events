@@ -145,7 +145,7 @@ export default async function ServicePage({
             <span>{svc.kicker}</span>
           </div>
           <h1>
-            {svc.kicker.toUpperCase()} <span className="accent">— {svc.title.toLowerCase()}</span>
+            {svc.kicker.toUpperCase()} <span className="accent">· {svc.title.toLowerCase()}</span>
           </h1>
           <p className="page-header__lead">{svc.lead}</p>
         </div>

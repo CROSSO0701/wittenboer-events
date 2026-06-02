@@ -357,10 +357,10 @@ export function WachtOpJou({
                     )}
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                    {item.date ? relativeDate(item.date) : '—'}
+                    {item.date ? relativeDate(item.date) : '-'}
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                    {item.location ?? '—'}
+                    {item.location ?? '-'}
                   </td>
                   <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{item.need}</td>
                   <td className="px-4 py-3 text-[var(--color-fg-muted)]">{fmtAgo(item.createdAt)}</td>

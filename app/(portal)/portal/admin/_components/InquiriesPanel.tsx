@@ -151,7 +151,7 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                 <tr key={r.id} className="border-b border-[var(--color-border)] last:border-b-0">
                   <Td>{r.name}</Td>
                   <Td>{r.email}</Td>
-                  <Td>{r.subject ?? '—'}</Td>
+                  <Td>{r.subject ?? '-'}</Td>
                   <Td muted>{relativeDate(r.created_at)}</Td>
                   <Td>
                     <StatusSelect
@@ -191,11 +191,11 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <div className="text-xs text-[var(--color-fg-muted)]">{r.email}</div>
                   </Td>
                   <Td>
-                    {r.package?.name ? <Badge tone="info">{r.package.name}</Badge> : '—'}
+                    {r.package?.name ? <Badge tone="info">{r.package.name}</Badge> : '-'}
                   </Td>
                   <Td muted>{relativeDate(r.event_date)}</Td>
-                  <Td muted>{r.guest_count ?? '—'}</Td>
-                  <Td muted>{r.location ?? '—'}</Td>
+                  <Td muted>{r.guest_count ?? '-'}</Td>
+                  <Td muted>{r.location ?? '-'}</Td>
                   <Td>
                     <StatusSelect
                       value={r.status}
@@ -232,9 +232,9 @@ export function InquiriesPanel({ onChanged }: { onChanged?: () => void }) {
                     <div className="font-medium text-[var(--color-fg)]">{r.name}</div>
                     <div className="text-xs text-[var(--color-fg-muted)]">{r.email}</div>
                   </Td>
-                  <Td>{r.artist?.stage_name ?? '—'}</Td>
+                  <Td>{r.artist?.stage_name ?? '-'}</Td>
                   <Td muted>{relativeDate(r.event_date)}</Td>
-                  <Td muted>{r.event_location ?? '—'}</Td>
+                  <Td muted>{r.event_location ?? '-'}</Td>
                   <Td>
                     <StatusSelect
                       value={r.status}

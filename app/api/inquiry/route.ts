@@ -148,7 +148,7 @@ export async function POST(request: Request) {
     }),
     sendResend({
       to: parsed.email,
-      subject: 'Bedankt voor je bericht — Wittenboer Events',
+      subject: 'Bedankt voor je bericht · Wittenboer Events',
       html: confirmMail.html,
       text: confirmMail.text,
     }),

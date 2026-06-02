@@ -153,7 +153,7 @@ function ArtwinCard({
         setTestResult(`Fout: ${data.error ?? 'onbekend'}`)
         toast.error(`Feed-test faalde`)
       } else {
-        setTestResult(`Feed werkt — ${data.count} events gevonden`)
+        setTestResult(`Feed werkt, ${data.count} events gevonden`)
         toast.success(`${data.count} events in feed`)
       }
     } finally {
@@ -276,7 +276,7 @@ function FeedCard() {
           </div>
           <p className="text-xs text-[var(--color-fg-muted)]">
             Plak deze link in Google Agenda → &ldquo;Andere agenda&rsquo;s&rdquo; → &ldquo;Toevoegen via URL&rdquo;.
-            Behandel hem als een wachtwoord — wie hem heeft, kan je klussen meekijken.
+            Behandel hem als een wachtwoord: wie hem heeft, kan je klussen meekijken.
           </p>
         </div>
       )}
@@ -292,8 +292,8 @@ function ResendCard({ connected }: { connected: boolean }) {
       </p>
       <p className="mt-3 text-xs text-[var(--color-fg-muted)]">
         {connected
-          ? 'Mail werkt — alles wordt automatisch verstuurd.'
-          : 'Nog niet ingesteld. Vraag de developer om dit te activeren — pas dan worden mails ook echt verstuurd.'}
+          ? 'Mail werkt, alles wordt automatisch verstuurd.'
+          : 'Nog niet ingesteld. Vraag de developer om dit te activeren, pas dan worden mails ook echt verstuurd.'}
       </p>
     </CardShell>
   )

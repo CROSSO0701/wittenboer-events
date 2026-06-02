@@ -39,9 +39,9 @@ export default async function AccountPage() {
           Profiel
         </h1>
         <dl className="mt-4 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--color-border)] bg-white p-4 text-sm">
-          <Field label="Naam" value={profile?.full_name ?? '—'} />
-          <Field label="E-mail" value={profile?.email ?? user.email ?? '—'} />
-          <Field label="Rol" value={profile?.role ?? '—'} />
+          <Field label="Naam" value={profile?.full_name ?? '-'} />
+          <Field label="E-mail" value={profile?.email ?? user.email ?? '-'} />
+          <Field label="Rol" value={profile?.role ?? '-'} />
           <Field
             label="Wachtwoord ingesteld"
             value={profile?.has_password ? 'Ja' : 'Nog niet'}

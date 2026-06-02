@@ -52,7 +52,7 @@ export default function ArtiestenPage() {
             De namen <span className="accent">die wij draaien.</span>
           </h1>
           <p className="page-header__lead">
-            Wij werken samen met een vaste groep Nederlandse artiesten &mdash; wij kennen hun show,
+            Wij werken samen met een vaste groep Nederlandse artiesten, wij kennen hun show,
             hun tapes, hun rider. Boekingen lopen via de artiest zelf; wij regelen de techniek
             en begeleiding.
           </p>
@@ -94,7 +94,7 @@ export default function ArtiestenPage() {
                 De artiesten boek je rechtstreeks via hun eigen kanalen. Wij zorgen voor de
                 tape-show, technische begeleiding en backstage-coördinatie als je dat wilt. Bel
                 ons als je wilt sparren over een line-up of een combinatie van artiesten op één
-                avond &mdash; wij kennen de meeste werkschema&apos;s.
+                avond, wij kennen de meeste werkschema&apos;s.
               </p>
             </div>
             <Link className="btn-primary" href="/contact">Bespreek een line-up</Link>

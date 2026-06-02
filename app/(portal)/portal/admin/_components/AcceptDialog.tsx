@@ -81,7 +81,7 @@ export function AcceptDialog({
       const data = await res.json().catch(() => ({}))
       if (res.status === 409 && data.conflicts) {
         setConflicts(data.conflicts as Conflict[])
-        toast.warning('Mogelijke dubbelboeking — controleer en bevestig.')
+        toast.warning('Mogelijke dubbelboeking, controleer en bevestig.')
         return
       }
       if (!res.ok) {

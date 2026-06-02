@@ -17,7 +17,7 @@ export type ClientRow = {
 }
 
 function formatDate(d?: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
 }
 
@@ -93,8 +93,8 @@ export function KlantenTable({ rows }: { rows: ClientRow[] }) {
                       {c.name ?? '(geen naam)'}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{c.email ?? '—'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{c.phone ?? '—'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{c.email ?? '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{c.phone ?? '-'}</td>
                   <td className="px-4 py-3 text-right text-[var(--color-fg)]">{c.total_bookings}</td>
                   <td className="px-4 py-3 text-right text-[var(--color-fg)]">
                     {formatEUR(c.total_value_cents)}

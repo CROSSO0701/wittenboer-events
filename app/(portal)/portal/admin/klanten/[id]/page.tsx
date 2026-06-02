@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Klantdetail' }
 export const dynamic = 'force-dynamic'
 
 function formatDate(d?: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
 }
 
@@ -58,7 +58,7 @@ export default async function KlantDetail({ params }: { params: Promise<{ id: st
           {client.name ?? '(geen naam)'}
         </h1>
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
-          {client.email ?? '—'}
+          {client.email ?? '-'}
           {client.phone && <> · {client.phone}</>}
         </p>
       </header>
@@ -106,7 +106,7 @@ export default async function KlantDetail({ params }: { params: Promise<{ id: st
                   >
                     <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
                     <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                      {b.event_location ?? '—'}
+                      {b.event_location ?? '-'}
                     </td>
                     <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{sourceLabel(b.source)}</td>
                     <td className="px-4 py-3">

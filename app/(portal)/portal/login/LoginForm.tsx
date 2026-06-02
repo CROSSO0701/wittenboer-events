@@ -34,7 +34,7 @@ export function LoginForm() {
   useEffect(() => {
     const authError = params.get('auth_error')
     if (!authError) return
-    toast.error(`Inloggen mislukt — ${authError}`)
+    toast.error(`Inloggen mislukt: ${authError}`)
   }, [params])
 
   return (

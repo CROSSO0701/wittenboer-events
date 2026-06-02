@@ -64,7 +64,7 @@ export default function AuthCallbackPage() {
         })
         if (error) authError = error.message
       } else {
-        failWith('Geen code ontvangen — link verlopen of ongeldig.')
+        failWith('Geen code ontvangen, link verlopen of ongeldig.')
         return
       }
 

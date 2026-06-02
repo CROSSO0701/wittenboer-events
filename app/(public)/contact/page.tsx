@@ -75,8 +75,8 @@ export default function ContactPage() {
             <p className="kicker">Of stuur een aanvraag</p>
             <h2>Vertel ons kort over je evenement.</h2>
             <p>
-              We reageren binnen één werkdag. Hoe meer je nu deelt &mdash; datum, locatie,
-              aantal gasten, wat je nodig hebt &mdash; hoe gerichter we meedenken.
+              We reageren binnen één werkdag. Hoe meer je nu deelt (datum, locatie,
+              aantal gasten, wat je nodig hebt), hoe gerichter we meedenken.
             </p>
             <div className="form-side__meta">
               <div className="form-side__row">

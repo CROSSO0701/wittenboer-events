@@ -56,9 +56,9 @@ export function StaffPanel() {
             <tbody>
               {staff.map((p) => (
                 <tr key={p.id} className="border-b border-[var(--color-border)] last:border-b-0">
-                  <td className="px-4 py-3 text-[var(--color-fg)]">{p.full_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.email ?? '—'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.phone ?? '—'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg)]">{p.full_name ?? '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.email ?? '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.phone ?? '-'}</td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
                       <Pencil size={14} /> Bewerken
@@ -122,7 +122,7 @@ function InviteStaffDialog({
         toast.error(msg + detail, { duration: 8000 })
         return
       }
-      if (data.reused) toast.success(`${fullName} stond al in het systeem — nu als crewlid gezet.`)
+      if (data.reused) toast.success(`${fullName} stond al in het systeem, nu als crewlid gezet.`)
       else toast.success(`${fullName} is toegevoegd als crewlid.`)
       setFullName('')
       setEmail('')

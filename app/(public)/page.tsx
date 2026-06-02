@@ -389,7 +389,7 @@ export default function Page() {
             <div className="approach__step">
               <span className="approach__num">01 / Bellen</span>
               <h3>Bellen<span className="dot" /></h3>
-              <p>Je belt of mailt. Wij komen langs of regelen het telefonisch — en denken meteen mee.</p>
+              <p>Je belt of mailt. Wij komen langs of regelen het telefonisch, en denken meteen mee.</p>
             </div>
             <div className="approach__step">
               <span className="approach__num">02 / Plan</span>

@@ -4,7 +4,7 @@ import { KlusForm } from './KlusForm'
 
 export const metadata: Metadata = {
   title: 'Klus doorgeven',
-  description: 'Artiesten van Wittenboer geven hier hun optreden door — wij regelen licht, geluid, podium en crew.',
+  description: 'Artiesten van Wittenboer geven hier hun optreden door, wij regelen licht, geluid, podium en crew.',
   // Alleen voor artiesten met de link — niet in zoekmachines.
   robots: { index: false, follow: false },
 }
@@ -49,7 +49,7 @@ export default function KlusDoorgevenPage() {
                 <div>
                   <strong>Direct doorgegeven</strong>
                   <br />
-                  Invullen en versturen — wij bevestigen per mail
+                  Invullen en versturen, wij bevestigen per mail
                 </div>
               </div>
               <div className="form-side__row">

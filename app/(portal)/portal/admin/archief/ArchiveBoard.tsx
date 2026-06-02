@@ -17,7 +17,7 @@ type Row = Database['public']['Tables']['bookings']['Row'] & {
 const PAGE = 25
 
 function formatDate(d?: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
 }
 
@@ -92,7 +92,7 @@ export function ArchiveBoard() {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
           {rows.length === 0
-            ? 'Nog niets in het archief — alle boekingen zijn nog actueel.'
+            ? 'Nog niets in het archief, alle boekingen zijn nog actueel.'
             : 'Geen resultaten voor je zoekopdracht.'}
         </div>
       ) : (
@@ -129,9 +129,9 @@ export function ArchiveBoard() {
                   <td className="px-4 py-3">
                     <Badge tone="info">{sourceLabel(b.source)}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.artist?.stage_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.event_location ?? '—'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg)]">{b.client_name ?? '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.artist?.stage_name ?? '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{b.event_location ?? '-'}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={b.status} />
                   </td>

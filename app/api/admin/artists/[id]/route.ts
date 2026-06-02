@@ -131,7 +131,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   if ((bookingCount ?? 0) > 0) {
     return NextResponse.json(
       {
-        error: `Deze artiest heeft ${bookingCount} aanvragen/klussen in de historie. Verwijderen niet mogelijk — gebruik 'Niet meer tonen' (actief uit).`,
+        error: `Deze artiest heeft ${bookingCount} aanvragen/klussen in de historie. Verwijderen niet mogelijk, gebruik 'Niet meer tonen' (actief uit).`,
       },
       { status: 409 }
     )

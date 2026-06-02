@@ -64,7 +64,7 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
     </Banner>
   ) : isFirstTime ? (
     <Banner tone="info">
-      <ShieldCheck size={16} /> Welkom — stel een wachtwoord in zodat je volgende keer sneller
+      <ShieldCheck size={16} /> Welkom, stel een wachtwoord in zodat je volgende keer sneller
       kunt inloggen.
     </Banner>
   ) : null

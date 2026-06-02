@@ -43,7 +43,7 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
   async function copyKlusLink() {
     try {
       await navigator.clipboard.writeText(klusLink)
-      toast.success("Link gekopieerd — plak 'm in WhatsApp of mail.")
+      toast.success("Link gekopieerd, plak 'm in WhatsApp of mail.")
     } catch {
       toast.error('Kopiëren lukte niet; selecteer de link handmatig.')
     }
@@ -78,7 +78,7 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
           </div>
           <p className="mt-0.5 text-xs text-[var(--color-fg-muted)]">
             Stuur deze link naar je artiesten (bijv. via WhatsApp). Ze geven hun klus door zonder
-            in te loggen — het komt direct bij &ldquo;Te doen&rdquo;.
+            in te loggen, het komt direct bij &ldquo;Te doen&rdquo;.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-[var(--color-fg)]">{a.stage_name}</td>
-                <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{a.genre ?? '—'}</td>
+                <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{a.genre ?? '-'}</td>
                 <td className="px-4 py-3">
                   {a.profile_id ? (
                     <Badge tone="accepted">Toegang actief</Badge>
@@ -443,7 +443,7 @@ function EditDialog({
               onChange={(e) => setBio(e.target.value)}
               rows={4}
               className="rounded-md border border-[var(--color-border-strong)] bg-white px-3 py-2 text-sm"
-              placeholder="Korte beschrijving — verschijnt op de artiestpagina."
+              placeholder="Korte beschrijving, verschijnt op de artiestpagina."
             />
           </div>
         </div>

@@ -54,7 +54,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const conflicts = await findKlusConflicts(supabase, { klusId: id, eventDate, staffIds })
     if (conflicts.length > 0 && !override_overlap) {
       return NextResponse.json(
-        { error: 'Mogelijke dubbelboeking — controleer en bevestig om door te gaan.', conflicts },
+        { error: 'Mogelijke dubbelboeking, controleer en bevestig om door te gaan.', conflicts },
         { status: 409 }
       )
     }

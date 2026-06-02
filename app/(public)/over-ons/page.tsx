@@ -73,7 +73,7 @@ export default function OverOnsPage() {
           </h1>
           <p className="page-header__lead">
             Wittenboer Events is sinds 2014 actief in de regio &lsquo;s-Hertogenbosch. Een vaste
-            kern crew, een netwerk van freelancers, eigen materiaal &mdash; en altijd dezelfde
+            kern crew, een netwerk van freelancers, eigen materiaal, en altijd dezelfde
             aanspreekpersoon van offerte tot opbouwdag.
           </p>
         </div>
@@ -86,8 +86,8 @@ export default function OverOnsPage() {
             <h2>Begonnen in 2014. Inmiddels een vaste crew.</h2>
             <p>
               Wittenboer Events begon in 2014 vanuit een schuur met de eerste set
-              licht en geluid. Ruim tien jaar later draaien wij tussen de 60 en 80 producties per jaar
-              &mdash; van bedrijfsborrels tot meerdaagse festivals met vijfduizend bezoekers.
+              licht en geluid. Ruim tien jaar later draaien wij tussen de 60 en 80 producties per jaar,
+              van bedrijfsborrels tot meerdaagse festivals met vijfduizend bezoekers.
             </p>
             <p>
               De vaste kern is klein: drie technici die elkaar door en door kennen, plus een
@@ -96,7 +96,7 @@ export default function OverOnsPage() {
               je in de offerte ziet, staat er op de avond zelf.
             </p>
             <p>
-              Wat ons onderscheidt is niet het materiaal &mdash; A-merk apparatuur is wat
+              Wat ons onderscheidt is niet het materiaal. A-merk apparatuur is wat
               iedereen gebruikt. Wat ons onderscheidt is hoe we een evenement benaderen: als een
               puzzel die we voor je oplossen. We denken mee over locatie, omgeving en publiek.
               We rekenen geluidsbelasting door voordat de gemeente erom vraagt. We bellen de

@@ -145,7 +145,7 @@ export default function ProjectenPage() {
             </div>
             <p className="section-head__lead">
               Korte impressies. Vraag een uitgebreide referentie als je iets vergelijkbaars
-              overweegt &mdash; we hebben de detail-draaiboeken nog liggen.
+              overweegt, we hebben de detail-draaiboeken nog liggen.
             </p>
           </div>
           <div className="more-grid__cards" data-reveal-stagger>

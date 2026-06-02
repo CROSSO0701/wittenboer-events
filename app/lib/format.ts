@@ -7,7 +7,7 @@
  * Gedrag identiek aan de oorspronkelijke implementatie in AanvragenOverzicht.
  */
 export function relativeDate(iso?: string | null): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const d = new Date(iso)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -36,7 +36,7 @@ export function fmtAgo(iso: string): string {
 
 /** Cent-bedrag naar EUR-notatie, of "—" bij ontbrekende waarde. */
 export function formatEUR(cents?: number | null): string {
-  if (cents == null) return '—'
+  if (cents == null) return '-'
   return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 }
 

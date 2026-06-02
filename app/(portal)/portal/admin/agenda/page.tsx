@@ -35,7 +35,7 @@ export default async function AgendaPage() {
         </h1>
         <p className="mt-1 text-sm text-[var(--color-fg-muted)]">
           Geaccepteerde shows en open aanvragen, op datum onder elkaar. Klik een boeking om te
-          bewerken, crew toe te wijzen of de tijd aan te passen — wijzigingen gaan automatisch mee
+          bewerken, crew toe te wijzen of de tijd aan te passen. Wijzigingen gaan automatisch mee
           naar de Google-agenda.
         </p>
       </header>

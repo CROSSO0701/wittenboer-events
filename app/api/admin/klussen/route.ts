@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   })
   if (conflicts.length > 0 && !input.override_overlap) {
     return NextResponse.json(
-      { error: 'Mogelijke dubbelboeking — controleer en bevestig om door te gaan.', conflicts },
+      { error: 'Mogelijke dubbelboeking, controleer en bevestig om door te gaan.', conflicts },
       { status: 409 }
     )
   }

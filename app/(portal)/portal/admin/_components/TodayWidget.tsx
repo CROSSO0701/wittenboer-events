@@ -173,7 +173,7 @@ export function TodayWidget({
                       <span className="text-[var(--color-fg-muted)]"> · {b.artist.stage_name}</span>
                     )}
                   </span>
-                  <span className="text-[var(--color-fg-secondary)]">{b.event_location ?? '—'}</span>
+                  <span className="text-[var(--color-fg-secondary)]">{b.event_location ?? '-'}</span>
                   <span className="justify-self-start sm:justify-self-end">
                     <span
                       className={

@@ -11,7 +11,7 @@ import type { Database } from '../../../../lib/db/types.generated'
 type Booking = Database['public']['Tables']['bookings']['Row']
 
 function formatDate(d?: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'medium' }).format(new Date(d))
 }
 
@@ -209,11 +209,11 @@ export function ArtistDashboard({
                     >
                       <td className="px-4 py-3 text-[var(--color-fg)]">{formatDate(b.event_date)}</td>
                       <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
-                        {b.event_location ?? '—'}
+                        {b.event_location ?? '-'}
                       </td>
                       <td className="px-4 py-3 text-[var(--color-fg-secondary)]">
                         {needs.length === 0 ? (
-                          <span className="text-[var(--color-fg-muted)]">—</span>
+                          <span className="text-[var(--color-fg-muted)]">-</span>
                         ) : (
                           <span className="flex flex-wrap gap-1">
                             {needs.map((n) => (

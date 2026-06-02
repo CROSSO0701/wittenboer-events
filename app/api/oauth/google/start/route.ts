@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         error:
-          'Google Agenda is nog niet ingesteld. Vraag de developer om de Google-koppeling te activeren — daarna kun je hier verbinden.',
+          'Google Agenda is nog niet ingesteld. Vraag de developer om de Google-koppeling te activeren, daarna kun je hier verbinden.',
       },
       { status: 503 }
     )

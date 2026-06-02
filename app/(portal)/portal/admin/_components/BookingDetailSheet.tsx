@@ -23,7 +23,7 @@ import type { Database } from '../../../../lib/db/types.generated'
 type Booking = Database['public']['Tables']['bookings']['Row']
 
 function formatDate(d?: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Intl.DateTimeFormat('nl-NL', { dateStyle: 'full' }).format(new Date(d))
 }
 
@@ -83,16 +83,16 @@ export function BookingDetailSheet({
 
           <dl className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
             <DetailRow label="Datum" value={formatDate(booking.event_date)} />
-            <DetailRow label="Locatie" value={booking.event_location ?? '—'} />
-            <DetailRow label="Aanvang" value={booking.event_start ? new Date(booking.event_start).toLocaleString('nl-NL') : '—'} />
-            <DetailRow label="Einde" value={booking.event_end ? new Date(booking.event_end).toLocaleString('nl-NL') : '—'} />
+            <DetailRow label="Locatie" value={booking.event_location ?? '-'} />
+            <DetailRow label="Aanvang" value={booking.event_start ? new Date(booking.event_start).toLocaleString('nl-NL') : '-'} />
+            <DetailRow label="Einde" value={booking.event_end ? new Date(booking.event_end).toLocaleString('nl-NL') : '-'} />
             <DetailRow
               label={booking.source === 'artist' ? 'Organisator e-mail' : 'Klant e-mail'}
-              value={booking.client_email ?? '—'}
+              value={booking.client_email ?? '-'}
             />
             <DetailRow
               label={booking.source === 'artist' ? 'Organisator telefoon' : 'Klant telefoon'}
-              value={booking.client_phone ?? '—'}
+              value={booking.client_phone ?? '-'}
             />
             <DetailRow label="Gage" value={formatEUR(booking.fee_cents)} />
             <DetailRow label="Aangemaakt" value={new Date(booking.created_at).toLocaleString('nl-NL')} />

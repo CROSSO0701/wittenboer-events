@@ -343,5 +343,5 @@ export function calendarTitle(opts: {
     head = head ? `${head} (${staffNames.join(', ')})` : `(${staffNames.join(', ')})`
   }
   const tail = (event ?? '').trim()
-  return [head, tail].filter(Boolean).join(' — ') || 'Boeking'
+  return [head, tail].filter(Boolean).join(' · ') || 'Boeking'
 }

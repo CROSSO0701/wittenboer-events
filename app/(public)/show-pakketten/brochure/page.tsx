@@ -188,7 +188,7 @@ export default async function BrochurePage({
               <div>
                 <span>Gasten</span>
                 <strong>
-                  {p.guest_capacity_min ?? '—'}–{p.guest_capacity_max ?? '—'}
+                  {p.guest_capacity_min ?? '-'}–{p.guest_capacity_max ?? '-'}
                 </strong>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default async function BrochurePage({
         </ul>
         <h2 className="cta-h">Reserveer een pakket</h2>
         <p>
-          Stuur een korte aanvraag — datum, locatie, welk pakket — en wij sturen binnen één
+          Stuur een korte aanvraag (datum, locatie, welk pakket) en wij sturen binnen één
           werkdag een offerte met vaste prijs.
         </p>
         <p className="big">

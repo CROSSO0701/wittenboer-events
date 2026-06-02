@@ -179,7 +179,7 @@ export function AgendaBoard() {
           if (isDead) continue
           if (!b.event_date || b.event_date < fromStr) continue
         }
-        ensure(b.event_date ?? '—').bookings.push(b)
+        ensure(b.event_date ?? '-').bookings.push(b)
       }
     }
 
@@ -199,8 +199,8 @@ export function AgendaBoard() {
     }
 
     const entries = Array.from(map.entries()).sort((a, b) => {
-      if (a[0] === '—') return 1
-      if (b[0] === '—') return -1
+      if (a[0] === '-') return 1
+      if (b[0] === '-') return -1
       return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
     })
     const count = entries.reduce(
@@ -368,11 +368,11 @@ export function AgendaBoard() {
           <h3
             className={cn(
               'mb-2 flex items-center gap-2 text-sm font-semibold capitalize',
-              date !== '—' && isToday(date) ? 'text-[var(--color-primary)]' : 'text-[var(--color-fg)]'
+              date !== '-' && isToday(date) ? 'text-[var(--color-primary)]' : 'text-[var(--color-fg)]'
             )}
           >
-            {date === '—' ? 'Zonder datum' : fmtDateHeader(date)}
-            {date !== '—' && isToday(date) && (
+            {date === '-' ? 'Zonder datum' : fmtDateHeader(date)}
+            {date !== '-' && isToday(date) && (
               <span className="rounded-full bg-[var(--color-primary-soft)] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[var(--color-primary-deep)]">
                 Vandaag
               </span>
@@ -406,7 +406,7 @@ export function AgendaBoard() {
                   className="flex w-full items-center gap-3 border-b border-[var(--color-border)] px-4 py-3 text-left last:border-b-0 hover:bg-[var(--color-surface-1)]"
                 >
                   <span className="w-12 shrink-0 font-medium tabular-nums text-[var(--color-fg)]">
-                    {fmtTime(b.event_start) ?? '—'}
+                    {fmtTime(b.event_start) ?? '-'}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium text-[var(--color-fg)]">
@@ -428,7 +428,7 @@ export function AgendaBoard() {
                   className="flex w-full items-center gap-3 border-b border-[var(--color-border)] border-l-2 border-l-[var(--color-secondary)] px-4 py-3 text-left last:border-b-0 hover:bg-[var(--color-surface-1)]"
                 >
                   <span className="w-12 shrink-0 font-medium tabular-nums text-[var(--color-fg)]">
-                    {fmtTime(k.event_start) ?? '—'}
+                    {fmtTime(k.event_start) ?? '-'}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5 truncate font-medium text-[var(--color-fg)]">

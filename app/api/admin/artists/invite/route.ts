@@ -238,7 +238,7 @@ export async function POST(request: Request) {
     sent = { ok: true }
   } else if (!useResend && reusedExisting) {
     // Geen Resend + bestaande user: kunnen geen mail sturen
-    sent = { ok: false, error: 'Bestaand account — laat ze inloggen op /portal/login' }
+    sent = { ok: false, error: 'Bestaand account, laat ze inloggen op /portal/login' }
   }
 
   await logAudit({
