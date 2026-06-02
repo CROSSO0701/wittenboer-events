@@ -47,6 +47,12 @@ export async function GET(request: Request) {
       skipped += 1
       continue
     }
+    // iCal-aggregatie-pseudo-events ("1 more booking in the night") zijn geen
+    // echte gigs maar artefacten uit de feed — overslaan.
+    if (/more bookings?\s+in the night/i.test(ev.summary ?? '')) {
+      skipped += 1
+      continue
+    }
     const { data: existing } = await supabase
       .from('bookings')
       .select('id, google_event_id')
