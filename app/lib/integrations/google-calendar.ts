@@ -285,6 +285,49 @@ export async function listOverlapping(startISO: string, endISO: string): Promise
   }
 }
 
+// Lijst alle events op een agenda (vanaf timeMin) die door de Artwin-sync zijn
+// aangemaakt — herkenbaar aan extendedProperties.private.artwinliveId. Pagineert
+// volledig. Gebruikt om wees-events op te ruimen.
+export async function listArtwinTaggedEvents(
+  calendarId: string,
+  timeMinISO: string
+): Promise<{ ok: boolean; ids: string[]; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, ids: [], error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, ids: [], error: 'Token refresh faalde' }
+
+  const ids: string[] = []
+  let pageToken: string | undefined
+  try {
+    do {
+      const params = new URLSearchParams({
+        timeMin: timeMinISO,
+        singleEvents: 'true',
+        maxResults: '250',
+        fields: 'nextPageToken,items(id,extendedProperties/private)',
+      })
+      if (pageToken) params.set('pageToken', pageToken)
+      const res = await fetch(
+        `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?${params}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      if (!res.ok) return { ok: false, ids, error: `Calendar ${res.status}` }
+      const data = (await res.json()) as {
+        nextPageToken?: string
+        items?: Array<{ id: string; extendedProperties?: { private?: Record<string, string> } }>
+      }
+      for (const e of data.items ?? []) {
+        if (e.extendedProperties?.private?.artwinliveId) ids.push(e.id)
+      }
+      pageToken = data.nextPageToken
+    } while (pageToken)
+    return { ok: true, ids }
+  } catch (err) {
+    return { ok: false, ids, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 // Bestaat dit event op de opgegeven agenda? (200 = ja)
 export async function eventExists(calendarId: string, eventId: string): Promise<boolean> {
   const env = await readConfig()
