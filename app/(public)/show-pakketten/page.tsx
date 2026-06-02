@@ -405,9 +405,8 @@ export default function ShowPakkettenPage() {
             </a>
             <a
               className="btn-ghost"
-              href="/show-pakketten/brochure?print=1"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/show-pakketten/brochure/pdf"
+              download
               style={{ borderColor: 'var(--color-border-on-dark)', color: 'var(--color-fg-on-dark)' }}
             >
               Download brochure (PDF)
