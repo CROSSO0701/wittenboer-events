@@ -399,6 +399,61 @@ export async function deleteEventFrom(calendarId: string, eventId: string): Prom
   }
 }
 
+// Lijst alle agenda's op het gekoppelde account (id, naam, of we mogen
+// schrijven, en of het de hoofdagenda is). Om te kiezen waar de shows heen gaan.
+export async function listCalendars(): Promise<{
+  ok: boolean
+  calendars: Array<{ id: string; summary: string; primary: boolean; accessRole: string }>
+  error?: string
+}> {
+  const env = await readConfig()
+  if (!env) return { ok: false, calendars: [], error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, calendars: [], error: 'Token refresh faalde' }
+  try {
+    const res = await fetch(`${API_BASE}/users/me/calendarList?maxResults=250`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok) return { ok: false, calendars: [], error: `Calendar ${res.status}` }
+    const data = (await res.json()) as {
+      items?: Array<{ id: string; summary?: string; primary?: boolean; accessRole?: string }>
+    }
+    return {
+      ok: true,
+      calendars: (data.items ?? []).map((c) => ({
+        id: c.id,
+        summary: c.summary ?? '(geen naam)',
+        primary: !!c.primary,
+        accessRole: c.accessRole ?? '',
+      })),
+    }
+  } catch (err) {
+    return { ok: false, calendars: [], error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+// Verwijdert een (secundaire) agenda volledig, inclusief al z'n events. De
+// hoofdagenda (primary) kan niet verwijderd worden.
+export async function deleteCalendar(calendarId: string): Promise<{ ok: boolean; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+  try {
+    const res = await fetch(`${API_BASE}/calendars/${encodeURIComponent(calendarId)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok && res.status !== 404 && res.status !== 410) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${body}` }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 // ===========================================================
 // Titel-helpers — gedeeld door de Artwin-sync en de staff-toewijzing
 // ===========================================================
