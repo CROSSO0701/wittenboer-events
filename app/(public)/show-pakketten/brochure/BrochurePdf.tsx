@@ -145,7 +145,7 @@ export async function renderBrochurePdf(packages: Pkg[]): Promise<Buffer> {
           <View style={s.coverTop}>
             {logo ? <Image src={logo} style={s.logo} /> : null}
             <Text style={s.kicker}>SHOWPAKKETTEN · BROCHURE</Text>
-            <Text style={s.h1}>VIER SHOWS,{'\n'}ÉÉN TELEFOONTJE.</Text>
+            <Text style={s.h1}>VIER SHOWS,{'\n'}EEN TELEFOONTJE.</Text>
             <Text style={s.lead}>
               Kant-en-klare licht- en geluidsproducties voor bruiloften, jubilea, verjaardagen en
               bedrijfsfeesten. Wij brengen, bouwen op, draaien de show, breken af. Jij bevestigt
@@ -216,7 +216,7 @@ export async function renderBrochurePdf(packages: Pkg[]): Promise<Buffer> {
       <Page size="A4" style={s.page}>
         <View style={s.closing}>
           <Text style={s.kickerTeal}>BIJ ELK PAKKET</Text>
-          <Text style={s.h2}>ÉÉN PRIJS.{'\n'}GEEN VERRASSINGEN.</Text>
+          <Text style={s.h2}>EEN PRIJS.{'\n'}GEEN VERRASSINGEN.</Text>
           <View style={{ marginTop: 22 }}>
             {INCLUDED.map(([t, d]) => (
               <View style={s.inclItem} key={t}>
