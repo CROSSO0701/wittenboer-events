@@ -281,7 +281,7 @@ export default function ShowPakkettenPage() {
               </div>
               <div className="pkg-card__body">
                 <div className="pkg-card__head">
-                  <div className="pkg-card__name">Show Goud</div>
+                  <div className="pkg-card__name">Black &amp; Gold</div>
                   <div className="pkg-card__price-block">
                     <div className="pkg-card__price-label">Vanaf</div>
                     <div className="pkg-card__price">€795</div>

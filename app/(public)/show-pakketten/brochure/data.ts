@@ -84,7 +84,7 @@ export const FALLBACK_PKGS: Pkg[] = [
   },
   {
     slug: 'show-goud',
-    name: 'Show Goud',
+    name: 'Black & Gold',
     tagline: 'Premium · goud',
     description:
       'Bruiloften en chique feesten met een warme, gouden uitstraling: gouden DJ-meubel, Portman P1’s en wash moving heads.',
