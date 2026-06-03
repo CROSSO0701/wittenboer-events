@@ -267,6 +267,41 @@ export default function ShowPakkettenPage() {
                 </div>
               </div>
             </article>
+
+            {/* SHOW GOUD */}
+            <article className="pkg-card">
+              <div className="pkg-card__media">
+                <span className="pkg-card__badge" style={{ background: 'var(--color-tertiary-deep)' }}>
+                  Premium · goud
+                </span>
+                <div
+                  className="pkg-card__media-photo"
+                  style={{ backgroundImage: "url('/photos/show-packages/show-goud.jpg')" }}
+                />
+              </div>
+              <div className="pkg-card__body">
+                <div className="pkg-card__head">
+                  <div className="pkg-card__name">Show Goud</div>
+                  <div className="pkg-card__price-block">
+                    <div className="pkg-card__price-label">Vanaf</div>
+                    <div className="pkg-card__price">€795</div>
+                  </div>
+                </div>
+                <ul className="pkg-card__incl">
+                  <li>1× DJ-meubel goud</li>
+                  <li>2× Portman P1</li>
+                  <li>2× wash moving head</li>
+                  <li>1× monitor</li>
+                  <li>1× A-set (geluid)</li>
+                  <li>1× DJ-monitor</li>
+                </ul>
+                <p className="pkg-card__hint">Bruiloften en chique feesten. Gouden uitstraling.</p>
+                <div className="pkg-card__foot">
+                  <Link className="btn-primary" href="/contact?pakket=show-goud">Vraag offerte</Link>
+                  <a className="btn-ghost" href="tel:+31627172876">Bel voor info</a>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>

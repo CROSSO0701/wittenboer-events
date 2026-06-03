@@ -82,6 +82,26 @@ export const FALLBACK_PKGS: Pkg[] = [
     is_popular: false,
     display_order: 4,
   },
+  {
+    slug: 'show-goud',
+    name: 'Show Goud',
+    tagline: 'Premium · goud',
+    description:
+      'Bruiloften en chique feesten met een warme, gouden uitstraling: gouden DJ-meubel, Portman P1’s en wash moving heads.',
+    price_from_cents: 79500,
+    guest_capacity_min: 100,
+    guest_capacity_max: 250,
+    features: [
+      '1× DJ-meubel goud',
+      '2× Portman P1',
+      '2× wash moving head',
+      '1× monitor',
+      '1× A-set (geluid)',
+      '1× DJ-monitor',
+    ],
+    is_popular: false,
+    display_order: 5,
+  },
 ]
 
 export async function loadPackages(): Promise<Pkg[]> {
