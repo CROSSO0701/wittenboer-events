@@ -145,7 +145,7 @@ export async function renderBrochurePdf(packages: Pkg[]): Promise<Buffer> {
           <View style={s.coverTop}>
             {logo ? <Image src={logo} style={s.logo} /> : null}
             <Text style={s.kicker}>SHOWPAKKETTEN · BROCHURE</Text>
-            <Text style={s.h1}>VIER SHOWS,{'\n'}EEN TELEFOONTJE.</Text>
+            <Text style={s.h1}>COMPLETE SHOWS.{'\n'}WIJ REGELEN ALLES.</Text>
             <Text style={s.lead}>
               Kant-en-klare licht- en geluidsproducties voor bruiloften, jubilea, verjaardagen en
               bedrijfsfeesten. Wij brengen, bouwen op, draaien de show, breken af. Jij bevestigt

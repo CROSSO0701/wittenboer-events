@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Showpakketten',
   description:
-    'Vier kant-en-klare licht- en geluidsproducties voor bruiloften en privéfeesten. Vanaf €495.',
+    'Kant-en-klare licht- en geluidsproducties voor bruiloften en privéfeesten. Vanaf €495.',
 }
 
 const FAQ = [
@@ -48,7 +48,7 @@ export default function ShowPakkettenPage() {
             <span>Showpakketten</span>
           </div>
           <h1>
-            Vier shows, <span className="accent">een telefoontje.</span>
+            Complete shows. <span className="accent">Wij regelen alles.</span>
           </h1>
           <p className="page-header__lead">
             Kant-en-klare disco-opbouwsets voor bruiloften en privéfeesten. We brengen, bouwen
@@ -63,7 +63,7 @@ export default function ShowPakkettenPage() {
             <p className="kicker">Showpakketten</p>
             <h2>Vooraf samengesteld. Op de avond perfect.</h2>
             <p>
-              Vier vaste setups die we draaien op bruiloften, jubilea, verjaardagen en
+              Vaste setups die we draaien op bruiloften, jubilea, verjaardagen en
               bedrijfsfeesten. Elk pakket is een complete licht- en geluidsproductie waar we
               honderden keren mee gewerkt hebben, en die we in een paar uur staan te bouwen.
             </p>
