@@ -48,7 +48,7 @@ export default function ShowPakkettenPage() {
             <span>Showpakketten</span>
           </div>
           <h1>
-            Vier shows, <span className="accent">één telefoontje.</span>
+            Vier shows, <span className="accent">een telefoontje.</span>
           </h1>
           <p className="page-header__lead">
             Kant-en-klare disco-opbouwsets voor bruiloften en privéfeesten. We brengen, bouwen
