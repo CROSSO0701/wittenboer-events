@@ -30,6 +30,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@remotion/cli": "^4.0.475",
+    "@remotion/google-fonts": "^4.0.475",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22",
     "@types/react": "^19",
@@ -38,13 +40,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "postcss": "^8",
+    "remotion": "^4.0.475",
     "tailwindcss": "^4.0.0",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }
