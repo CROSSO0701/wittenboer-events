@@ -27,7 +27,7 @@ const C = {
 
 const EASE = Easing.bezier(0.16, 1, 0.3, 1)
 
-const WORDS = ['licht.', 'geluid.', 'podium.', 'crew.']
+const WORDS = ['licht.', 'geluid.', 'beeld.', 'podium.', 'crew.']
 const WORD_START = 2.3 // eerste wissel (s)
 const WORD_EVERY = 2.6 // wisselinterval (s)
 const WORD_ANIM = 0.65 // duur van de wissel (s)
@@ -148,6 +148,7 @@ function Kinetic({ t }: { t: number }) {
 const ITEMS = [
   'Licht',
   'Geluid',
+  'Beeld',
   'Podia',
   'Showpakketten',
   'Drive-ins',
@@ -344,7 +345,7 @@ export const EventScherm = () => {
                 ...rise(t, 1.9, 1.0, 27),
               }}
             >
-              Licht, geluid en podia voor bruiloften, bedrijfsfeesten en festivals.
+              Licht, geluid, beeld en podia voor bruiloften, bedrijfsfeesten en festivals.
               <br />
               Wij denken mee en regelen alles van A tot Z.
             </p>
