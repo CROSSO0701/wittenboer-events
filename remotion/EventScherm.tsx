@@ -278,6 +278,7 @@ export const EventScherm = () => {
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
+            paddingBottom: 110,
           }}
         >
           <div>
@@ -310,7 +311,7 @@ export const EventScherm = () => {
             {/* headline */}
             <h1
               style={{
-                margin: '49px 0 0',
+                margin: '42px 0 0',
                 fontFamily: anton.fontFamily,
                 fontWeight: 400,
                 textTransform: 'uppercase',
@@ -335,7 +336,7 @@ export const EventScherm = () => {
             {/* subregel */}
             <p
               style={{
-                margin: '43px 0 0',
+                margin: '36px 0 0',
                 color: C.onDarkMuted,
                 fontSize: 35,
                 fontWeight: 500,
@@ -351,7 +352,7 @@ export const EventScherm = () => {
             {/* CTA */}
             <div
               style={{
-                marginTop: 59,
+                marginTop: 46,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 42,
