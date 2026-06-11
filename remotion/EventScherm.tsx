@@ -286,16 +286,16 @@ export const EventScherm = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 31,
+                gap: 42,
                 ...rise(t, 0.7, 1.1),
               }}
             >
-              <Img src={staticFile('logo/we-mark.png')} style={{ width: 138 }} />
+              <Img src={staticFile('logo/we-mark.png')} style={{ width: 190 }} />
               <div
                 style={{
                   fontWeight: 700,
                   color: C.onDark,
-                  fontSize: 61,
+                  fontSize: 84,
                   lineHeight: 0.95,
                   letterSpacing: '-0.02em',
                   textAlign: 'left',
