@@ -471,8 +471,8 @@ export const EventScherm3D = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 42,
-                transform: 'translateZ(80px)',
                 ...rise(t, 2.3, 1.0, 27),
+                transform: `translateZ(80px) ${rise(t, 2.3, 1.0, 27).transform}`,
               }}
             >
               <span
