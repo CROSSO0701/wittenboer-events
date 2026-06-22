@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CalendarClock, ArrowUpRight } from 'lucide-react'
+import { CalendarClock, ArrowUpRight, UserPlus } from 'lucide-react'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import type { Database } from '../../../../lib/db/types.generated'
 import { BookingDetailSheet } from './BookingDetailSheet'
+import { AssignStaffDialog } from './AssignStaffDialog'
 
 type BookingRow = Database['public']['Tables']['bookings']['Row'] & {
   artist?: { stage_name: string | null } | null
@@ -55,13 +56,17 @@ function staffNames(rows: BookingRow['assignments']): string[] {
 export function TodayWidget({
   refreshKey = 0,
   initial,
+  onSummary,
 }: {
   refreshKey?: number
   initial?: TodayInitial
+  /** Meldt aantal gigs + gigs-zonder-crew terug aan de parent (prioriteitsstrip). */
+  onSummary?: (s: { count: number; needCrew: number }) => void
 }) {
   const [today, setToday] = useState<BookingRow[] | null>(initial?.today ?? null)
   const [next, setNext] = useState<NextUp | null>(initial?.next ?? null)
   const [selected, setSelected] = useState<BookingRow | null>(null)
+  const [assignFor, setAssignFor] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -80,6 +85,10 @@ export function TodayWidget({
       const todayRows = (todays as BookingRow[] | null) ?? []
       setToday(todayRows)
       setNext(null)
+      onSummary?.({
+        count: todayRows.length,
+        needCrew: todayRows.filter((b) => !b.assignments || b.assignments.length === 0).length,
+      })
 
       if (todayRows.length === 0) {
         const { data: nextRows } = await supabase
@@ -95,7 +104,7 @@ export function TodayWidget({
     } catch {
       // RLS / no-session — laat leeg, niet kritisch
     }
-  }, [])
+  }, [onSummary])
 
   useEffect(() => {
     load()
@@ -107,7 +116,7 @@ export function TodayWidget({
 
   if (today.length === 0) {
     return (
-      <section className="rounded-2xl border border-[var(--color-border)] bg-white p-5">
+      <section id="vandaag" className="scroll-mt-24 rounded-2xl border border-[var(--color-border)] bg-white p-5">
         <header className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-fg-muted)]">
           <CalendarClock size={14} /> Vandaag · {dateLabel}
         </header>
@@ -136,7 +145,7 @@ export function TodayWidget({
 
   return (
     <>
-    <section className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
+    <section id="vandaag" className="scroll-mt-24 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
       <header className="flex items-baseline justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-1)] px-5 py-3">
         <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-fg-muted)]">
           <CalendarClock size={14} /> Vandaag · {dateLabel}
@@ -152,12 +161,13 @@ export function TodayWidget({
               : names.length === 1
                 ? names[0]
                 : `${names[0]}+${names.length - 1}`
+          const noCrew = names.length === 0
           return (
-            <li key={b.id}>
+            <li key={b.id} className="group flex items-stretch transition-colors hover:bg-[var(--color-surface-1)]">
               <button
                 type="button"
                 onClick={() => setSelected(b)}
-                className="group flex w-full items-stretch gap-4 px-5 py-3 text-left transition-colors hover:bg-[var(--color-surface-1)]"
+                className="flex min-w-0 flex-1 items-stretch gap-4 py-3 pl-5 text-left"
               >
                 <span
                   aria-hidden
@@ -177,7 +187,7 @@ export function TodayWidget({
                   <span className="justify-self-start sm:justify-self-end">
                     <span
                       className={
-                        names.length === 0
+                        noCrew
                           ? 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-900'
                           : 'inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface-1)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--color-fg)]'
                       }
@@ -187,6 +197,16 @@ export function TodayWidget({
                   </span>
                 </span>
               </button>
+              {noCrew && (
+                <button
+                  type="button"
+                  onClick={() => setAssignFor(b.id)}
+                  className="m-2 inline-flex min-h-[44px] shrink-0 items-center gap-1.5 self-center rounded-xl border border-[var(--color-primary)] px-3 text-xs font-medium text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-white"
+                >
+                  <UserPlus size={14} className="shrink-0" />
+                  <span className="hidden sm:inline">Wijs toe</span>
+                </button>
+              )}
             </li>
           )
         })}
@@ -201,6 +221,17 @@ export function TodayWidget({
         load()
       }}
     />
+    {assignFor && (
+      <AssignStaffDialog
+        bookingId={assignFor}
+        open={!!assignFor}
+        onOpenChange={(o) => !o && setAssignFor(null)}
+        onAssigned={() => {
+          setAssignFor(null)
+          load()
+        }}
+      />
+    )}
     </>
   )
 }

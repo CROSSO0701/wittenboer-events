@@ -1,18 +1,29 @@
-'use client'
+import type { Metadata, Viewport } from 'next'
+import { PortalLayoutClient } from './_components/PortalLayoutClient'
+import { RegisterSW } from './_components/RegisterSW'
 
-import { usePathname } from 'next/navigation'
-import { PortalShell } from './_components/PortalShell'
+// Maakt de portal installeerbaar als app op de telefoon.
+// iOS leest deze apple-* tags; Android/Chrome gebruiken het manifest + de service worker.
+export const metadata: Metadata = {
+  appleWebApp: {
+    capable: true,
+    title: 'Wittenboer',
+    statusBarStyle: 'black-translucent',
+  },
+  icons: {
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#157A8C',
+}
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  // Login + OAuth callback pages krijgen GEEN shell
-  const bare = pathname === '/portal/login'
-  if (bare) {
-    return (
-      <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center px-6 py-12">
-        {children}
-      </main>
-    )
-  }
-  return <PortalShell>{children}</PortalShell>
+  return (
+    <>
+      <RegisterSW />
+      <PortalLayoutClient>{children}</PortalLayoutClient>
+    </>
+  )
 }

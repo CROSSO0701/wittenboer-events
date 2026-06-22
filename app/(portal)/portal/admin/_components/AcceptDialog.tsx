@@ -70,6 +70,8 @@ export function AcceptDialog({
   notes?: string | null
 }) {
   const fieldId = useId()
+  // Of er brondata uit de aanvraag is overgenomen, om de hint te tonen.
+  const hasPrefill = Boolean(eventDate || eventStart || eventEnd || eventLocation || notes)
   const { staff } = useStaffList({ enabled: open, ordered: false })
   const [picked, setPicked] = useState<Record<string, { role: string; channel: 'email' | 'whatsapp' }>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -256,6 +258,11 @@ export function AcceptDialog({
           <div>
             <Label>Naar Google Agenda</Label>
             <p className="text-xs text-[var(--color-fg-muted)]">Deze tekst komt in de agenda.</p>
+            {hasPrefill && (
+              <p className="mt-1 text-xs text-[var(--color-fg-muted)]">
+                Overgenomen uit de aanvraag, pas aan indien nodig.
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="space-y-1">
