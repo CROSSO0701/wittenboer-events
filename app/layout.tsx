@@ -24,8 +24,10 @@ const jetbrains = JetBrains_Mono({
   display: 'swap',
 })
 
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wittenboerevents.nl').replace(/\/$/, '')
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://wittenboerevents.nl'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Wittenboer Events | licht, geluid en productie',
     template: '%s | Wittenboer Events',
@@ -35,12 +37,48 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
+    url: SITE_URL,
+    siteName: 'Wittenboer Events',
     title: 'Wittenboer Events',
     description: 'Licht, geluid, stroom en artiesten voor evenementen van elke schaal.',
-    siteName: 'Wittenboer Events',
+    images: [
+      {
+        url: '/og.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Wittenboer Events: licht, geluid en productie',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wittenboer Events',
+    description: 'Licht, geluid, stroom en artiesten voor evenementen van elke schaal.',
+    images: ['/og.jpg'],
   },
   robots: { index: true, follow: true },
-  icons: { icon: '/icon.png' },
+}
+
+const localBusinessJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE_URL}/#organization`,
+  name: 'Wittenboer Events',
+  url: SITE_URL,
+  email: 'info@wittenboerevents.nl',
+  telephone: '+31627172876',
+  image: `${SITE_URL}/og.jpg`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Het Schild 35',
+    postalCode: '5275 EE',
+    addressLocality: 'Den Dungen',
+    addressCountry: 'NL',
+  },
+  sameAs: [
+    'https://www.instagram.com/wittenboerevents/',
+    'https://www.facebook.com/profile.php?id=100054423193609',
+  ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -56,6 +94,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           id="js-loaded-flag"
           strategy="beforeInteractive"
         >{`document.documentElement.classList.add('js-loaded')`}</Script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
         {children}
       </body>
     </html>

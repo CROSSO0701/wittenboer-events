@@ -1,7 +1,19 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import SplitText from '../components/shared/SplitText'
 import { HeroLights } from '../components/shared/HeroLights'
 import { HeroKinetic } from '../components/shared/HeroKinetic'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'Wittenboer Events | licht, geluid en productie in Den Dungen',
+  },
+  description:
+    'Wij regelen licht, geluid, stroom, artiesten en de volledige productie van uw evenement. Van drive-in tot festival, in de regio s-Hertogenbosch en daarbuiten.',
+  alternates: {
+    canonical: '/',
+  },
+}
 
 const ICON_ARROW_RIGHT = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

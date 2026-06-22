@@ -82,6 +82,26 @@ export async function POST(request: Request) {
     )
   }
 
+  // Audit-log (best-effort). Geen actor: publieke link zonder login. We schrijven
+  // rechtstreeks naar audit_log met een eigen action-string, omdat dit een
+  // publieke aanmelding is en geen admin-actie uit de AuditAction-union.
+  try {
+    await supabase.from('audit_log').insert({
+      actor_id: null,
+      action: 'booking.public_submitted',
+      entity: 'booking',
+      entity_id: created.id,
+      metadata: {
+        source: 'public-klus-doorgeven',
+        artist_name: input.artist_name,
+        event: input.event,
+        event_date: input.event_date,
+      } as never,
+    })
+  } catch {
+    // Audit-write mag de aanmelding nooit blokkeren.
+  }
+
   // Notificatie naar Marnix (best-effort).
   try {
     const mail = await renderEmail(

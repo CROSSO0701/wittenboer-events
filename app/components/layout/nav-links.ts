@@ -31,6 +31,11 @@ export const NAV_ITEMS: NavItem[] = [
         label: 'Artiesten',
         desc: 'Tapes & backstage van A tot Z',
       },
+      {
+        href: '/aanbod/productiebegeleiding',
+        label: 'Productiebegeleiding',
+        desc: 'Eén aanspreekpunt, van A tot Z',
+      },
     ],
   },
   { href: '/show-pakketten', label: 'Showpakketten', page: 'show-pakketten' },

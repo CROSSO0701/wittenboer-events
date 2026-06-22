@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { LocationInput } from '../../(portal)/portal/admin/_components/LocationInput'
+import { LocationInput } from '../../components/shared/LocationInput'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -155,7 +155,7 @@ export function KlusForm() {
       </div>
 
       {status === 'error' && (
-        <p style={{ color: '#a13a3a', fontSize: 14 }}>
+        <p style={{ color: 'var(--color-danger)', fontSize: 14 }}>
           {errorMsg ?? 'Er ging iets mis bij het versturen. Probeer het opnieuw of bel direct.'}
         </p>
       )}

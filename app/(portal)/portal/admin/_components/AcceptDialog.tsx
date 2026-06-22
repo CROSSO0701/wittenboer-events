@@ -19,6 +19,13 @@ import { Textarea } from '../../../../components/ui/textarea'
 import { useStaffList } from './useStaffList'
 
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
+type Notification = { staff_id: string; ok: boolean; channel: string; error?: string }
+
+/** Lijst van namen netjes aan elkaar plakken ("A", "A en B", "A, B en C"). */
+function joinNames(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? ''
+  return `${names.slice(0, -1).join(', ')} en ${names[names.length - 1]}`
+}
 
 // Lokale "HH:MM" uit een ISO-datetime (met offset). Leeg bij geen/ongeldige waarde.
 function localTimeFromISO(iso?: string | null): string {
@@ -164,14 +171,32 @@ export function AcceptDialog({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ assignments: assigns, override_overlap: override }),
         })
+        const assignData = await assignRes.json().catch(() => ({}))
         if (!assignRes.ok) {
           staffAssignFailed = true
-          const assignData = await assignRes.json().catch(() => ({}))
           toast.warning(
             assignData.error
               ? `Geaccepteerd, maar crew toewijzen faalde: ${assignData.error}`
               : 'Geaccepteerd, maar crew toewijzen faalde. Plan de crew handmatig in.'
           )
+        } else {
+          // Crew is toegewezen, maar controleer of de WhatsApp-berichten echt
+          // aankwamen. Niet-bezorgde WhatsApp apart melden.
+          const notifications: Notification[] = Array.isArray(assignData.notifications)
+            ? assignData.notifications
+            : []
+          const failedWhatsapp = notifications.filter((n) => n.channel === 'whatsapp' && !n.ok)
+          if (failedWhatsapp.length > 0) {
+            const names = failedWhatsapp.map(
+              (n) => staff.find((s) => s.id === n.staff_id)?.full_name ?? 'een crewlid'
+            )
+            toast.warning(
+              `Crew toegewezen. Let op: WhatsApp naar ${joinNames(names)} niet bezorgd. Informeer ${
+                failedWhatsapp.length > 1 ? 'hen' : 'die persoon'
+              } even handmatig.`,
+              { duration: 8000 }
+            )
+          }
         }
       }
       const staffNames = pickedIds

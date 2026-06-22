@@ -11,9 +11,6 @@ const config: NextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: 'picsum.photos', pathname: '/**' },
-    ],
     formats: ['image/avif', 'image/webp'],
   },
   turbopack: {

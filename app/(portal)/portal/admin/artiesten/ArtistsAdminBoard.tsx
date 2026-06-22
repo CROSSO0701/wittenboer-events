@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { UserPlus, Send, ShieldOff, Pencil, Trash2, Eye, EyeOff, Copy, Link2 } from 'lucide-react'
@@ -34,6 +34,8 @@ type ArtistRow = {
 export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
   const router = useRouter()
   const [inviteOpen, setInviteOpen] = useState(false)
+  // Artiest die voorgeselecteerd moet staan in de uitnodig-dialoog (per-rij "Toegang geven").
+  const [invitePreselectId, setInvitePreselectId] = useState<string | null>(null)
   const [revokeTarget, setRevokeTarget] = useState<ArtistRow | null>(null)
   const [editTarget, setEditTarget] = useState<ArtistRow | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<ArtistRow | null>(null)
@@ -92,7 +94,12 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
       </div>
 
       <div className="mb-3 flex justify-end">
-        <Button onClick={() => setInviteOpen(true)}>
+        <Button
+          onClick={() => {
+            setInvitePreselectId(null)
+            setInviteOpen(true)
+          }}
+        >
           <UserPlus size={16} /> Artiest toevoegen
         </Button>
       </div>
@@ -169,7 +176,10 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setInviteOpen(true)}
+                        onClick={() => {
+                          setInvitePreselectId(a.id)
+                          setInviteOpen(true)
+                        }}
                         title="Toegang geven"
                       >
                         <Send size={14} />
@@ -193,10 +203,15 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
 
       <InviteDialog
         open={inviteOpen}
-        onOpenChange={setInviteOpen}
+        preselectArtistId={invitePreselectId}
+        onOpenChange={(o) => {
+          setInviteOpen(o)
+          if (!o) setInvitePreselectId(null)
+        }}
         unlinkedArtists={artists.filter((a) => !a.profile_id)}
         onSuccess={() => {
           setInviteOpen(false)
+          setInvitePreselectId(null)
           router.refresh()
         }}
       />
@@ -239,11 +254,14 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
 
 function InviteDialog({
   open,
+  preselectArtistId = null,
   onOpenChange,
   unlinkedArtists,
   onSuccess,
 }: {
   open: boolean
+  /** Voorgeselecteerde artiest (per-rij "Toegang geven"), zodat er niet opnieuw gezocht hoeft te worden. */
+  preselectArtistId?: string | null
   onOpenChange: (o: boolean) => void
   unlinkedArtists: ArtistRow[]
   onSuccess: () => void
@@ -255,6 +273,14 @@ function InviteDialog({
   const [photoUrl, setPhotoUrl] = useState('')
   const [email, setEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  // Bij openen vanuit een rij: zet meteen op "Bestaande artiest" met die artiest gekozen.
+  useEffect(() => {
+    if (open && preselectArtistId) {
+      setMode('existing')
+      setArtistId(preselectArtistId)
+    }
+  }, [open, preselectArtistId])
 
   async function submit() {
     setSubmitting(true)

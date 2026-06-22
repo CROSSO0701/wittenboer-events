@@ -38,6 +38,10 @@ export function StaffPanel() {
           <UserPlus size={16} /> Crewlid toevoegen
         </Button>
       </div>
+      <p className="mb-3 text-sm text-[var(--color-fg-muted)]">
+        Crewleden zet u op de planning en krijgen bij een toewijzing bericht per e-mail of WhatsApp.
+        Zij loggen niet in: dit is enkel een contactlijst om mee te plannen en te informeren.
+      </p>
       {staff.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
           Nog geen crewleden. Klik op &ldquo;Crewlid toevoegen&rdquo; om er een toe te voegen.
@@ -50,22 +54,37 @@ export function StaffPanel() {
                 <th className="px-4 py-2">Naam</th>
                 <th className="px-4 py-2">E-mail</th>
                 <th className="px-4 py-2">Telefoon</th>
+                <th className="px-4 py-2">Bericht via</th>
                 <th className="px-4 py-2 text-right">Acties</th>
               </tr>
             </thead>
             <tbody>
-              {staff.map((p) => (
-                <tr key={p.id} className="border-b border-[var(--color-border)] last:border-b-0">
-                  <td className="px-4 py-3 text-[var(--color-fg)]">{p.full_name ?? '-'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.email ?? '-'}</td>
-                  <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.phone ?? '-'}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
-                      <Pencil size={14} /> Bewerken
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {staff.map((p) => {
+                const hasPhone = !!p.phone?.trim()
+                return (
+                  <tr key={p.id} className="border-b border-[var(--color-border)] last:border-b-0">
+                    <td className="px-4 py-3 text-[var(--color-fg)]">{p.full_name ?? '-'}</td>
+                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.email ?? '-'}</td>
+                    <td className="px-4 py-3 text-[var(--color-fg-secondary)]">{p.phone ?? '-'}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                          hasPhone
+                            ? 'bg-[var(--color-surface-2)] text-[var(--color-fg-secondary)]'
+                            : 'bg-[var(--color-surface-1)] text-[var(--color-fg-muted)]'
+                        }`}
+                      >
+                        {hasPhone ? 'E-mail en WhatsApp' : 'Alleen e-mail'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
+                        <Pencil size={14} /> Bewerken
+                      </Button>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -139,7 +158,9 @@ function InviteStaffDialog({
         <DialogHeader>
           <DialogTitle>Crewlid toevoegen</DialogTitle>
           <DialogDescription>
-            Het account wordt direct aangemaakt en is meteen toewijsbaar aan shows.
+            Voeg een crewlid toe om mee te plannen. Het is daarna meteen toewijsbaar aan shows en
+            krijgt bij een toewijzing bericht. Vul een telefoonnummer in om ook via WhatsApp te
+            kunnen berichten.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">

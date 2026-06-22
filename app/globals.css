@@ -39,6 +39,9 @@
   --color-fg-on-dark:     #F5F5F6;
   --color-fg-on-dark-muted: #B0BEC4;
 
+  /* Leesbaar donkerrood voor formulier-foutmeldingen (>=4.5:1 op de off-white surface). */
+  --color-danger:         oklch(55% 0.14 25);
+
   --color-border:         #DCDEE0;
   --color-border-strong:  #B6B9BC;
   --color-border-on-dark: #4A5C65;

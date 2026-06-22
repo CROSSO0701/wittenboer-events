@@ -15,9 +15,12 @@ function friendlyAuthError(msg?: string | null): string {
   return `Aanmaken faalde: ${msg}`
 }
 
-// Admin maakt een crewlid DIRECT aan in de backend — geen invite-mail die het
-// crewlid eerst moet accepteren. Het account bestaat meteen en is direct
-// toewijsbaar aan klussen. (Inloggen op de portal kan later via een magic-link.)
+// Admin voegt een crewlid toe: een contactrecord (naam, e-mail, optioneel
+// telefoon) dat meteen toewijsbaar is aan klussen en bij toewijzing een melding
+// krijgt (e-mail/WhatsApp). Er wordt GEEN onboarding- of inlogmail verstuurd en
+// crew krijgt geen portaltoegang. Door het datamodel (booking_assignments.staff_id
+// verwijst naar auth.users) is achter de schermen wel een minimaal account nodig
+// als koppelpunt; dat blijft puur intern en wordt nergens als login gepresenteerd.
 export async function POST(request: Request) {
   let admin
   try {
@@ -61,7 +64,8 @@ export async function POST(request: Request) {
     }
   }
 
-  // Nieuw account: direct aanmaken + bevestigd (geen acceptatie nodig).
+  // Nieuw contact: intern koppelrecord aanmaken (geen wachtwoord, geen mail).
+  // email_confirm voorkomt dat Supabase een bevestigings-/inlogmail stuurt.
   if (!reused) {
     const { data: created, error: createErr } = await supabase.auth.admin.createUser({
       email: input.email,

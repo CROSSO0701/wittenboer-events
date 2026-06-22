@@ -1,174 +1,187 @@
-# Wittenboer Events — Backstage Craft redesign
+# Wittenboer Events - design system (zoals geshipt)
 
-This is the **Claude-version** of the Wittenboer Events redesign. Built alongside (not from) Hermes's version for a direct taste-comparison. Deliberately picked a different taste direction so the comparison is meaningful.
+Dit beschrijft het ontwerp zoals het daadwerkelijk live staat. De tokens, fonts en
+kleuren hieronder zijn 1-op-1 overgenomen uit `app/globals.css` (`@theme`) en de
+font-imports in `app/layout.tsx`. Dit is de bedoelde eindlook en blijft zo: fonts,
+kleuren en design-tokens niet wijzigen zonder overleg.
 
-## Where this diverges from Hermes's version
+## Doelgroep
 
-Hermes went **editorial-magazine / full-dark / Bodoni Moda + amber stage-licht**. That direction keeps losing because:
+Eventorganisatoren, festivaldirecteuren, corporate eventmanagers en zaaleigenaren in
+Brabant en de rest van NL. Professionals die productiediensten boeken (geluid, licht,
+podium, stroom, artiestenbegeleiding) en daarnaast de show-pakketten kunnen huren. Ze
+vergelijken Wittenboer overdag, op laptop en telefoon, met twee of drie andere
+productiebedrijven. Ze moeten snel vertrouwen krijgen en zonder wrijving bij de
+contactgegevens komen.
 
-1. The target user (event planner vetting vendors) browses during the day and wants to trust → dark interface reads as moody first, trustworthy second
-2. Bodoni Moda is the **fashion-magazine** move — wrong vocabulary for a Brabantse B2B event-productie bedrijf
-3. "Full dark" forced the photos to compete with the UI for dramatic gravitas — both lost
+**Job-to-be-done**:
+1. Bevestigen dat dit bedrijf hun evenement aankan (festival, corporate, tuinfeest, beurs).
+2. Bewijs van eerder werk zien (foto's, klantnamen, projecttypes).
+3. Contact opnemen voor een offerte of een vrijblijvend gesprek.
 
-This version goes **light-interface + cinematic-photo-inserts / Darker Grotesque / single warm accent**. Reasons below.
+## Merkpersoonlijkheid
 
-## Research sources I built on
+**Drie woorden**: warm, capabel, theatraal. Niet "premium", niet "modern".
 
-- **Impeccable** (Paul Bakaus, 10K+ stars) — SKILL.md + typography.md + color-and-contrast.md refs
-- **Taste skill** (Leonxlnx) — bias-correction rules + forbidden AI tells
-- **Redesign skill** — audit checklist
-- Wittenboer's actual HTML (extracted real copy, real testimonials, real photo inventory)
-- 2026 editorial web design trends (cinematic photography, authenticity > perfection)
+**Als fysiek object**: de binnenzijde van een goed gebruikt concertprogramma uit een
+regionaal theater. Heeft papiergewicht, heeft vakmanschap, probeert je niet te imponeren.
 
-## Taste direction: "Backstage Craft"
+**Stem**: professioneel Nederlands B2B met de formele "u"-vorm. Warm, capabel,
+ongekunsteld. Gebruikt het vocabulaire uit de branche: *meedenken*, *ontzorgen*,
+*uit handen nemen*, *van A tot Z*. Geen marketing-speak, geen corporate jargon.
 
-**Three concrete brand words**: warm, capable, theatrical. Not "premium", not "modern", not "elegant" — those are dead categories.
+**Anti-referenties** (wat dit niet mag zijn): Linear / Stripe / Vercel
+developer-marketing, fashion-magazine serif-editorial, SaaS-dashboard dark-with-glow,
+"tech startup"-look van welke soort dan ook.
 
-**As a physical object**: the inside cover of a worn concert-program booklet from a regional theater. Has paper weight, has craft, is not trying to impress you.
+## Typografie (geshipt)
 
-**Anti-references** (what this must NOT look like):
-- Linear.app / Stripe / Vercel developer-marketing (wrong audience)
-- Fashion-magazine Bodoni editorial (wrong vocabulary)
-- SaaS dashboard dark-with-glow (AI-slop fingerprint)
-- "Tech startup" aesthetic of any kind
+Drie families, allemaal via `next/font/google` self-hosted (zie `app/layout.tsx`):
 
-## The font decision — and why it took 20 minutes
+- **Anton** (display) - `--font-display`, weight 400. Voor `h1`/`h2`, hero, sectiekoppen,
+  metric-cijfers, marquee-namen. Altijd `text-transform: uppercase`, `letter-spacing`
+  rond `0.01em`, `line-height` `1.05`. Eén dik gewicht, hoog contrast met de body.
+- **Figtree** (body) - `--font-body`, weights 400/500/600/700. Voor lopende tekst,
+  knoppen, navigatie en de subkoppen `h3`/`h4` (Figtree 700, strakke `letter-spacing`
+  `-0.025em`). Body op 16px, `line-height` 1.55, `text-wrap: pretty`.
+- **JetBrains Mono** (mono) - `--font-mono`, weights 400/500. Voor stapnummers
+  (approach), projectnummers en technische details. Sober, leesbaar, goede diacritics.
 
-Impeccable's reject list explicitly bans: Inter, Fraunces, IBM Plex (all variants), Newsreader, Lora, Playfair, Cormorant, Syne, Outfit, DM Sans, Plus Jakarta Sans, Instrument Sans/Serif, Space Mono, Space Grotesk.
+Fallback-stacks staan in `@theme`:
+`--font-display: var(--font-display), "Anton", "Impact", ui-sans-serif, sans-serif;`
+en analoog voor body (Figtree) en mono.
 
-Taste skill recommends Geist / Satoshi / Cabinet Grotesk / Outfit — but those are becoming the new monoculture (exactly the failure mode Impeccable calls out).
+Display-schaal (clamp-tokens):
+`--text-display-xl` t/m `--text-display-sm`, plus per-sectie `clamp()` op de grote koppen.
 
-**Final choice**: **Darker Grotesque** for everything (display + body, weights 300–900, single family). 
+## Kleursysteem
 
-Why single family: Impeccable says *"You often don't need a second font. One well-chosen family in multiple weights creates cleaner hierarchy than two competing typefaces."* Darker Grotesque has wide weight range and distinctive character — it carries both display and body roles without losing identity.
+Petrol/zand-palet. De meeste tokens staan als hex in `@theme`; `--color-danger`
+en enkele mengkleuren gebruiken OKLCH / `color-mix(in oklch|oklab, …)`. Geen puur
+zwart, geen puur wit: de donkere secties zijn petrol-tint `#2A3840`, de basis is een
+off-white `#F5F5F6`.
 
-**Mono accent**: Sometype Mono for contact info and project numbers. Rare (not JetBrains, not Space Mono), handles Dutch diacritics, has a slightly worn feel that matches "craft" positioning.
+**Primary - petrol/teal**
+- `--color-primary: #157A8C` (CTA's, focus, accenten)
+- `--color-primary-hover: #0F6374`
+- `--color-primary-soft: #E3F0F3`
+- `--color-primary-deep: #0B4A57`
 
-Both free on Google Fonts, both self-hosted via Next.js font optimization, both not on any reject list I've seen.
+**Secondary - koel grijsblauw**
+- `--color-secondary: #546A72`, `-deep: #3B4D54`, `-darker: #2A3840` (o.a. footer),
+  `-soft: #E1E6E8`
 
-## Color system (OKLCH)
+**Tertiary - zand/warm (het "stage"-accent op donkere secties)**
+- `--color-tertiary: #D9C5B2`, `-deep: #B8A088`, `-soft: #F3EAE0`
+  Zand wordt gebruikt als kicker- en accentkleur op donkere achtergronden
+  (hero-accent, quote-mark, stats-cijfers, footer-koppen).
 
-Single accent philosophy — one amber, used rarely:
+**Neutralen / oppervlakken**
+- `--color-bg: #F5F5F6`, `--color-card: #FBFBFC`,
+  `--color-surface-1: #EDEEEF`, `--color-surface-2: #E2E3E5`
+- Donker: `--color-surface-dark: #2A3840`, `--color-surface-dark-1: #3B4D54`
 
-```css
---accent: oklch(70% 0.14 60);       /* stage-lamp amber */
---accent-hover: oklch(64% 0.15 58); /* slightly darker, more saturated */
+**Tekst**
+- `--color-fg: #1E2A2F`, `-secondary: #3E3F42`, `-muted: #636466`
+- Op donker: `--color-fg-on-dark: #F5F5F6`, `-on-dark-muted: #B0BEC4`
 
---surface-0: oklch(97% 0.005 80);   /* base paper — tinted toward amber */
---surface-1: oklch(99% 0.003 80);   /* raised, slightly lighter */
---surface-dark: oklch(12% 0.008 80); /* photo-section background */
+**Status / randen**
+- `--color-danger: oklch(55% 0.14 25)` (donkerrood, >=4.5:1 op de off-white surface)
+- `--color-border: #DCDEE0`, `-strong: #B6B9BC`, `-on-dark: #4A5C65`
 
---text-primary: oklch(18% 0.01 80);
---text-secondary: oklch(42% 0.01 80);
---text-muted: oklch(60% 0.008 80);
-```
+Twee accenten naast elkaar zijn hier toegestaan en bewust: **petrol** (`primary`) op
+lichte secties en CTA's, **zand** (`tertiary`) op donkere secties. Dat is het
+geshipte systeem, geen anti-pattern.
 
-All neutrals tinted toward amber (chroma 0.005-0.015, hue 80) for subconscious cohesion between the accent and the UI. No pure black, no pure white, no mixed warm/cool grays.
+## Layout
 
-**60-30-10 applied**: 60% neutral surfaces, 30% type (primary + secondary), 10% accent. Accent appears only on CTAs, focus states, and one pull-quote per section.
+Tokens in `@theme`:
+- Spacing: `--space-2xs` (0.25rem) t/m `--space-5xl` (9rem).
+- Container: `--container-max: 1400px`, inset `clamp(1.25rem, 2vw + 0.5rem, 2.5rem)`.
+- Radii: `--radius-sm/md/lg/xl` (0.25–1.25rem). Knoppen en pills gebruiken `999px`.
 
-## Layout system
-
-- **Spacing scale** (4pt): 4, 8, 12, 16, 24, 32, 48, 64, 96
-- **Max width**: 1440px, not 1200px — gives wider hero photos room to breathe
-- **Hero**: 60/40 split, typography left, cinematic photo right. NOT centered.
-- **Services**: 2-column zig-zag, NOT 3-column-cards (banned generic pattern)
-- **Testimonials**: inline magazine-quotes with attribution, NOT card carousel with dots
-- **Contact block**: single-column on mobile, 60/40 on desktop, Sometype Mono for details
-
-Mobile first means *mobile-designed*: full-bleed hero photo on mobile becomes split on desktop. Not "desktop with columns collapsed."
+Principes zoals geïmplementeerd:
+- Asymmetrische, redactionele opbouw. Hero is een donkere full-bleed foto-sectie met
+  petrol/petrol-overlay, grote Anton-kop met zand-accentregel, lead + CTA-rij + een
+  drie-koloms metrics-balk.
+- Services-preview is een **bento-grid** (12 koloms, `span-7-r2` / `span-5` / `span-4`),
+  niet drie gelijke kaarten op een rij.
+- Featured work: kaarten met een "color-gel"-foto die van grijs naar kleur opklaart bij
+  hover (op touch-devices direct in kleur via `@media (hover: none)`).
+- Artists: roster-grid met grijs-naar-kleur portretten.
+- Quotes: één grote quote-hero (donker, zand quote-mark) plus kleinere support-quotes,
+  geen carousel met dots.
+- Approach: drie stappen met mono-genummerde labels en een dunne scheidingslijn.
+- Donkere secties zetten hun eigen tekst- en kicker-kleuren (zand) inline.
 
 ## Motion
 
-Motion library (formerly framer-motion), imported from `motion/react`.
+Motion library, import altijd uit `motion/react`. CSS-gedreven reveals plus
+JS-georkestreerde varianten.
 
-- Scroll-triggered stagger reveals on section entries — gentle, ease-out-quart
-- Hover states: `translate-y(-1px)` on press, 200ms ease
-- Respects `prefers-reduced-motion: reduce` throughout
-- NO bounce, NO spring-overshoot, NO parallax-distortion on scroll
-- React Compiler (stable in Next 16) handles memoization
+- Scroll-reveals: `[data-reveal]` met varianten `fade/left/right/scale` en
+  `[data-reveal-delay]` / `[data-reveal-stagger]` voor staggering.
+- Easing-tokens: `--ease-out-quart: cubic-bezier(0.25,1,0.5,1)` en
+  `--ease-out-expo: cubic-bezier(0.16,1,0.3,1)`. Geen bounce, geen spring-overshoot.
+- Split-text op koppen (`.split-line` / `.split-word`), image-zoom bij in-view
+  (`[data-img-zoom]`), subtiele parallax (`[data-parallax]`), scroll-progress-balk,
+  `.hover-lift` (translateY -3px + zachte schaduw).
+- Nav: vaste balk die bij scroll krimpt en transparant-over-hero wordt (`nav--over-hero`).
 
-## Anti-pattern ban list (enforced in code)
+## Anti-pattern ban list (afgedwongen in code)
 
-Every one of these would trigger rejection if it appeared in my output:
+Deze blijven verboden. Let op: dit verbiedt **niet** de fonts/kleuren die de site
+legitiem gebruikt (Anton/Figtree/JetBrains Mono, petrol + zand) - die zijn juist het
+systeem.
 
-- [ ] Inter, Fraunces, IBM Plex, or any font from Impeccable's reject list
-- [ ] Purple or indigo gradients (THE LILA BAN)
-- [ ] `border-left: Xpx solid [color]` > 1px — side-stripe accents on cards/alerts
-- [ ] `background-clip: text` gradient text
-- [ ] 3-column equal card grids as feature row
-- [ ] Centered hero with big tagline above CTA
-- [ ] `bg-#000` or `bg-#fff` — pure black/white
-- [ ] `h-screen` for hero (use `min-h-[100dvh]`)
-- [ ] Bounce / elastic / overshoot easing
-- [ ] Generic lucide user icon avatars
-- [ ] "John Doe" / "Lorem Ipsum" / "Acme Corp" / "99.99%"
-- [ ] Filler copywriting: "Elevate", "Seamless", "Unleash", "Next-Gen"
-- [ ] Emoji in UI chrome (only in copy where Marnix would naturally use them)
-- [ ] Cards nested in cards
-- [ ] More than one accent color
-- [ ] Hidden critical functionality on mobile
+- [ ] "Lorem Ipsum" / "John Doe" / "Acme Corp" / "99.99%" - alleen echte content,
+      echte cijfers, echte mensen.
+- [ ] Puur zwart (`#000`) of puur wit (`#fff`) - gebruik de tokens uit `globals.css`.
+- [ ] Paarse/indigo gradients (de lila-ban).
+- [ ] `background-clip: text` gradient-tekst.
+- [ ] `h-screen` op de hero - gebruik `min-h-[100dvh]` / de hero-paddings.
+- [ ] Drie gelijke feature-kaarten op een rij (de bento-grid is de bedoeling).
+- [ ] Bounce / elastic / overshoot easing.
+- [ ] Gecentreerde hero met grote tagline boven één CTA.
+- [ ] Generieke lucide user-icon avatars.
+- [ ] Filler-copy: "Elevate", "Seamless", "Unleash", "Next-Gen".
+- [ ] Emoji in UI-chrome (alleen in copy waar Marnix dat natuurlijk zou doen).
+- [ ] Em-dashes (lange streepjes) - gebruik koppelteken, dubbele punt, komma of haakjes.
+- [ ] Informele aanspreekvorm - altijd de formele "u".
+- [ ] Kritieke functionaliteit verbergen op mobiel.
 
-## Content preservation
+## Content (echt, niet gegenereerd)
 
-Real content from wittenboerevents.nl (not generated):
+**Services** (Nederlandse naamgeving behouden): Geluid, Tapeshows, Licht,
+Stroomvoorziening, Artiestenbegeleiding. Plus de show-pakketten als verhuur-lijn.
 
-**Tagline**: "Licht & geluid" / "Voor ieder evenement een passende oplossing"
+**Testimonials** (echte klanten): Thomas de Groot (oprichter Park Lounge),
+Bert van Kronenburg (eigenaar Beurs Schijndel), Berk Music.
 
-**Services** (preserving Dutch naming):
-- Geluid
-- Tapeshows
-- Licht
-- Stroomvoorziening
-- Artiestenbegeleiding
+**Contact / vestiging**: 06-27172876, info@wittenboerevents.nl,
+**Het Schild 35, 5275 EE Den Dungen**. WhatsApp, Facebook, Instagram.
 
-**Over ons** (Marnix's actual copy): "Van een kant en klare drive-in-show tot complete project verzorging op maat..."
+## Toegankelijkheid
 
-**Testimonials** (actual clients, actual words):
-- Thomas de Groot, Oprichter Park Lounge
-- Bert van Kronenburg, Eigenaar Beurs Schijndel
-- Berk Music
-- (Fourth slot removed — the original site has a "Lorem" placeholder which is deeply ironic but we fix it by removing until real testimonial arrives)
-
-**Contact**: 06-27172876, info@wittenboerevents.nl, Molenbergstraat 3, 5271CD Sint-Michielsgestel. WhatsApp, Facebook, Instagram.
-
-**Tone**: formal "u" throughout, preserving *meedenken*, *ontzorgen*, *uit handen nemen*, *van A tot Z*. Not translated-from-English marketing speak.
+- WCAG AA minimum (AAA op kritieke paden).
+- Alle bodytekst >= 4.5:1 contrast; `--color-danger` en `kicker` zijn gekozen om dat
+  ook op getinte/donkere oppervlakken te halen.
+- Zichtbare focus-rings: `:focus-visible` met 2px petrol outline + offset.
+- Skip-link (`.skip-link`) voor WCAG 2.4.1.
+- `prefers-reduced-motion` gerespecteerd; reveals/zoom vallen netjes terug.
+- Alt-tekst op elke foto die het getoonde evenement beschrijft.
+- Touch-targets >= 44px; `text-wrap: pretty` / `balance` tegen weeskinderen.
 
 ## Tech stack
 
-- **Next.js 16.2.1** — App Router, Turbopack stable, React Compiler stable
-- **React 19** 
-- **Tailwind CSS v4.1** — CSS-first config via `@theme` directive (no `tailwind.config.js`)
-- **Motion library** — `motion/react` imports
-- **TypeScript** strict mode
-- **Deploy**: GitHub → Vercel auto-deploy
+- Next.js 16 App Router (Turbopack, React Compiler), React 19, TypeScript strict.
+- Tailwind CSS v4 - CSS-first via `@theme` in `app/globals.css`, geen `tailwind.config.js`.
+- Motion library - `motion/react`.
+- Supabase (Postgres + Auth + SSR cookies).
+- Deploy: Vercel.
 
-## Quality targets
+## Kwaliteitsdoelen
 
-- Lighthouse Performance ≥ 95 mobile, ≥ 98 desktop
-- Lighthouse Accessibility = 100
-- Best Practices ≥ 95
-- SEO = 100
-- CLS ≤ 0.05
-- LCP ≤ 1.8s
-- TBT ≤ 100ms
-- First print to interactive photo visible ≤ 1.2s on mobile 4G
-
-## What's NOT included (on purpose)
-
-- No CMS — single-page site, edit in code for now. Marnix can swap photos by committing to the repo.
-- No analytics beyond Vercel's built-in
-- No cookie banner — no tracking means no banner needed. If Wittenboer later adds analytics, add a light explicit-consent banner then.
-- No newsletter / no dark mode toggle — not what the user asked for, no good reason to add.
-
-## How to compare with Hermes's version
-
-After both are deployed as Vercel previews:
-
-1. Open each on your phone first (mobile-first judgment)
-2. Note which one makes you trust "they can handle my event" faster — that's the brief winning
-3. Note which one you can still remember 10 minutes after closing the tab — that's the taste winning
-4. Run both through Impeccable's detector (`npx impeccable detect <url>`) — anti-pattern count
-5. Run both through Lighthouse mobile — performance numbers
-
-Winner on trust + memorability + zero-slop + performance is the direction to actually ship.
+- Lighthouse Performance >= 95 mobiel, >= 98 desktop.
+- Lighthouse Accessibility = 100, Best Practices >= 95, SEO = 100.
+- CLS <= 0.05, LCP <= 1.8s, TBT <= 100ms.

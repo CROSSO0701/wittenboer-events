@@ -11,6 +11,13 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
+/** Nette Nederlandse labels per rol, geen ruwe codes naar gebruikers tonen. */
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Beheerder',
+  artist: 'Artiest',
+  staff: 'Crew',
+}
+
 export default async function AccountPage() {
   let supabase
   try {
@@ -41,7 +48,7 @@ export default async function AccountPage() {
         <dl className="mt-4 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--color-border)] bg-white p-4 text-sm">
           <Field label="Naam" value={profile?.full_name ?? '-'} />
           <Field label="E-mail" value={profile?.email ?? user.email ?? '-'} />
-          <Field label="Rol" value={profile?.role ?? '-'} />
+          <Field label="Rol" value={profile?.role ? ROLE_LABELS[profile.role] ?? profile.role : '-'} />
           <Field
             label="Wachtwoord ingesteld"
             value={profile?.has_password ? 'Ja' : 'Nog niet'}

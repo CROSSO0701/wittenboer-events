@@ -177,7 +177,12 @@ export default async function ServicePage({
             )}
             {svc.photo && (
               <div className="svc__photo" data-img-zoom>
-                <Image src={svc.photo} alt="" width={1600} height={900} />
+                <Image
+                  src={svc.photo}
+                  alt={`${svc.kicker} van Wittenboer Events op locatie`}
+                  width={1600}
+                  height={900}
+                />
               </div>
             )}
             <div className="svc__cta-row">

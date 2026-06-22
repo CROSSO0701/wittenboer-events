@@ -17,7 +17,7 @@ import { Label } from '../../../../components/ui/label'
 import { Textarea } from '../../../../components/ui/textarea'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import { KlusTypesManager } from './KlusTypesManager'
-import { LocationInput } from './LocationInput'
+import { LocationInput } from '../../../../components/shared/LocationInput'
 
 export type KlusRow = {
   id: string

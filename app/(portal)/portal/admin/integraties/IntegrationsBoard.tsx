@@ -151,10 +151,10 @@ function ArtwinCard({
       const data = await res.json().catch(() => ({}))
       if (!res.ok || !data.ok) {
         setTestResult(`Fout: ${data.error ?? 'onbekend'}`)
-        toast.error(`Feed-test faalde`)
+        toast.error(`Verbinding testen lukte niet`)
       } else {
-        setTestResult(`Feed werkt, ${data.count} events gevonden`)
-        toast.success(`${data.count} events in feed`)
+        setTestResult(`Verbinding werkt, ${data.count} gigs gevonden`)
+        toast.success(`${data.count} gigs gevonden`)
       }
     } finally {
       setTesting(false)
@@ -166,8 +166,8 @@ function ArtwinCard({
   return (
     <CardShell icon={<Rss size={18} />} title="ArtwinLive" ok={ok}>
       <p className="text-sm text-[var(--color-fg-secondary)]">
-        Importeer je gigs van ArtwinLive. Plak de privé-link uit ArtwinLive hieronder. We
-        halen elke ochtend automatisch nieuwe gigs op.
+        Haal je gigs uit ArtwinLive binnen. Plak de privé-link uit ArtwinLive hieronder. Elke
+        ochtend halen we automatisch je nieuwe gigs op, u hoeft er verder niets voor te doen.
       </p>
       <div className="mt-3 flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
@@ -197,10 +197,10 @@ function ArtwinCard({
         {testResult && (
           <p
             className={`flex items-center gap-1.5 text-xs ${
-              testResult.startsWith('Feed werkt') ? 'text-emerald-700' : 'text-red-700'
+              testResult.startsWith('Verbinding werkt') ? 'text-emerald-700' : 'text-red-700'
             }`}
           >
-            {testResult.startsWith('Feed werkt') ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+            {testResult.startsWith('Verbinding werkt') ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
             {testResult}
           </p>
         )}
@@ -292,8 +292,8 @@ function ResendCard({ connected }: { connected: boolean }) {
       </p>
       <p className="mt-3 text-xs text-[var(--color-fg-muted)]">
         {connected
-          ? 'Mail werkt, alles wordt automatisch verstuurd.'
-          : 'Nog niet ingesteld. Vraag de developer om dit te activeren, pas dan worden mails ook echt verstuurd.'}
+          ? 'Alles loopt automatisch, u hoeft hier niets te doen.'
+          : 'Nog niet ingeschakeld. Laat dit even door ons aanzetten, daarna gaan de mails vanzelf de deur uit.'}
       </p>
     </CardShell>
   )

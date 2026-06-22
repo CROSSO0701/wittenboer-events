@@ -18,6 +18,13 @@ import { useStaffList } from './useStaffList'
 
 type Pick = { role: string; channel: 'email' | 'whatsapp' }
 type Conflict = { kind: 'artist' | 'staff' | 'unavailable' | 'klus'; label: string; detail: string }
+type Notification = { staff_id: string; ok: boolean; channel: string; error?: string }
+
+/** Lijst van namen netjes aan elkaar plakken ("A", "A en B", "A, B en C"). */
+function joinNames(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? ''
+  return `${names.slice(0, -1).join(', ')} en ${names[names.length - 1]}`
+}
 
 const CONFLICT_ICON: Record<Conflict['kind'], ComponentType<{ size?: number; className?: string }>> = {
   artist: Music2,
@@ -87,6 +94,22 @@ export function AssignStaffDialog({
       if (!res.ok) {
         toast.error(data.error ?? `Status ${res.status}`)
         return
+      }
+      // Controleer per kanaal of de melding echt aankwam. Niet-bezorgde
+      // WhatsApp-berichten apart melden, zodat een mislukte WhatsApp niet
+      // als "gelukt" wegvalt.
+      const notifications: Notification[] = Array.isArray(data.notifications) ? data.notifications : []
+      const failedWhatsapp = notifications.filter((n) => n.channel === 'whatsapp' && !n.ok)
+      if (failedWhatsapp.length > 0) {
+        const names = failedWhatsapp.map(
+          (n) => staff.find((s) => s.id === n.staff_id)?.full_name ?? 'een crewlid'
+        )
+        toast.warning(
+          `Crew toegewezen. Let op: WhatsApp naar ${joinNames(names)} niet bezorgd. Informeer ${
+            failedWhatsapp.length > 1 ? 'hen' : 'die persoon'
+          } even handmatig.`,
+          { duration: 8000 }
+        )
       }
       onAssigned()
       onOpenChange(false)

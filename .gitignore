@@ -14,4 +14,22 @@ out
 tsconfig.tsbuildinfo
 supabase/.temp/
 *.tmp
-Offerte-*.pdf
+
+# Internal sales docs (all formats + version variants) — never commit
+Offerte-*
+
+# Heavy media that does not belong in the repo
+*.mp3
+*.mp4
+*.zip
+
+# LibreOffice/OpenOffice lock files
+.~lock.*#
+
+# Loose dropped files / scratch assets in the repo root — keep them out of `git add .`
+/pers fotos/
+/pngtree-*
+/worst-stamp-*.webp
+/avb554hcd.webp
+/https___cdn.pijper.io*.png
+/Challenges-groep-nieuw.png

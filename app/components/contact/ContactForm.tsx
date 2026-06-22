@@ -173,7 +173,7 @@ export function ContactForm() {
         />
       </div>
       {status === 'error' && (
-        <p role="alert" style={{ color: '#a13a3a', fontSize: 14 }}>
+        <p role="alert" style={{ color: 'var(--color-danger)', fontSize: 14 }}>
           Er ging iets mis bij het versturen. Probeer het opnieuw of bel direct.
         </p>
       )}

@@ -28,6 +28,17 @@ import { cn } from '../../../lib/utils/cn'
 type Role = 'admin' | 'artist' | 'staff' | null
 type Session = { email: string | null; fullName: string | null; role: Role } | null
 
+/** Nette Nederlandse labels per rol, geen ruwe codes naar gebruikers tonen. */
+const ROLE_LABELS: Record<'admin' | 'artist' | 'staff', string> = {
+  admin: 'Beheerder',
+  artist: 'Artiest',
+  staff: 'Crew',
+}
+
+function roleLabel(role: Role | undefined): string | null {
+  return role ? ROLE_LABELS[role] : null
+}
+
 type NavItem = {
   href: string
   label: string
@@ -121,7 +132,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
         { href: '/portal/admin/artiesten', label: 'Artiesten', icon: Music },
       ]
     : isArtist
-      ? [{ href: '/portal/artiest', label: 'Mijn klussen', icon: Music2 }]
+      ? [{ href: '/portal/artiest', label: 'Mijn aanvragen', icon: Music2 }]
       : []
 
   // Instellingen (zelden gebruikt) — ingetogen sectie in de sidebar-footer.
@@ -140,14 +151,10 @@ export function PortalShell({ children }: { children: ReactNode }) {
 
   // Subtitle kiest dezelfde logica
   const subtitleRole = inAdminArea
-    ? 'Admin'
+    ? ROLE_LABELS.admin
     : inArtistArea
-      ? 'Artiest'
-      : role === 'admin'
-        ? 'Admin'
-        : role === 'artist'
-          ? 'Artiest'
-          : 'Portal'
+      ? ROLE_LABELS.artist
+      : roleLabel(role) ?? 'Portal'
 
   const initial = (session?.fullName ?? session?.email ?? 'WE').slice(0, 1).toUpperCase()
 
@@ -263,9 +270,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
               <div className="truncate text-sm font-medium text-[var(--color-fg-on-dark)]">
                 {session?.fullName ?? session?.email ?? '...'}
               </div>
-              {role && (
+              {roleLabel(role) && (
                 <div className="text-[10px] uppercase tracking-wider text-[var(--color-tertiary)]">
-                  {role}
+                  {roleLabel(role)}
                 </div>
               )}
             </div>
