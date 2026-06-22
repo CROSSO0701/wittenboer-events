@@ -1,5 +1,6 @@
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
+import WhatsAppButton from '../components/layout/WhatsAppButton'
 import ScrollEffects from '../components/shared/ScrollEffects'
 import { SpotlightCursor } from '../components/shared/SpotlightCursor'
 
@@ -16,6 +17,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {children}
       </div>
       <Footer />
+      <WhatsAppButton />
       <ScrollEffects />
     </>
   )
