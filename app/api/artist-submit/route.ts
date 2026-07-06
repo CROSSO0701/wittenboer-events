@@ -57,6 +57,29 @@ export async function POST(request: Request) {
   // overal consistent blijft.
   const title = `${input.event} (${input.artist_name})`
 
+  // De bookings-tabel heeft geen aparte kolommen voor prikken/opbouwen,
+  // begane grond/verdieping en verhard pad. We vatten deze extra info samen in
+  // een leesbaar blok bovenaan de notes, zodat Marnix alles op één plek ziet.
+  const setupLabel = input.setup_type === 'prikken' ? 'Prikken' : 'Opbouwen'
+  const floorLabel =
+    input.floor_level === 'begane_grond'
+      ? 'Begane grond'
+      : input.floor_level === 'verdieping'
+        ? 'Verdieping'
+        : null
+  const pavedLabel =
+    input.paved_path === true ? 'Ja' : input.paved_path === false ? 'Nee' : null
+
+  const detailLines = [
+    `Prikken of opbouwen: ${setupLabel}`,
+    floorLabel ? `Begane grond of verdieping: ${floorLabel}` : null,
+    pavedLabel ? `Verhard pad naar het optreden: ${pavedLabel}` : null,
+  ].filter((l): l is string => l !== null)
+
+  const combinedNotes = [detailLines.join('\n'), input.notes?.trim() || null]
+    .filter((part): part is string => Boolean(part))
+    .join('\n\n')
+
   const { data: created, error: insertErr } = await supabase
     .from('bookings')
     .insert({
@@ -64,12 +87,12 @@ export async function POST(request: Request) {
       artist_id: null,
       created_by: null,
       client_name: title,
-      client_phone: input.client_phone ?? null,
+      client_phone: input.client_phone,
       event_date: input.event_date,
-      event_start: input.event_start ?? null,
-      event_end: input.event_end ?? null,
+      event_start: input.event_start,
+      event_end: input.event_end,
       event_location: input.event_location,
-      notes: input.notes ?? null,
+      notes: combinedNotes || null,
       status: 'pending',
     })
     .select('id')
@@ -104,6 +127,14 @@ export async function POST(request: Request) {
 
   // Notificatie naar Marnix (best-effort).
   try {
+    const fmtTime = (iso: string) =>
+      new Intl.DateTimeFormat('nl-NL', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Europe/Amsterdam',
+      }).format(new Date(iso))
+    const showtimes = `${fmtTime(input.event_start)} - ${fmtTime(input.event_end)}`
+
     const mail = await renderEmail(
       InquiryReceivedMail({
         type: 'artist-booking',
@@ -112,7 +143,11 @@ export async function POST(request: Request) {
         phone: input.client_phone,
         artistName: input.artist_name,
         eventDate: input.event_date,
+        showtimes,
         location: input.event_location,
+        setupType: setupLabel,
+        floorLevel: floorLabel ?? undefined,
+        pavedPath: pavedLabel ?? undefined,
         message: input.notes,
       })
     )

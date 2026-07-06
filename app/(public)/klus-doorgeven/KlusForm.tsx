@@ -1,39 +1,68 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { LocationInput } from '../../components/shared/LocationInput'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
+type SetupType = '' | 'prikken' | 'opbouwen'
+type FloorLevel = '' | 'begane_grond' | 'verdieping'
+type PavedPath = '' | 'ja' | 'nee'
 
 export function KlusForm() {
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
+  // Kernvelden in state, zodat we live kunnen valideren en de verzendknop
+  // disabled houden tot alles compleet is.
+  const [artistName, setArtistName] = useState('')
+  const [event, setEvent] = useState('')
+  const [eventDate, setEventDate] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [location, setLocation] = useState('')
+  const [clientPhone, setClientPhone] = useState('')
+  const [setupType, setSetupType] = useState<SetupType>('')
+  const [floorLevel, setFloorLevel] = useState<FloorLevel>('')
+  const [pavedPath, setPavedPath] = useState<PavedPath>('')
+  const [notes, setNotes] = useState('')
+
+  // Kernvelden verplicht: artiest/naam, datum, adres, showtijden (begin + eind),
+  // telefoon contactpersoon en prikken-of-opbouwen. Zonder deze mag het niet
+  // verzonden worden.
+  const isComplete = useMemo(
+    () =>
+      artistName.trim().length > 0 &&
+      event.trim().length > 0 &&
+      eventDate.trim().length > 0 &&
+      startTime.trim().length > 0 &&
+      endTime.trim().length > 0 &&
+      location.trim().length > 0 &&
+      clientPhone.trim().length > 0 &&
+      (setupType === 'prikken' || setupType === 'opbouwen'),
+    [artistName, event, eventDate, startTime, endTime, location, clientPhone, setupType]
+  )
+
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!isComplete) {
+      setErrorMsg('Vul eerst alle verplichte velden in.')
+      setStatus('error')
+      return
+    }
     setStatus('submitting')
     setErrorMsg(null)
-    const data = new FormData(e.currentTarget)
 
-    // Datum + (optionele) tijden naar ISO-datetime voor aanvang/einde.
-    const date = (data.get('event_date') as string) || ''
-    const startT = (data.get('event_start_time') as string) || ''
-    const endT = (data.get('event_end_time') as string) || ''
-
+    // Showtijden (begin + eind) naar ISO-datetime, gekoppeld aan de datum.
     let event_start: string | undefined
-    if (date && startT) {
-      const d = new Date(`${date}T${startT}`)
-      if (!Number.isNaN(d.getTime())) event_start = d.toISOString()
-    }
+    const startD = new Date(`${eventDate}T${startTime}`)
+    if (!Number.isNaN(startD.getTime())) event_start = startD.toISOString()
 
     let event_end: string | undefined
-    if (date && endT) {
-      const d = new Date(`${date}T${endT}`)
-      if (!Number.isNaN(d.getTime())) {
-        // Eindigt het optreden vóór de aanvang? Dan loopt het door na middernacht.
-        if (event_start && d.toISOString() <= event_start) d.setDate(d.getDate() + 1)
-        event_end = d.toISOString()
-      }
+    const endD = new Date(`${eventDate}T${endTime}`)
+    if (!Number.isNaN(endD.getTime())) {
+      // Eindigt het optreden vóór de aanvang? Dan loopt het door na middernacht.
+      if (event_start && endD.toISOString() <= event_start) endD.setDate(endD.getDate() + 1)
+      event_end = endD.toISOString()
     }
 
     try {
@@ -41,15 +70,18 @@ export function KlusForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          artist_name: data.get('artist_name') || '',
-          event: data.get('event') || '',
-          client_phone: data.get('client_phone') || '',
-          event_date: date,
+          artist_name: artistName,
+          event,
+          client_phone: clientPhone,
+          event_date: eventDate,
           event_start,
           event_end,
-          event_location: data.get('event_location') || '',
-          notes: data.get('notes') || '',
-          website: data.get('website') || '',
+          event_location: location,
+          setup_type: setupType,
+          floor_level: floorLevel || undefined,
+          paved_path: pavedPath === '' ? undefined : pavedPath === 'ja',
+          notes,
+          website: (new FormData(e.currentTarget).get('website') as string) || '',
         }),
       })
       if (!res.ok) {
@@ -80,7 +112,7 @@ export function KlusForm() {
   }
 
   return (
-    <form className="contact-form" onSubmit={onSubmit}>
+    <form className="contact-form" onSubmit={onSubmit} noValidate>
       {/* Honeypot, verborgen voor mensen */}
       <input
         type="text"
@@ -99,6 +131,8 @@ export function KlusForm() {
           type="text"
           placeholder="Bijv. Mikey Wonder"
           autoComplete="off"
+          value={artistName}
+          onChange={(e) => setArtistName(e.target.value)}
           required
         />
       </div>
@@ -110,23 +144,53 @@ export function KlusForm() {
           name="event"
           type="text"
           placeholder="Bijv. Bruiloft Jansen, Kermis Oss, Café De Kroeg"
+          value={event}
+          onChange={(e) => setEvent(e.target.value)}
           required
         />
       </div>
 
       <div className="field">
         <label htmlFor="event_date">Datum</label>
-        <input id="event_date" name="event_date" type="date" required />
+        <input
+          id="event_date"
+          name="event_date"
+          type="date"
+          value={eventDate}
+          onChange={(e) => setEventDate(e.target.value)}
+          required
+        />
       </div>
 
-      <div className="field--row">
-        <div className="field">
-          <label htmlFor="event_start_time">Aanvang (optioneel)</label>
-          <input id="event_start_time" name="event_start_time" type="time" />
-        </div>
-        <div className="field">
-          <label htmlFor="event_end_time">Einde (optioneel)</label>
-          <input id="event_end_time" name="event_end_time" type="time" />
+      <div className="field">
+        <label>Showtijden</label>
+        <div className="field--row">
+          <div className="field">
+            <label htmlFor="event_start_time" className="field__sublabel">
+              Begin
+            </label>
+            <input
+              id="event_start_time"
+              name="event_start_time"
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="event_end_time" className="field__sublabel">
+              Eind
+            </label>
+            <input
+              id="event_end_time"
+              name="event_end_time"
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              required
+            />
+          </div>
         </div>
       </div>
 
@@ -136,22 +200,80 @@ export function KlusForm() {
           id="event_location"
           name="event_location"
           placeholder="Adres / stad / venue"
+          defaultValue={location}
+          onValueChange={setLocation}
           required
         />
       </div>
 
       <div className="field">
-        <label htmlFor="notes">Wat heb je nodig?</label>
-        <textarea
-          id="notes"
-          name="notes"
-          placeholder="Bijv. geluid + licht, podium, boel inprikken op aanwezige installatie, line-up, bijzonderheden…"
+        <label htmlFor="client_phone">Telefoon contactpersoon (klant)</label>
+        <input
+          id="client_phone"
+          name="client_phone"
+          type="tel"
+          placeholder="Telefoonnummer van de contactpersoon"
+          value={clientPhone}
+          onChange={(e) => setClientPhone(e.target.value)}
+          required
         />
       </div>
 
       <div className="field">
-        <label htmlFor="client_phone">Je telefoon (optioneel)</label>
-        <input id="client_phone" name="client_phone" type="tel" placeholder="Zodat we je snel kunnen bereiken" />
+        <label htmlFor="setup_type">Prikken of opbouwen?</label>
+        <select
+          id="setup_type"
+          name="setup_type"
+          value={setupType}
+          onChange={(e) => setSetupType(e.target.value as SetupType)}
+          required
+        >
+          <option value="" disabled>
+            Maak een keuze
+          </option>
+          <option value="prikken">Prikken</option>
+          <option value="opbouwen">Opbouwen</option>
+        </select>
+      </div>
+
+      <div className="field">
+        <label htmlFor="floor_level">Begane grond of verdieping?</label>
+        <select
+          id="floor_level"
+          name="floor_level"
+          value={floorLevel}
+          onChange={(e) => setFloorLevel(e.target.value as FloorLevel)}
+        >
+          <option value="">Maak een keuze (optioneel)</option>
+          <option value="begane_grond">Begane grond</option>
+          <option value="verdieping">Verdieping</option>
+        </select>
+      </div>
+
+      <div className="field">
+        <label htmlFor="paved_path">Is er een verhard pad naar het optreden?</label>
+        <select
+          id="paved_path"
+          name="paved_path"
+          value={pavedPath}
+          onChange={(e) => setPavedPath(e.target.value as PavedPath)}
+        >
+          <option value="">Maak een keuze (optioneel)</option>
+          <option value="ja">Ja</option>
+          <option value="nee">Nee</option>
+        </select>
+        <span className="field__hint">Geen grind, gras of zand.</span>
+      </div>
+
+      <div className="field">
+        <label htmlFor="notes">Bijzonderheden</label>
+        <textarea
+          id="notes"
+          name="notes"
+          placeholder="Bijv. line-up, boel inprikken op aanwezige installatie, wensen of aandachtspunten…"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </div>
 
       {status === 'error' && (
@@ -162,7 +284,11 @@ export function KlusForm() {
 
       <div className="form__submit-row">
         <span className="field__hint">Wittenboer bevestigt de details.</span>
-        <button className="btn-primary" type="submit" disabled={status === 'submitting'}>
+        <button
+          className="btn-primary"
+          type="submit"
+          disabled={status === 'submitting' || !isComplete}
+        >
           {status === 'submitting' ? 'Versturen…' : 'Klus doorgeven'}
         </button>
       </div>

@@ -11,8 +11,12 @@ export function InquiryReceivedMail({
   packageName,
   artistName,
   eventDate,
+  showtimes,
   guestCount,
   location,
+  setupType,
+  floorLevel,
+  pavedPath,
 }: {
   type: 'contact' | 'show-package' | 'artist-booking'
   name: string
@@ -24,8 +28,12 @@ export function InquiryReceivedMail({
   packageName?: string
   artistName?: string
   eventDate?: string
+  showtimes?: string
   guestCount?: number
   location?: string
+  setupType?: string
+  floorLevel?: string
+  pavedPath?: string
 }) {
   const title =
     type === 'contact'
@@ -46,8 +54,12 @@ export function InquiryReceivedMail({
           {packageName && <Field label="Pakket" value={packageName} />}
           {artistName && <Field label="Artiest" value={artistName} />}
           {eventDate && <Field label="Datum" value={eventDate} />}
+          {showtimes && <Field label="Showtijden" value={showtimes} />}
           {guestCount && <Field label="Gasten" value={String(guestCount)} />}
           {location && <Field label="Locatie" value={location} />}
+          {setupType && <Field label="Prikken of opbouwen" value={setupType} />}
+          {floorLevel && <Field label="Begane grond of verdieping" value={floorLevel} />}
+          {pavedPath && <Field label="Verhard pad" value={pavedPath} />}
           {subject && <Field label="Onderwerp" value={subject} />}
         </tbody>
       </table>

@@ -20,6 +20,7 @@ export function LocationInput({
   required,
   className,
   id,
+  onValueChange,
 }: {
   name?: string
   defaultValue?: string
@@ -28,8 +29,16 @@ export function LocationInput({
   /** Optionele input-classes (admin gebruikt de shadcn Input-stijl; publiek laat CSS het doen). */
   className?: string
   id?: string
+  /** Meldt elke waardewijziging aan de parent (voor live-validatie). */
+  onValueChange?: (value: string) => void
 }) {
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValueState] = useState(defaultValue)
+
+  // Eén setter die zowel de interne state als (optioneel) de parent bijwerkt.
+  const setValue = (next: string) => {
+    setValueState(next)
+    onValueChange?.(next)
+  }
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)

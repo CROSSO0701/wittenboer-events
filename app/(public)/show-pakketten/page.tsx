@@ -152,7 +152,8 @@ export default function ShowPakkettenPage() {
                 <ul className="pkg-card__incl">
                   <li>1× DJ-meubel truss met LED parren</li>
                   <li>1× 4-bar lichtbar</li>
-                  <li>1× Pioneer-set (CDJ + mixer)</li>
+                  <li>1× Pioneer Deck</li>
+                  <li>1× A-set (geluid)</li>
                 </ul>
                 <p className="pkg-card__hint">Voor verjaardagen en kleinere zalen tot ±80 gasten.</p>
                 <div className="pkg-card__foot">
@@ -180,13 +181,13 @@ export default function ShowPakkettenPage() {
                   </div>
                 </div>
                 <ul className="pkg-card__incl">
-                  <li>2× 4-bar lichtbar</li>
                   <li>1× DJ-booth met 4 LED parren</li>
+                  <li>2× 4-bar lichtbar</li>
                   <li>1× Pioneer-set (CDJ + mixer)</li>
+                  <li>1× A-set (geluid)</li>
                   <li>1× booth-monitor</li>
-                  <li>1× set d&amp;b audio</li>
                 </ul>
-                <p className="pkg-card__hint">Strak DJ-booth met d&amp;b geluid. Tot ±150 gasten.</p>
+                <p className="pkg-card__hint">Strak DJ-booth met A-set (geluid). Tot ±150 gasten.</p>
                 <div className="pkg-card__foot">
                   <Link className="btn-primary" href="/contact?pakket=booth">Vraag offerte</Link>
                   <a className="btn-ghost" href="tel:+31627172876">Bel voor info</a>
@@ -212,13 +213,13 @@ export default function ShowPakkettenPage() {
                   </div>
                 </div>
                 <ul className="pkg-card__incl">
-                  <li>4× truss-paal met LED par + moving head</li>
                   <li>1× truss-booth met LED parren</li>
-                  <li>1× DJ-set (CDJ + mixer)</li>
+                  <li>4× truss-paal met LED par + moving head</li>
+                  <li>1× Pioneer-set (CDJ + mixer)</li>
+                  <li>1× A-set (geluid)</li>
                   <li>1× monitor</li>
-                  <li>1× Pioneer-set</li>
                 </ul>
-                <p className="pkg-card__hint">De full-show. Tot ±250 gasten, afgebeeld op de foto.</p>
+                <p className="pkg-card__hint">De full-show. Tot ±150 gasten, afgebeeld op de foto.</p>
                 <div className="pkg-card__foot">
                   <Link className="btn-primary" href="/contact?pakket=truss-show">Vraag offerte</Link>
                   <a
@@ -252,12 +253,12 @@ export default function ShowPakkettenPage() {
                   </div>
                 </div>
                 <ul className="pkg-card__incl">
+                  <li>1× DJ-booth wit</li>
                   <li>4× truss-paal met witte slave</li>
                   <li>4× moving head</li>
                   <li>4× LED par</li>
-                  <li>1× DJ-booth wit</li>
-                  <li>1× set d&amp;b audio</li>
-                  <li>1× Pioneer-set</li>
+                  <li>1× Pioneer-set (CDJ + mixer)</li>
+                  <li>1× A-set (geluid)</li>
                   <li>1× booth-monitor</li>
                 </ul>
                 <p className="pkg-card__hint">Bruiloften en chique gala-avonden. Witte uitstraling.</p>
@@ -291,8 +292,9 @@ export default function ShowPakkettenPage() {
                   <li>1× DJ-meubel goud</li>
                   <li>2× Portman P1</li>
                   <li>2× wash moving head</li>
-                  <li>1× monitor</li>
+                  <li>1× Pioneer-set (CDJ + mixer)</li>
                   <li>1× A-set (geluid)</li>
+                  <li>1× monitor</li>
                   <li>1× DJ-monitor</li>
                 </ul>
                 <p className="pkg-card__hint">Bruiloften en chique feesten. Gouden uitstraling.</p>
@@ -349,18 +351,78 @@ export default function ShowPakkettenPage() {
                 </svg>
               </div>
               <h3>Programmering</h3>
-              <p>Lichtshow vooraf geprogrammeerd. Op de avond zelf staat er iemand achter de console.</p>
-            </div>
-            <div className="incl__item">
-              <div className="incl__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" />
-                </svg>
-              </div>
-              <h3>Aanspreekpunt</h3>
-              <p>Eén nummer voor de hele avond. Iets gaat fout? We lossen het op zonder dat je merkt dat het er was.</p>
+              <p>Lichtshow vooraf geprogrammeerd. De DJ kan zelf de standen wisselen tijdens de avond.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="pkg-extras">
+        <div className="container">
+          <div className="incl__head" data-reveal>
+            <p className="kicker">Uit te breiden met</p>
+            <h2>Extra&apos;s voor net dat beetje meer.</h2>
+            <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--color-fg-secondary)' }}>
+              Losse toevoegingen bovenop je pakket. Geef bij de aanvraag aan wat je wilt, dan
+              rekenen we het meteen mee in de offerte.
+            </p>
+          </div>
+          <ul className="pkg-extras__list" data-reveal-stagger>
+            <li className="pkg-extras__row">
+              <span className="pkg-extras__name">Hazer</span>
+              <span className="pkg-extras__price">€25</span>
+            </li>
+            <li className="pkg-extras__row">
+              <span className="pkg-extras__name">Podium (incl. afrok)</span>
+              <span className="pkg-extras__price">€125</span>
+            </li>
+            <li className="pkg-extras__row">
+              <span className="pkg-extras__name">Sparks (2×)</span>
+              <span className="pkg-extras__price">€200</span>
+            </li>
+            <li className="pkg-extras__row">
+              <span className="pkg-extras__name">CO2-gun (1× 60 sec)</span>
+              <span className="pkg-extras__price">€250</span>
+            </li>
+            <li className="pkg-extras__row">
+              <span className="pkg-extras__name">Tapijttegels voor op het podium</span>
+              <span className="pkg-extras__price">€100</span>
+            </li>
+          </ul>
+          <p className="pkg-extras__more">
+            Meer nodig? Show op maat, <Link href="/contact">neem contact op</Link>.
+          </p>
+        </div>
+      </section>
+
+      <section className="pkg-terms">
+        <div className="container">
+          <div className="incl__head" data-reveal>
+            <p className="kicker">Goed om te weten</p>
+            <h2>Zo werken we op de dag zelf.</h2>
+          </div>
+          <ul className="pkg-terms__list" data-reveal-stagger>
+            <li className="pkg-terms__item">
+              <strong>Transport</strong>
+              <span>€0,50 per km, altijd van toepassing.</span>
+            </li>
+            <li className="pkg-terms__item">
+              <strong>Op- en afbouw</strong>
+              <span>
+                Opbouw vanaf 9:00 met 2 technici. Na afloop nemen we alles weer mee.
+              </span>
+            </li>
+            <li className="pkg-terms__item">
+              <strong>Wij bouwen, de act draait</strong>
+              <span>Wij bouwen op en breken af. De act draait de show zelf.</span>
+            </li>
+            <li className="pkg-terms__item">
+              <strong>Lichtshow</strong>
+              <span>
+                Vooraf geprogrammeerd. De DJ kan tijdens de avond zelf de standen wisselen.
+              </span>
+            </li>
+          </ul>
         </div>
       </section>
 
