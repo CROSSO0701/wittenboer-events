@@ -80,6 +80,15 @@ export function KlusDialog({
   const [kind, setKind] = useState(klus?.kind ?? '')
   const [typesOpen, setTypesOpen] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // Inline nieuw type toevoegen bij het veld zelf.
+  const [addingType, setAddingType] = useState(false)
+  const [newTypeLabel, setNewTypeLabel] = useState('')
+  const [savingType, setSavingType] = useState(false)
+  // Vrije omschrijving als het gekozen type exact "Overig" is.
+  const [overigOmschrijving, setOverigOmschrijving] = useState('')
+
+  // Sentinel-waarde voor de extra optie onderaan de dropdown.
+  const NEW_TYPE_SENTINEL = '__new__'
 
   // Active klus-types laden (voor de dropdown). Apart van de open-effect zodat
   // we ook na het sluiten van de beheer-dialog kunnen verversen.
@@ -106,9 +115,15 @@ export function KlusDialog({
       setOverride(false)
       setPicked({})
       setConfirmDelete(false)
+      setAddingType(false)
+      setNewTypeLabel('')
+      setOverigOmschrijving('')
       return
     }
     setKind(klus?.kind ?? '')
+    setAddingType(false)
+    setNewTypeLabel('')
+    setOverigOmschrijving('')
     loadKindOptions()
     ;(async () => {
       try {
@@ -151,6 +166,64 @@ export function KlusDialog({
     })
   }
 
+  // Reageert op de dropdown. De sentinel-optie start de inline invoer en
+  // wordt nooit als echte kind-waarde bewaard.
+  function onKindSelectChange(value: string) {
+    if (value === NEW_TYPE_SENTINEL) {
+      setAddingType(true)
+      setNewTypeLabel('')
+      setOverigOmschrijving('')
+      return
+    }
+    setAddingType(false)
+    setNewTypeLabel('')
+    // Reset de vrije omschrijving zodra we van "Overig" wegnavigeren.
+    if (value !== 'Overig') setOverigOmschrijving('')
+    setKind(value)
+  }
+
+  function cancelNewType() {
+    setAddingType(false)
+    setNewTypeLabel('')
+  }
+
+  // Nieuw type opslaan via de API en direct selecteren.
+  async function submitNewType() {
+    const label = newTypeLabel.trim()
+    if (!label || savingType) return
+    setSavingType(true)
+    try {
+      const res = await fetch('/api/admin/klus-types', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 409) {
+        // Type bestond al: selecteer het gewoon.
+        setKind(label)
+        setAddingType(false)
+        setNewTypeLabel('')
+        toast.info('Dit type bestond al en is geselecteerd.')
+        return
+      }
+      if (!res.ok || !data.ok || !data.type) {
+        toast.error(data.error ?? `Status ${res.status}`)
+        return
+      }
+      const type = data.type as KlusType
+      setKindOptions((prev) => [...prev, { id: type.id, label: type.label }])
+      setKind(type.label)
+      setAddingType(false)
+      setNewTypeLabel('')
+      toast.success('Type toegevoegd.')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Type toevoegen faalde')
+    } finally {
+      setSavingType(false)
+    }
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSubmitting(true)
@@ -160,9 +233,13 @@ export function KlusDialog({
       role_on_job: v.role || undefined,
       notification_channel: v.channel,
     }))
+    // Bij "Overig" mag de gebruiker een eigen omschrijving meesturen; die
+    // wordt geen herbruikbaar type. Anders de gekozen waarde gebruiken.
+    const finalKind =
+      kind === 'Overig' && overigOmschrijving.trim() ? overigOmschrijving.trim() : kind
     const body = {
       title: ((fd.get('title') as string) || '').trim() || undefined,
-      kind: kind.trim() || undefined,
+      kind: finalKind.trim() || undefined,
       event_date: ((fd.get('event_date') as string) || '').trim() || undefined,
       event_start: localToISO((fd.get('event_start') as string) || ''),
       event_end: localToISO((fd.get('event_end') as string) || ''),
@@ -274,8 +351,8 @@ export function KlusDialog({
             <select
               id="klus-kind"
               name="kind"
-              value={kind}
-              onChange={(e) => setKind(e.target.value)}
+              value={addingType ? NEW_TYPE_SENTINEL : kind}
+              onChange={(e) => onKindSelectChange(e.target.value)}
               className="h-10 rounded-md border border-[var(--color-border-strong)] bg-white px-3 text-sm"
             >
               {/* Toon de huidige waarde ook als ze (nog) niet in de active-lijst zit,
@@ -293,7 +370,47 @@ export function KlusDialog({
                   {o.label}
                 </option>
               ))}
+              <option value={NEW_TYPE_SENTINEL}>+ Nieuw type toevoegen…</option>
             </select>
+            {addingType && (
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Input
+                  autoFocus
+                  placeholder="Naam van het type"
+                  value={newTypeLabel}
+                  onChange={(e) => setNewTypeLabel(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      submitNewType()
+                    }
+                  }}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    onClick={submitNewType}
+                    disabled={!newTypeLabel.trim() || savingType}
+                  >
+                    {savingType ? 'Toevoegen…' : 'Toevoegen'}
+                  </Button>
+                  <Button type="button" variant="ghost" onClick={cancelNewType} disabled={savingType}>
+                    Annuleren
+                  </Button>
+                </div>
+              </div>
+            )}
+            {!addingType && kind === 'Overig' && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="klus-overig">Eigen omschrijving (optioneel)</Label>
+                <Input
+                  id="klus-overig"
+                  placeholder="Eigen omschrijving (optioneel)"
+                  value={overigOmschrijving}
+                  onChange={(e) => setOverigOmschrijving(e.target.value)}
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="klus-date">Datum</Label>
