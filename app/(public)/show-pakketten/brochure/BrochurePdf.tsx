@@ -125,10 +125,9 @@ async function dataUri(rel: string, mime: string): Promise<string | null> {
 }
 
 const INCLUDED = [
-  ['Transport.', 'Wij brengen alles in onze eigen bus. Binnen 50 km rond Den Bosch zonder voorrijkosten.'],
-  ['Opbouw & afbouw.', 'Twee technici komen 2-4 uur voor aanvang. Na afloop alles weer mee.'],
-  ['Programmering.', 'Lichtshow vooraf geprogrammeerd, op de avond zelf iemand achter de console.'],
-  ['Aanspreekpunt.', 'Eén nummer voor de hele avond. Iets gaat fout? Wij lossen het op.'],
+  ['Transport.', 'Wij brengen alles in onze eigen bus, € 0,50 per kilometer.'],
+  ['Opbouw & afbouw.', 'Twee technici bouwen op vanaf 9:00. Na afloop alles weer mee.'],
+  ['Programmering.', 'De lichtshow is vooraf geprogrammeerd, de DJ kan zelf andere standen aanzetten.'],
 ]
 
 export async function renderBrochurePdf(packages: Pkg[]): Promise<Buffer> {
