@@ -17,6 +17,7 @@ export type AuditAction =
   | 'artist.deleted'
   | 'staff.invited'
   | 'staff.created'
+  | 'staff.updated'
   | 'klus.created'
   | 'klus.updated'
   | 'klus.deleted'

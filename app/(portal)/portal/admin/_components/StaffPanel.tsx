@@ -14,7 +14,6 @@ import {
 import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
-import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import { useStaffList } from './useStaffList'
 
 type StaffProfile = {
@@ -207,11 +206,13 @@ function EditStaffDialog({
   onSaved: () => void
 }) {
   const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     setFullName(profile?.full_name ?? '')
+    setEmail(profile?.email ?? '')
     setPhone(profile?.phone ?? '')
   }, [profile])
 
@@ -219,21 +220,20 @@ function EditStaffDialog({
     if (!profile) return
     setSubmitting(true)
     try {
-      const supabase = createSupabaseBrowserClient()
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ full_name: fullName, phone: phone })
-        .eq('id', profile.id)
-        .select('id')
-      if (error) throw error
-      // RLS kan de update stilletjes blokkeren (0 rijen terug). Voorkom een valse succesmelding.
-      if (!data || data.length === 0) {
-        throw new Error('Geen rechten om dit profiel bij te werken.')
+      const res = await fetch('/api/admin/staff/' + profile.id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: fullName, phone, email }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
+        return
       }
       toast.success('Profiel bijgewerkt.')
       onSaved()
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Bijwerken faalde')
     } finally {
       setSubmitting(false)
     }
@@ -245,7 +245,7 @@ function EditStaffDialog({
         <DialogHeader>
           <DialogTitle>Profiel bewerken</DialogTitle>
           <DialogDescription>
-            {profile?.email ?? 'Pas naam en telefoonnummer aan.'}
+            Pas naam, e-mail en telefoon van dit crewlid aan.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
@@ -255,6 +255,15 @@ function EditStaffDialog({
               id="full_name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="edit-email">E-mail</Label>
+            <Input
+              id="edit-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1.5">
