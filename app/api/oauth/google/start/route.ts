@@ -44,7 +44,12 @@ export async function GET(request: Request) {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 600,
+    maxAge: 1800,
+    // Op het hoofddomein zetten zodat de cookie zowel op www.wittenboerevents.nl
+    // als op wittenboerevents.nl meekomt. De apex stuurt met een 308 door naar
+    // www; zonder domein-brede cookie raakt de state bij die hop kwijt en faalt
+    // de state-validatie in de callback.
+    ...(process.env.NODE_ENV === 'production' ? { domain: '.wittenboerevents.nl' } : {}),
   })
   return res
 }

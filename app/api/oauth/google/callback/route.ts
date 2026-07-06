@@ -148,7 +148,7 @@ export async function GET(request: Request) {
   res.headers.append(
     'set-cookie',
     `we_oauth_state=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${
-      process.env.NODE_ENV === 'production' ? '; Secure' : ''
+      process.env.NODE_ENV === 'production' ? '; Secure; Domain=.wittenboerevents.nl' : ''
     }`
   )
   return res
