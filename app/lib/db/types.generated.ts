@@ -679,6 +679,7 @@ export type Database = {
           event_date: string
           event_end: string | null
           event_start: string | null
+          google_event_id: string | null
           id: string
           kind: string
           location: string | null
@@ -693,6 +694,7 @@ export type Database = {
           event_date: string
           event_end?: string | null
           event_start?: string | null
+          google_event_id?: string | null
           id?: string
           kind?: string
           location?: string | null
@@ -707,6 +709,7 @@ export type Database = {
           event_date?: string
           event_end?: string | null
           event_start?: string | null
+          google_event_id?: string | null
           id?: string
           kind?: string
           location?: string | null

@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { updateKlusSchema } from '../../../../lib/schemas/planning'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
+import { createEvent, patchEvent, deleteEvent } from '../../../../lib/integrations/google-calendar'
 import { logAudit } from '../../../../lib/audit'
 import { findKlusConflicts } from '../../../../lib/booking-conflicts'
 
@@ -105,6 +106,28 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
   }
 
+  // Google-agenda synchroniseren op basis van de NIEUWE waarden (best-effort).
+  // Faalt Google, dan blijft de klus-wijziging gewoon staan (geen error).
+  const summary = klus.title
+  const description = klus.notes || undefined
+  const location = klus.location || undefined
+  const timing =
+    klus.event_start && klus.event_end
+      ? { startISO: klus.event_start, endISO: klus.event_end }
+      : klus.event_date
+        ? { allDayDate: klus.event_date }
+        : {}
+  if (klus.google_event_id) {
+    // Bestaand agenda-item bijwerken.
+    await patchEvent(klus.google_event_id, { summary, location, description, ...timing })
+  } else if (klus.event_start || klus.event_date) {
+    // Nog geen agenda-item: alsnog aanmaken (ook voor eerder aangemaakte klussen).
+    const created = await createEvent({ summary, description, location, ...timing })
+    if (created.ok && created.id) {
+      await supabase.from('klussen').update({ google_event_id: created.id }).eq('id', id)
+    }
+  }
+
   await logAudit({
     actorId: admin.id,
     action: 'klus.updated',
@@ -128,9 +151,21 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   const { id } = await params
   const supabase = createSupabaseAdminClient()
 
+  // Haal het gekoppelde agenda-item op zodat we het mee kunnen opruimen.
+  const { data: existing } = await supabase
+    .from('klussen')
+    .select('google_event_id')
+    .eq('id', id)
+    .maybeSingle()
+
   const { error: delErr } = await supabase.from('klussen').delete().eq('id', id)
   if (delErr) {
     return NextResponse.json({ error: 'Verwijderen faalde.', detail: delErr.message }, { status: 500 })
+  }
+
+  // Agenda-item verwijderen (best-effort): faalt Google, dan is de klus toch weg.
+  if (existing?.google_event_id) {
+    await deleteEvent(existing.google_event_id)
   }
 
   await logAudit({ actorId: admin.id, action: 'klus.deleted', entity: 'klus', entityId: id })

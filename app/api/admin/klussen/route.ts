@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { createKlusSchema } from '../../../lib/schemas/planning'
 import { AuthError, requireAdmin } from '../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../lib/db/server'
+import { createEvent } from '../../../lib/integrations/google-calendar'
 import { logAudit } from '../../../lib/audit'
 import { findKlusConflicts } from '../../../lib/booking-conflicts'
 
@@ -86,6 +87,29 @@ export async function POST(request: Request) {
         { status: 200 }
       )
     }
+  }
+
+  // Google-agenda (best-effort): een ingeplande klus verschijnt automatisch in
+  // de agenda. Faalt Google, dan blijft de klus gewoon bestaan (geen error).
+  const summary = input.title
+  const description = input.notes || undefined
+  const location = input.location || undefined
+  let created: { ok: boolean; id?: string } | null = null
+  if (input.event_start && input.event_end) {
+    // Getimed event.
+    created = await createEvent({
+      summary,
+      description,
+      location,
+      startISO: input.event_start,
+      endISO: input.event_end,
+    })
+  } else if (input.event_date) {
+    // Hele-dag-event.
+    created = await createEvent({ summary, description, location, allDayDate: input.event_date })
+  }
+  if (created?.ok && created.id) {
+    await supabase.from('klussen').update({ google_event_id: created.id }).eq('id', klus.id)
   }
 
   await logAudit({

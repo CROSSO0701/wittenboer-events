@@ -1,12 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CalendarDays, Wrench, Palmtree, Check, SlidersHorizontal, ChevronDown } from 'lucide-react'
+import { CalendarDays, Wrench, Palmtree, Check, SlidersHorizontal, ChevronDown, Search } from 'lucide-react'
 import { createSupabaseBrowserClient } from '../../../../lib/db/client'
 import type { Database } from '../../../../lib/db/types.generated'
 import { StatusBadge } from '../../_components/StatusBadge'
 import { Badge } from '../../../../components/ui/badge'
 import { Button } from '../../../../components/ui/button'
+import { Input } from '../../../../components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -96,6 +97,7 @@ export function AgendaBoard() {
   const [klussen, setKlussen] = useState<Klus[]>([])
   const [availability, setAvailability] = useState<Availability[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
   const [scope, setScope] = useState<'upcoming' | 'all'>('upcoming')
   const [source, setSource] = useState<'all' | 'own' | 'artwinlive'>('all')
   const [show, setShow] = useState<{ bookings: boolean; klussen: boolean; vrij: boolean }>({
@@ -160,6 +162,12 @@ export function AgendaBoard() {
     horizon.setDate(horizon.getDate() + 365)
     const toStr = ymd(horizon)
 
+    // Tekst-zoekfilter (case-insensitive) — werkt SAMEN met de andere filters.
+    // Lege query = alles tonen. Availability wordt niet doorzocht.
+    const q = query.trim().toLowerCase()
+    const matches = (...fields: (string | null | undefined)[]) =>
+      q === '' || fields.some((f) => f != null && f.toLowerCase().includes(q))
+
     const map = new Map<string, DayGroup>()
     const ensure = (key: string) => {
       let g = map.get(key)
@@ -179,6 +187,7 @@ export function AgendaBoard() {
           if (isDead) continue
           if (!b.event_date || b.event_date < fromStr) continue
         }
+        if (!matches(b.client_name, b.client_email, b.event_location, b.notes, b.artist?.stage_name)) continue
         ensure(b.event_date ?? '-').bookings.push(b)
       }
     }
@@ -186,11 +195,13 @@ export function AgendaBoard() {
     if (show.klussen) {
       for (const k of klussen) {
         if (scope === 'upcoming' && k.event_date < fromStr) continue
+        if (!matches(k.title, k.location, k.notes, k.kind)) continue
         ensure(k.event_date).klussen.push(k)
       }
     }
 
-    if (show.vrij) {
+    // Bij een actieve zoekopdracht tonen we geen vrij/vakantie (niet doorzoekbaar).
+    if (show.vrij && q === '') {
       for (const a of availability) {
         for (const day of eachDateInRange(a.start_date, a.end_date, fromStr, toStr)) {
           ensure(day).availability.push(a)
@@ -208,7 +219,7 @@ export function AgendaBoard() {
       0
     )
     return { groups: entries, total: count }
-  }, [bookings, klussen, availability, scope, source, show])
+  }, [bookings, klussen, availability, scope, source, show, query])
 
   function toggleShow(key: keyof typeof show) {
     setShow((s) => ({ ...s, [key]: !s[key] }))
@@ -220,6 +231,23 @@ export function AgendaBoard() {
   // (inline op desktop, ingeklapt in <details> op mobiel).
   const filterControls = (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+      {/* Zoeken — filtert de reeds geladen data client-side (case-insensitive) */}
+      <div className="relative w-full sm:w-64">
+        <Search
+          size={15}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-fg-muted)]"
+          aria-hidden
+        />
+        <Input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Zoek op klant, artiest, locatie of titel"
+          aria-label="Zoeken in agenda"
+          className="h-9 pl-9 text-xs"
+        />
+      </div>
+
       {/* Wanneer — segmented control (kies-er-één, aaneengesloten) */}
       <div
         role="group"
@@ -353,13 +381,27 @@ export function AgendaBoard() {
 
       {groups && groups.length === 0 && (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] bg-white px-6 py-12 text-center">
-          <CalendarDays size={40} className="text-[var(--color-fg-muted)]" />
-          <h3 className="font-[family-name:var(--font-display)] text-xl uppercase tracking-wide text-[var(--color-fg)]">
-            Niets gepland
-          </h3>
-          <p className="max-w-sm text-sm text-[var(--color-fg-muted)]">
-            Boekingen, klussen en vrij/vakantie verschijnen hier, op datum gesorteerd.
-          </p>
+          {query.trim() ? (
+            <>
+              <Search size={40} className="text-[var(--color-fg-muted)]" />
+              <h3 className="font-[family-name:var(--font-display)] text-xl uppercase tracking-wide text-[var(--color-fg)]">
+                Geen resultaten
+              </h3>
+              <p className="max-w-sm text-sm text-[var(--color-fg-muted)]">
+                Geen resultaten voor deze zoekopdracht.
+              </p>
+            </>
+          ) : (
+            <>
+              <CalendarDays size={40} className="text-[var(--color-fg-muted)]" />
+              <h3 className="font-[family-name:var(--font-display)] text-xl uppercase tracking-wide text-[var(--color-fg)]">
+                Niets gepland
+              </h3>
+              <p className="max-w-sm text-sm text-[var(--color-fg-muted)]">
+                Boekingen, klussen en vrij/vakantie verschijnen hier, op datum gesorteerd.
+              </p>
+            </>
+          )}
         </div>
       )}
 
