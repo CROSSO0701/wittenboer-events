@@ -1,30 +1,15 @@
 import { NextResponse } from 'next/server'
 import { AuthError, requireAdmin } from '../../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../../lib/db/server'
-import { sendResend } from '../../../../../lib/integrations/resend'
-import { renderEmail } from '../../../../../lib/email/render'
-import { InviteMail } from '../../../../../lib/email/templates/invite'
+import { sendCrewWelcome } from '../../../../../lib/crew/provision'
 import { logAudit } from '../../../../../lib/audit'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
-function friendlyAuthError(msg?: string | null): string {
-  if (!msg) return 'Inloglink versturen faalde.'
-  const m = msg.toLowerCase()
-  if (m.includes('rate limit')) {
-    return 'Te veel mails verstuurd. Probeer het over een uur opnieuw.'
-  }
-  if (m.includes('invalid') && m.includes('email')) return 'Ongeldig e-mailadres.'
-  return `Inloglink versturen faalde: ${msg}`
-}
-
-// Stuurt een crewlid een inloglink om een wachtwoord in te stellen en in te
-// loggen. Het staff-account bestaat al (aangemaakt bij "Crewlid toevoegen",
-// bevestigd, zonder wachtwoord); daarom genereren we een magic-link. Via
-// /auth/callback belandt een crewlid zonder wachtwoord op de account-pagina om
-// er een in te stellen. De rol blijft 'staff'.
+// Stuurt een crewlid de welkomstmail (inloglink + persoonlijke agenda-link)
+// opnieuw. Het staff-account bestaat al (aangemaakt bij "Crewlid toevoegen",
+// bevestigd, zonder wachtwoord). Via /auth/callback belandt een crewlid zonder
+// wachtwoord op de account-pagina om er een in te stellen. De rol blijft 'staff'.
 export async function POST(_request: Request, context: RouteContext) {
   let admin
   try {
@@ -61,52 +46,37 @@ export async function POST(_request: Request, context: RouteContext) {
 
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json(
-      { error: 'Mail-service (Resend) is niet ingeschakeld, kan geen inloglink versturen.' },
+      { error: 'Mail-service (Resend) is niet ingeschakeld, kan geen inlog- en agenda-mail versturen.' },
       { status: 503 }
     )
   }
 
-  // /auth/callback stuurt crew zonder wachtwoord door naar de account-pagina om
-  // er een in te stellen; wie er al een heeft, gaat direct naar /portal/crew.
-  const redirectTo = `${SITE_URL}/auth/callback`
-
-  const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-    type: 'magiclink',
-    email: target.email,
-    options: { redirectTo },
-  })
-  if (linkErr || !linkData?.properties?.action_link) {
+  let result
+  try {
+    result = await sendCrewWelcome(supabase, {
+      id: target.id,
+      email: target.email,
+      full_name: target.full_name,
+    })
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
     return NextResponse.json(
-      { error: friendlyAuthError(linkErr?.message), detail: linkErr?.message },
+      { error: 'Inlog- en agenda-mail versturen faalde.', detail },
       { status: 500 }
     )
   }
-
-  const mail = await renderEmail(
-    InviteMail({
-      name: target.full_name ?? 'crewlid',
-      role: 'crewlid',
-      link: linkData.properties.action_link,
-    })
-  )
-  const sent = await sendResend({
-    to: target.email,
-    subject: 'Je inloglink voor Wittenboer Events',
-    html: mail.html,
-    text: mail.text,
-  })
 
   await logAudit({
     actorId: admin.id,
     action: 'staff.invited',
     entity: 'profile',
     entityId: id,
-    metadata: { email: target.email, mailSent: sent.ok, mailError: sent.error },
+    metadata: { email: target.email, mailSent: result.mailSent, mailError: result.mailError },
   })
 
-  if (!sent.ok) {
+  if (!result.mailSent) {
     return NextResponse.json(
-      { error: 'Inloglink kon niet worden verstuurd.', detail: sent.error },
+      { error: 'Inlog- en agenda-mail kon niet worden verstuurd.', detail: result.mailError },
       { status: 500 }
     )
   }

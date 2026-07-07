@@ -4,6 +4,7 @@ import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
 import { inviteStaffSchema } from '../../../../lib/schemas/invite'
 import { logAudit } from '../../../../lib/audit'
+import { sendCrewWelcome } from '../../../../lib/crew/provision'
 
 function friendlyAuthError(msg?: string | null): string {
   if (!msg) return 'Aanmaken faalde.'
@@ -17,10 +18,11 @@ function friendlyAuthError(msg?: string | null): string {
 
 // Admin voegt een crewlid toe: een contactrecord (naam, e-mail, optioneel
 // telefoon) dat meteen toewijsbaar is aan klussen en bij toewijzing een melding
-// krijgt (e-mail/WhatsApp). Er wordt GEEN onboarding- of inlogmail verstuurd en
-// crew krijgt geen portaltoegang. Door het datamodel (booking_assignments.staff_id
-// verwijst naar auth.users) is achter de schermen wel een minimaal account nodig
-// als koppelpunt; dat blijft puur intern en wordt nergens als login gepresenteerd.
+// krijgt (e-mail/WhatsApp). Daarnaast krijgt het crewlid automatisch een
+// welkomstmail met een inloglink en een persoonlijke agenda-link, zodat het
+// direct zelf kan inloggen en de agenda kan toevoegen. Door het datamodel
+// (booking_assignments.staff_id verwijst naar auth.users) is achter de schermen
+// een minimaal account nodig als koppelpunt.
 export async function POST(request: Request) {
   let admin
   try {
@@ -93,13 +95,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Profiel opslaan faalde.', detail: updateErr.message }, { status: 500 })
   }
 
+  // Welkomstmail (inlog + agenda-link) versturen mag de toevoeg-actie nooit
+  // laten falen: fouten hier worden alleen gelogd, niet doorgegeven als error.
+  let mailSent = false
+  let mailSkipped: 'no-resend' | undefined
+  try {
+    const result = await sendCrewWelcome(supabase, {
+      id: userId,
+      email: input.email,
+      full_name: input.full_name,
+    })
+    mailSent = result.mailSent
+    mailSkipped = result.skipped
+    if (!result.mailSent && !result.skipped) {
+      console.error('Welkomstmail versturen faalde:', result.mailError)
+    }
+  } catch (err) {
+    console.error('Welkomstmail provisioning faalde:', err instanceof Error ? err.message : err)
+  }
+
   await logAudit({
     actorId: admin.id,
     action: 'staff.created',
     entity: 'profile',
     entityId: userId,
-    metadata: { email: input.email, reused },
+    metadata: { email: input.email, reused, mailSent },
   })
 
-  return NextResponse.json({ ok: true, user_id: userId, reused })
+  return NextResponse.json({ ok: true, user_id: userId, reused, mailSent, mailSkipped })
 }

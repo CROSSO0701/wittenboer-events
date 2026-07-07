@@ -21,10 +21,12 @@ export type StaffListItem = {
   full_name: string | null
   email: string | null
   phone: string | null
+  has_password: boolean
+  calendar_feed_token: string | null
 }
 
 // Eén ophaal-query selecteert alle kolommen die enige consumer nodig heeft.
-const SELECT = 'id, full_name, email, phone'
+const SELECT = 'id, full_name, email, phone, has_password, calendar_feed_token'
 
 type CacheEntry = {
   data: StaffListItem[] | null

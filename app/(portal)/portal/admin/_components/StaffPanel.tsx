@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus, Send } from 'lucide-react'
+import { Pencil, UserPlus, Send, Copy, Users } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,9 @@ import {
 import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
-import { useStaffList } from './useStaffList'
+import { useStaffList, type StaffListItem } from './useStaffList'
 
-type StaffProfile = {
-  id: string
-  full_name: string | null
-  email: string | null
-  phone: string | null
-}
+type StaffProfile = StaffListItem
 
 export function StaffPanel() {
   // Gedeelde crew-lijst (#120): zelfde query/volgorde als voorheen, nu via de hook.
@@ -30,6 +25,7 @@ export function StaffPanel() {
   const [editing, setEditing] = useState<StaffProfile | null>(null)
   const [inviting, setInviting] = useState(false)
   const [sendingLoginId, setSendingLoginId] = useState<string | null>(null)
+  const [sendingAll, setSendingAll] = useState(false)
 
   async function sendLoginLink(p: StaffProfile) {
     if (!p.email) {
@@ -46,23 +42,65 @@ export function StaffPanel() {
         toast.error(msg + detail, { duration: 8000 })
         return
       }
-      toast.success(`Inloglink verstuurd naar ${p.email}.`)
+      toast.success(`Inlog + agenda verstuurd naar ${p.email}.`)
+      void refresh()
     } finally {
       setSendingLoginId(null)
     }
   }
 
+  async function copyCalendarLink(p: StaffProfile) {
+    if (!p.calendar_feed_token) return
+    const feedUrl = `${window.location.origin}/api/calendar/${p.calendar_feed_token}.ics`
+    try {
+      await navigator.clipboard.writeText(feedUrl)
+      toast.success('Agenda-link gekopieerd.')
+    } catch {
+      toast.error('Kopiëren faalde.')
+    }
+  }
+
+  async function sendToAllCrew() {
+    const withEmail = staff.filter((p) => p.email)
+    if (withEmail.length === 0) {
+      toast.error('Geen crewleden met een e-mailadres gevonden.')
+      return
+    }
+    setSendingAll(true)
+    let succeeded = 0
+    let failed = 0
+    try {
+      for (const p of withEmail) {
+        try {
+          const res = await fetch(`/api/admin/staff/${p.id}/send-login`, { method: 'POST' })
+          if (res.ok) succeeded += 1
+          else failed += 1
+        } catch {
+          failed += 1
+        }
+      }
+      toast.success(`Verstuurd naar ${succeeded} crewleden (${failed} mislukt).`)
+      void refresh()
+    } finally {
+      setSendingAll(false)
+    }
+  }
+
   return (
     <>
-      <div className="mb-3 flex justify-end">
+      <div className="mb-3 flex justify-end gap-2">
+        <Button variant="ghost" onClick={sendToAllCrew} disabled={sendingAll || staff.length === 0}>
+          <Users size={16} /> {sendingAll ? 'Versturen…' : 'Stuur naar alle crew'}
+        </Button>
         <Button onClick={() => setInviting(true)}>
           <UserPlus size={16} /> Crewlid toevoegen
         </Button>
       </div>
       <p className="mb-3 text-sm text-[var(--color-fg-muted)]">
         Crewleden zet u op de planning en krijgen bij een toewijzing bericht per e-mail of WhatsApp.
-        Wilt u dat een crewlid zelf zijn eigen klussen kan inzien? Stuur dan een inloglink, dan
-        stelt hij een wachtwoord in en logt hij in op zijn eigen crew-portaal.
+        Bij toevoegen krijgt een crewlid automatisch een welkomstmail met een inloglink en een
+        persoonlijke agenda-link. Met de knop &ldquo;Stuur inlog + agenda&rdquo; kunt u die opnieuw
+        versturen.
       </p>
       {staff.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
@@ -77,6 +115,7 @@ export function StaffPanel() {
                 <th className="px-4 py-2">E-mail</th>
                 <th className="px-4 py-2">Telefoon</th>
                 <th className="px-4 py-2">Bericht via</th>
+                <th className="px-4 py-2">Inlog</th>
                 <th className="px-4 py-2 text-right">Acties</th>
               </tr>
             </thead>
@@ -100,15 +139,36 @@ export function StaffPanel() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                          p.has_password
+                            ? 'bg-[var(--color-surface-2)] text-[var(--color-fg-secondary)]'
+                            : 'bg-[var(--color-surface-1)] text-[var(--color-fg-muted)]'
+                        }`}
+                      >
+                        {p.has_password ? 'Heeft wachtwoord' : 'Nog niet ingelogd'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
+                        {p.calendar_feed_token && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyCalendarLink(p)}
+                            title="Kopieer de persoonlijke agenda-link van dit crewlid"
+                          >
+                            <Copy size={14} /> Kopieer agenda-link
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => sendLoginLink(p)}
                           disabled={sendingLoginId === p.id || !p.email}
-                          title={p.email ? 'Stuur dit crewlid een inloglink' : 'Voeg eerst een e-mailadres toe'}
+                          title={p.email ? 'Stuur dit crewlid inlog + agenda' : 'Voeg eerst een e-mailadres toe'}
                         >
-                          <Send size={14} /> {sendingLoginId === p.id ? 'Versturen…' : 'Stuur inloglink'}
+                          <Send size={14} /> {sendingLoginId === p.id ? 'Versturen…' : 'Stuur inlog + agenda'}
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
                           <Pencil size={14} /> Bewerken
@@ -174,8 +234,12 @@ function InviteStaffDialog({
         toast.error(msg + detail, { duration: 8000 })
         return
       }
-      if (data.reused) toast.success(`${fullName} stond al in het systeem, nu als crewlid gezet.`)
-      else toast.success(`${fullName} is toegevoegd als crewlid.`)
+      const mailStatus =
+        data.mailSent
+          ? 'Welkomstmail (inlog + agenda) verstuurd.'
+          : 'Let op: de welkomstmail kon niet worden verstuurd (mailservice uit). Gebruik "Stuur inlog + agenda" zodra dat weer kan.'
+      if (data.reused) toast.success(`${fullName} stond al in het systeem, nu als crewlid gezet. ${mailStatus}`)
+      else toast.success(`${fullName} is toegevoegd. ${mailStatus}`)
       setFullName('')
       setEmail('')
       setPhone('')
@@ -192,8 +256,9 @@ function InviteStaffDialog({
           <DialogTitle>Crewlid toevoegen</DialogTitle>
           <DialogDescription>
             Voeg een crewlid toe om mee te plannen. Het is daarna meteen toewijsbaar aan shows en
-            krijgt bij een toewijzing bericht. Vul een telefoonnummer in om ook via WhatsApp te
-            kunnen berichten.
+            krijgt bij een toewijzing bericht. Er volgt automatisch een welkomstmail met een
+            inloglink en een persoonlijke agenda-link. Vul een telefoonnummer in om ook via
+            WhatsApp te kunnen berichten.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
