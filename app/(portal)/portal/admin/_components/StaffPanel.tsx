@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus } from 'lucide-react'
+import { Pencil, UserPlus, Send } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,28 @@ export function StaffPanel() {
   const { staff, refresh } = useStaffList()
   const [editing, setEditing] = useState<StaffProfile | null>(null)
   const [inviting, setInviting] = useState(false)
+  const [sendingLoginId, setSendingLoginId] = useState<string | null>(null)
+
+  async function sendLoginLink(p: StaffProfile) {
+    if (!p.email) {
+      toast.error('Dit crewlid heeft geen e-mailadres. Voeg er eerst een toe.')
+      return
+    }
+    setSendingLoginId(p.id)
+    try {
+      const res = await fetch(`/api/admin/staff/${p.id}/send-login`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
+        return
+      }
+      toast.success(`Inloglink verstuurd naar ${p.email}.`)
+    } finally {
+      setSendingLoginId(null)
+    }
+  }
 
   return (
     <>
@@ -39,7 +61,8 @@ export function StaffPanel() {
       </div>
       <p className="mb-3 text-sm text-[var(--color-fg-muted)]">
         Crewleden zet u op de planning en krijgen bij een toewijzing bericht per e-mail of WhatsApp.
-        Zij loggen niet in: dit is enkel een contactlijst om mee te plannen en te informeren.
+        Wilt u dat een crewlid zelf zijn eigen klussen kan inzien? Stuur dan een inloglink, dan
+        stelt hij een wachtwoord in en logt hij in op zijn eigen crew-portaal.
       </p>
       {staff.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-fg-muted)]">
@@ -76,10 +99,21 @@ export function StaffPanel() {
                         {hasPhone ? 'E-mail en WhatsApp' : 'Alleen e-mail'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
-                        <Pencil size={14} /> Bewerken
-                      </Button>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => sendLoginLink(p)}
+                          disabled={sendingLoginId === p.id || !p.email}
+                          title={p.email ? 'Stuur dit crewlid een inloglink' : 'Voeg eerst een e-mailadres toe'}
+                        >
+                          <Send size={14} /> {sendingLoginId === p.id ? 'Versturen…' : 'Stuur inloglink'}
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
+                          <Pencil size={14} /> Bewerken
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 )

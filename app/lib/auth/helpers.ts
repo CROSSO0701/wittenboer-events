@@ -54,3 +54,7 @@ export async function requireAdmin() {
 export async function requireArtist() {
   return requireRole('artist')
 }
+
+export async function requireStaff() {
+  return requireRole('staff')
+}

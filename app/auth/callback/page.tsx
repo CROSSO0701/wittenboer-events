@@ -99,6 +99,7 @@ export default function AuthCallbackPage() {
       let target = next || '/portal/account'
       if (profile?.role === 'admin') target = '/portal/admin'
       else if (profile?.role === 'artist') target = '/portal/artiest'
+      else if (profile?.role === 'staff') target = '/portal/crew'
       router.replace(target)
     }
 

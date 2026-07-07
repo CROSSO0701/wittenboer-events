@@ -117,9 +117,11 @@ export function PortalShell({ children }: { children: ReactNode }) {
   // path geen context geeft (/portal/account losstaand), valt-ie terug op rol.
   const inAdminArea = pathname.startsWith('/portal/admin')
   const inArtistArea = pathname.startsWith('/portal/artiest')
+  const inCrewArea = pathname.startsWith('/portal/crew')
 
   const isAdmin = inAdminArea || role === 'admin'
   const isArtist = !isAdmin && (inArtistArea || role === 'artist')
+  const isCrew = !isAdmin && !isArtist && (inCrewArea || role === 'staff')
 
   // Primaire nav (dagelijks gebruik) — bovenaan de sidebar.
   const primaryItems: NavItem[] = isAdmin
@@ -133,7 +135,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
       ]
     : isArtist
       ? [{ href: '/portal/artiest', label: 'Mijn aanvragen', icon: Music2 }]
-      : []
+      : isCrew
+        ? [{ href: '/portal/crew', label: 'Mijn klussen', icon: CalendarDays }]
+        : []
 
   // Instellingen (zelden gebruikt) — ingetogen sectie in de sidebar-footer.
   // Account schuift mee in deze groep.
@@ -154,7 +158,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
     ? ROLE_LABELS.admin
     : inArtistArea
       ? ROLE_LABELS.artist
-      : roleLabel(role) ?? 'Portal'
+      : inCrewArea
+        ? ROLE_LABELS.staff
+        : roleLabel(role) ?? 'Portal'
 
   const initial = (session?.fullName ?? session?.email ?? 'WE').slice(0, 1).toUpperCase()
 
@@ -178,7 +184,16 @@ export function PortalShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className="flex items-center justify-between gap-2 px-5 py-5">
-          <Link href={role === 'artist' ? '/portal/artiest' : '/portal/admin'} className="flex items-center gap-3">
+          <Link
+            href={
+              role === 'artist'
+                ? '/portal/artiest'
+                : role === 'staff'
+                  ? '/portal/crew'
+                  : '/portal/admin'
+            }
+            className="flex items-center gap-3"
+          >
             <Image
               src="/logo/we-mark.png"
               alt="Wittenboer"

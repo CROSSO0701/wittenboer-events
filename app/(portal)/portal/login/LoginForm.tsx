@@ -108,7 +108,9 @@ function PasswordPanel({ next }: { next: string }) {
           ? '/portal/admin'
           : profile?.role === 'artist'
             ? '/portal/artiest'
-            : next || '/'
+            : profile?.role === 'staff'
+              ? '/portal/crew'
+              : next || '/'
       toast.success('Ingelogd')
       router.replace(target)
       router.refresh()
