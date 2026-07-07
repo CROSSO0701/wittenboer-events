@@ -170,6 +170,7 @@ export type Database = {
           assigned_at: string
           assigned_by: string | null
           booking_id: string
+          google_event_id: string | null
           notification_channel: Database["public"]["Enums"]["notification_channel"]
           notified_at: string | null
           role_on_job: string | null
@@ -179,6 +180,7 @@ export type Database = {
           assigned_at?: string
           assigned_by?: string | null
           booking_id: string
+          google_event_id?: string | null
           notification_channel?: Database["public"]["Enums"]["notification_channel"]
           notified_at?: string | null
           role_on_job?: string | null
@@ -188,6 +190,7 @@ export type Database = {
           assigned_at?: string
           assigned_by?: string | null
           booking_id?: string
+          google_event_id?: string | null
           notification_channel?: Database["public"]["Enums"]["notification_channel"]
           notified_at?: string | null
           role_on_job?: string | null
@@ -613,6 +616,7 @@ export type Database = {
         Row: {
           assigned_at: string
           assigned_by: string | null
+          google_event_id: string | null
           klus_id: string
           notification_channel: Database["public"]["Enums"]["notification_channel"]
           notified_at: string | null
@@ -622,6 +626,7 @@ export type Database = {
         Insert: {
           assigned_at?: string
           assigned_by?: string | null
+          google_event_id?: string | null
           klus_id: string
           notification_channel?: Database["public"]["Enums"]["notification_channel"]
           notified_at?: string | null
@@ -631,6 +636,7 @@ export type Database = {
         Update: {
           assigned_at?: string
           assigned_by?: string | null
+          google_event_id?: string | null
           klus_id?: string
           notification_channel?: Database["public"]["Enums"]["notification_channel"]
           notified_at?: string | null
@@ -733,6 +739,7 @@ export type Database = {
           created_at: string
           email: string | null
           full_name: string | null
+          google_calendar_id: string | null
           has_password: boolean
           id: string
           phone: string | null
@@ -744,6 +751,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          google_calendar_id?: string | null
           has_password?: boolean
           id: string
           phone?: string | null
@@ -755,6 +763,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          google_calendar_id?: string | null
           has_password?: boolean
           id?: string
           phone?: string | null

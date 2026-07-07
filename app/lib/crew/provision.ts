@@ -5,6 +5,7 @@ import type { Database } from '../db/types.generated'
 import { sendResend } from '../integrations/resend'
 import { renderEmail } from '../email/render'
 import { CrewWelcomeMail } from '../email/templates/crew-welcome'
+import { createCalendar } from '../integrations/google-calendar'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
@@ -57,15 +58,48 @@ async function ensureCalendarFeedToken(
   return current?.calendar_feed_token ?? newToken
 }
 
-// Provisioning voor een crewlid: token aanmaken indien leeg, magic-link
-// genereren, welkomstmail (inlog + persoonlijke agenda-link) versturen. Puur:
-// geeft geen NextResponse terug, gooit alleen bij een echte fout in de
-// magic-link-generatie.
+// Zorgt dat het crewlid een eigen Google-agenda ("Wittenboer · <naam>") heeft:
+// hergebruikt een bestaande google_calendar_id, of maakt de agenda aan en slaat
+// de id op. Best-effort: als Google niet gekoppeld is of faalt, blijft het veld
+// leeg en gaat de rest van de provisioning gewoon door (nooit laten falen).
+export async function ensureCrewGoogleCalendar(
+  supabase: SupabaseAdminClient,
+  target: ProvisionTarget
+): Promise<void> {
+  try {
+    const { data: existing } = await supabase
+      .from('profiles')
+      .select('google_calendar_id')
+      .eq('id', target.id)
+      .maybeSingle()
+    if (existing?.google_calendar_id) return
+
+    const naam = (target.full_name ?? '').trim() || 'crewlid'
+    const created = await createCalendar(`Wittenboer · ${naam}`)
+    if (!created.ok || !created.id) {
+      console.error('Crew-agenda aanmaken faalde:', created.error)
+      return
+    }
+    await supabase
+      .from('profiles')
+      .update({ google_calendar_id: created.id })
+      .eq('id', target.id)
+      .is('google_calendar_id', null)
+  } catch (err) {
+    console.error('Crew-agenda provisioning faalde:', err instanceof Error ? err.message : err)
+  }
+}
+
+// Provisioning voor een crewlid: token aanmaken indien leeg, eigen Google-agenda
+// aanmaken indien leeg, magic-link genereren, welkomstmail (inlog + persoonlijke
+// agenda-link) versturen. Puur: geeft geen NextResponse terug, gooit alleen bij
+// een echte fout in de magic-link-generatie.
 export async function sendCrewWelcome(
   supabase: SupabaseAdminClient,
   target: ProvisionTarget
 ): Promise<ProvisionResult> {
   const token = await ensureCalendarFeedToken(supabase, target.id)
+  await ensureCrewGoogleCalendar(supabase, target)
   const calendarUrl = `${SITE_URL}/api/calendar/${token}.ics`
 
   const redirectTo = `${SITE_URL}/auth/callback`

@@ -135,6 +135,98 @@ export async function createEvent(input: GCalEventInput): Promise<{ ok: boolean;
   }
 }
 
+// Zelfde als createEvent, maar schrijft naar een MEEGEGEVEN agenda i.p.v. de
+// standaard-agenda. Gebruikt voor de persoonlijke crew-agenda's. Best-effort.
+export async function createEventIn(
+  calendarId: string,
+  input: GCalEventInput
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const env = await readConfig()
+  if (!env) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[gcal:dev] would create event in', calendarId, ':', input.summary)
+    }
+    return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+
+  const isAllDay = !(input.startISO && input.endISO) && !!input.allDayDate
+  const start = isAllDay
+    ? { date: input.allDayDate! }
+    : { dateTime: input.startISO, timeZone: env.timezone }
+  const end = isAllDay
+    ? { date: nextDay(input.allDayDate!) }
+    : { dateTime: input.endISO, timeZone: env.timezone }
+
+  try {
+    const res = await fetch(`${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?sendUpdates=none`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        summary: input.summary,
+        description: input.description,
+        location: input.location,
+        start,
+        end,
+        attendees: input.attendees?.map((email) => ({ email })),
+        extendedProperties: input.sourceId
+          ? { private: { artwinliveId: input.sourceId } }
+          : undefined,
+      }),
+    })
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${body}` }
+    }
+    const data = (await res.json()) as { id: string }
+    return { ok: true, id: data.id }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+// Zelfde als patchEvent, maar op een MEEGEGEVEN agenda. Best-effort.
+export async function patchEventIn(
+  calendarId: string,
+  eventId: string,
+  patch: Partial<GCalEventInput>
+): Promise<{ ok: boolean; error?: string }> {
+  const env = await readConfig()
+  if (!env) return { ok: false, error: 'Google Calendar credentials ontbreken' }
+  const token = await getAccessToken(env)
+  if (!token) return { ok: false, error: 'Token refresh faalde' }
+
+  const body: Record<string, unknown> = {}
+  if (patch.summary !== undefined) body.summary = patch.summary
+  if (patch.description !== undefined) body.description = patch.description
+  if (patch.location !== undefined) body.location = patch.location
+  if (patch.startISO) body.start = { dateTime: patch.startISO, timeZone: env.timezone }
+  if (patch.endISO) body.end = { dateTime: patch.endISO, timeZone: env.timezone }
+  if (patch.allDayDate) {
+    body.start = { date: patch.allDayDate }
+    body.end = { date: nextDay(patch.allDayDate) }
+  }
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}?sendUpdates=none`,
+      {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    )
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '')
+      return { ok: false, error: `Calendar ${res.status}: ${errBody}` }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 export async function patchEvent(
   eventId: string,
   patch: Partial<GCalEventInput>

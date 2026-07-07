@@ -3,7 +3,13 @@ import { ZodError } from 'zod'
 import { updateKlusSchema } from '../../../../lib/schemas/planning'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { createEvent, patchEvent, deleteEvent } from '../../../../lib/integrations/google-calendar'
+import {
+  createEvent,
+  patchEvent,
+  deleteEvent,
+  createEventIn,
+  deleteEventFrom,
+} from '../../../../lib/integrations/google-calendar'
 import { logAudit } from '../../../../lib/audit'
 import { findKlusConflicts } from '../../../../lib/booking-conflicts'
 
@@ -88,6 +94,30 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   // Crew opnieuw zetten als assignments is meegegeven (vervangt de set volledig).
   if (assignments) {
+    // Bestaande toewijzingen + hun persoonlijke agenda-events ophalen zodat we
+    // die events kunnen opruimen (best-effort) voordat we de set vervangen.
+    const { data: priorAssigns } = await supabase
+      .from('klus_assignments')
+      .select('staff_id, google_event_id')
+      .eq('klus_id', id)
+    const prior = priorAssigns ?? []
+    if (prior.length > 0) {
+      const priorStaffIds = prior.map((a) => a.staff_id)
+      const { data: priorProfiles } = await supabase
+        .from('profiles')
+        .select('id, google_calendar_id')
+        .in('id', priorStaffIds)
+      const calById = new Map<string, string | null>(
+        (priorProfiles ?? []).map((p) => [p.id, p.google_calendar_id])
+      )
+      for (const a of prior) {
+        const cal = calById.get(a.staff_id)
+        if (cal && a.google_event_id) {
+          await deleteEventFrom(cal, a.google_event_id)
+        }
+      }
+    }
+
     await supabase.from('klus_assignments').delete().eq('klus_id', id)
     if (staffIds.length > 0) {
       const rows = assignments.map((a) => ({
@@ -128,6 +158,36 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
   }
 
+  // Persoonlijke crew-agenda (best-effort): de (mogelijk nieuwe) toewijzingen in
+  // de eigen agenda van elk crewlid zetten, naast de hoofd-agenda. De oude events
+  // zijn hierboven al opgeruimd. Alleen als assignments is meegegeven.
+  if (assignments && staffIds.length > 0 && (klus.event_start || klus.event_date)) {
+    const { data: crewProfiles } = await supabase
+      .from('profiles')
+      .select('id, google_calendar_id')
+      .in('id', staffIds)
+    for (const a of assignments) {
+      const profile = crewProfiles?.find((p) => p.id === a.staff_id)
+      if (!profile?.google_calendar_id) continue
+      const crewDescription = [klus.notes, a.role_on_job ? `Rol: ${a.role_on_job}` : null]
+        .filter(Boolean)
+        .join('\n\n')
+      const crewCreated = await createEventIn(profile.google_calendar_id, {
+        summary,
+        description: crewDescription || undefined,
+        location,
+        ...timing,
+      })
+      if (crewCreated.ok && crewCreated.id) {
+        await supabase
+          .from('klus_assignments')
+          .update({ google_event_id: crewCreated.id })
+          .eq('klus_id', id)
+          .eq('staff_id', a.staff_id)
+      }
+    }
+  }
+
   await logAudit({
     actorId: admin.id,
     action: 'klus.updated',
@@ -158,6 +218,25 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     .eq('id', id)
     .maybeSingle()
 
+  // Persoonlijke crew-agenda-events ophalen VOOR het verwijderen (klus_assignments
+  // kan meecascaden), zodat we die events uit de eigen agenda's kunnen opruimen.
+  const { data: crewAssigns } = await supabase
+    .from('klus_assignments')
+    .select('staff_id, google_event_id')
+    .eq('klus_id', id)
+  const crewToClean = (crewAssigns ?? []).filter((a) => a.google_event_id)
+  let crewCalById = new Map<string, string | null>()
+  if (crewToClean.length > 0) {
+    const { data: crewProfiles } = await supabase
+      .from('profiles')
+      .select('id, google_calendar_id')
+      .in(
+        'id',
+        crewToClean.map((a) => a.staff_id)
+      )
+    crewCalById = new Map((crewProfiles ?? []).map((p) => [p.id, p.google_calendar_id]))
+  }
+
   const { error: delErr } = await supabase.from('klussen').delete().eq('id', id)
   if (delErr) {
     return NextResponse.json({ error: 'Verwijderen faalde.', detail: delErr.message }, { status: 500 })
@@ -166,6 +245,14 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   // Agenda-item verwijderen (best-effort): faalt Google, dan is de klus toch weg.
   if (existing?.google_event_id) {
     await deleteEvent(existing.google_event_id)
+  }
+
+  // Persoonlijke crew-agenda-events opruimen (best-effort).
+  for (const a of crewToClean) {
+    const cal = crewCalById.get(a.staff_id)
+    if (cal && a.google_event_id) {
+      await deleteEventFrom(cal, a.google_event_id)
+    }
   }
 
   await logAudit({ actorId: admin.id, action: 'klus.deleted', entity: 'klus', entityId: id })

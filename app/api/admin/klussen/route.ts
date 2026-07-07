@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { createKlusSchema } from '../../../lib/schemas/planning'
 import { AuthError, requireAdmin } from '../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../lib/db/server'
-import { createEvent } from '../../../lib/integrations/google-calendar'
+import { createEvent, createEventIn } from '../../../lib/integrations/google-calendar'
 import { logAudit } from '../../../lib/audit'
 import { findKlusConflicts } from '../../../lib/booking-conflicts'
 
@@ -110,6 +110,47 @@ export async function POST(request: Request) {
   }
   if (created?.ok && created.id) {
     await supabase.from('klussen').update({ google_event_id: created.id }).eq('id', klus.id)
+  }
+
+  // Persoonlijke crew-agenda (best-effort): elk toegewezen crewlid met een eigen
+  // Google-agenda krijgt de klus in ZIJN agenda, naast de hoofd-agenda. Faalt
+  // Google, dan blijft de klus gewoon bestaan (geen error).
+  if (staffIds.length > 0) {
+    const { data: crewProfiles } = await supabase
+      .from('profiles')
+      .select('id, google_calendar_id')
+      .in('id', staffIds)
+    for (const a of input.assignments ?? []) {
+      const profile = crewProfiles?.find((p) => p.id === a.staff_id)
+      if (!profile?.google_calendar_id) continue
+      const crewDescription = [input.notes, a.role_on_job ? `Rol: ${a.role_on_job}` : null]
+        .filter(Boolean)
+        .join('\n\n')
+      let crewCreated: { ok: boolean; id?: string } | null = null
+      if (input.event_start && input.event_end) {
+        crewCreated = await createEventIn(profile.google_calendar_id, {
+          summary,
+          description: crewDescription || undefined,
+          location,
+          startISO: input.event_start,
+          endISO: input.event_end,
+        })
+      } else if (input.event_date) {
+        crewCreated = await createEventIn(profile.google_calendar_id, {
+          summary,
+          description: crewDescription || undefined,
+          location,
+          allDayDate: input.event_date,
+        })
+      }
+      if (crewCreated?.ok && crewCreated.id) {
+        await supabase
+          .from('klus_assignments')
+          .update({ google_event_id: crewCreated.id })
+          .eq('klus_id', klus.id)
+          .eq('staff_id', a.staff_id)
+      }
+    }
   }
 
   await logAudit({

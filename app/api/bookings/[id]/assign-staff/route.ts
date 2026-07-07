@@ -3,7 +3,11 @@ import { ZodError } from 'zod'
 import { assignStaffSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
+import {
+  patchEvent,
+  calendarTitle,
+  createEventIn,
+} from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { StaffAssignedMail } from '../../../../lib/email/templates/staff-assigned'
@@ -78,6 +82,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     )
   }
 
+  // Bestaande toewijzingen ophalen: zo weten we welke crew NIEUW is (en dus een
+  // event in de eigen agenda moet krijgen) en welke al een event heeft.
+  const { data: priorAssigns } = await supabase
+    .from('booking_assignments')
+    .select('staff_id, google_event_id')
+    .eq('booking_id', id)
+  const priorEventByStaff = new Map<string, string | null>(
+    (priorAssigns ?? []).map((a) => [a.staff_id, a.google_event_id])
+  )
+
   // Upsert assignments
   const rows = input.assignments.map((a) => ({
     booking_id: id,
@@ -120,8 +134,51 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const staffIds = input.assignments.map((a) => a.staff_id)
   const { data: staffProfiles } = await supabase
     .from('profiles')
-    .select('id, email, full_name, phone')
+    .select('id, email, full_name, phone, google_calendar_id')
     .in('id', staffIds)
+
+  // Persoonlijke crew-agenda (best-effort): elk NIEUW toegewezen crewlid met een
+  // eigen Google-agenda krijgt de klus in ZIJN agenda. Faalt Google, dan blijft
+  // de toewijzing gewoon bestaan (geen error). Gebeurt naast de hoofd-agenda.
+  const personalSummary = calendarTitle({
+    source: booking.source,
+    clientName: booking.client_name,
+    artistName: booking.artist?.stage_name ?? null,
+  })
+  for (const a of input.assignments) {
+    const profile = staffProfiles?.find((p) => p.id === a.staff_id)
+    if (!profile?.google_calendar_id) continue
+    // Al een event voor dit crewlid op deze boeking? Dan niet dubbel aanmaken.
+    if (priorEventByStaff.get(a.staff_id)) continue
+
+    const description = [booking.notes, a.role_on_job ? `Rol: ${a.role_on_job}` : null]
+      .filter(Boolean)
+      .join('\n\n')
+    let created: { ok: boolean; id?: string } | null = null
+    if (booking.event_start && booking.event_end) {
+      created = await createEventIn(profile.google_calendar_id, {
+        summary: personalSummary,
+        description: description || undefined,
+        location: booking.event_location ?? undefined,
+        startISO: booking.event_start,
+        endISO: booking.event_end,
+      })
+    } else if (booking.event_date) {
+      created = await createEventIn(profile.google_calendar_id, {
+        summary: personalSummary,
+        description: description || undefined,
+        location: booking.event_location ?? undefined,
+        allDayDate: booking.event_date,
+      })
+    }
+    if (created?.ok && created.id) {
+      await supabase
+        .from('booking_assignments')
+        .update({ google_event_id: created.id })
+        .eq('booking_id', id)
+        .eq('staff_id', a.staff_id)
+    }
+  }
 
   const notifyResults: Array<{ staff_id: string; ok: boolean; channel: string; error?: string }> = []
   for (const a of input.assignments) {
