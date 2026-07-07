@@ -21,8 +21,8 @@ export const artistSubmitBookingSchema = z.object({
   event_end: isoDateTime,
   event_location: z.string().trim().min(1, 'Vul een locatie in').max(500),
   setup_type: setupTypeSchema,
-  floor_level: floorLevelSchema.optional().or(z.literal('').transform(() => undefined)),
-  paved_path: z.boolean().optional(),
+  floor_level: floorLevelSchema,
+  paved_path: z.boolean({ message: 'Geef aan of er een verhard pad is' }),
   notes: z.string().trim().max(5000).optional().or(z.literal('').transform(() => undefined)),
 })
 

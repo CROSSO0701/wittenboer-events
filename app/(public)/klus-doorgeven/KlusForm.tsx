@@ -38,8 +38,10 @@ export function KlusForm() {
       endTime.trim().length > 0 &&
       location.trim().length > 0 &&
       clientPhone.trim().length > 0 &&
-      (setupType === 'prikken' || setupType === 'opbouwen'),
-    [artistName, event, eventDate, startTime, endTime, location, clientPhone, setupType]
+      (setupType === 'prikken' || setupType === 'opbouwen') &&
+      (floorLevel === 'begane_grond' || floorLevel === 'verdieping') &&
+      (pavedPath === 'ja' || pavedPath === 'nee'),
+    [artistName, event, eventDate, startTime, endTime, location, clientPhone, setupType, floorLevel, pavedPath]
   )
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -244,7 +246,7 @@ export function KlusForm() {
           value={floorLevel}
           onChange={(e) => setFloorLevel(e.target.value as FloorLevel)}
         >
-          <option value="">Maak een keuze (optioneel)</option>
+          <option value="">Maak een keuze</option>
           <option value="begane_grond">Begane grond</option>
           <option value="verdieping">Verdieping</option>
         </select>
@@ -258,7 +260,7 @@ export function KlusForm() {
           value={pavedPath}
           onChange={(e) => setPavedPath(e.target.value as PavedPath)}
         >
-          <option value="">Maak een keuze (optioneel)</option>
+          <option value="">Maak een keuze</option>
           <option value="ja">Ja</option>
           <option value="nee">Nee</option>
         </select>

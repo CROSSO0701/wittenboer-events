@@ -56,8 +56,10 @@ export function SubmitBookingForm({
       endTime.trim().length > 0 &&
       location.trim().length > 0 &&
       clientPhone.trim().length > 0 &&
-      (setupType === 'prikken' || setupType === 'opbouwen'),
-    [event, eventDate, startTime, endTime, location, clientPhone, setupType]
+      (setupType === 'prikken' || setupType === 'opbouwen') &&
+      (floorLevel === 'begane_grond' || floorLevel === 'verdieping') &&
+      (pavedPath === 'ja' || pavedPath === 'nee'),
+    [event, eventDate, startTime, endTime, location, clientPhone, setupType, floorLevel, pavedPath]
   )
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -288,7 +290,7 @@ export function SubmitBookingForm({
             className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
             style={{ fontSize: '16px' }}
           >
-            <option value="">Maak een keuze (optioneel)</option>
+            <option value="">Maak een keuze</option>
             <option value="begane_grond">Begane grond</option>
             <option value="verdieping">Verdieping</option>
           </select>
@@ -305,7 +307,7 @@ export function SubmitBookingForm({
             className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
             style={{ fontSize: '16px' }}
           >
-            <option value="">Maak een keuze (optioneel)</option>
+            <option value="">Maak een keuze</option>
             <option value="ja">Ja</option>
             <option value="nee">Nee</option>
           </select>
