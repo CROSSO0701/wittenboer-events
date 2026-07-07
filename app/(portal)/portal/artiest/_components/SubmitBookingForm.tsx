@@ -3,69 +3,25 @@
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
-  Speaker,
-  Lightbulb,
-  Mic,
-  Theater,
-  Plug,
   Send,
   Calendar as CalendarIcon,
   Clock,
   MapPin,
-  Users,
   MessageSquare,
   Phone,
-  User as UserIcon,
+  Wrench,
+  Building2,
+  Route,
 } from 'lucide-react'
 import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
 import { Textarea } from '../../../../components/ui/textarea'
+import { LocationInput } from '../../../../components/shared/LocationInput'
 
-const NEEDS = [
-  { id: 'geluid', label: 'Geluid', icon: Speaker },
-  { id: 'licht', label: 'Licht', icon: Lightbulb },
-  { id: 'tape', label: 'Tape', sub: 'begeleiding op band', icon: Mic },
-  { id: 'podium', label: 'Podium', sub: 'rigging / decor', icon: Theater },
-  { id: 'stroom', label: 'Stroom', sub: 'aggregaat / kabels', icon: Plug },
-] as const
-
-const QUICK_START_TIMES = ['16:00', '18:00', '19:00', '20:00', '21:00', '22:00'] as const
-
-const DURATION_OPTIONS = [
-  { id: '1', label: '1 uur', minutes: 60 },
-  { id: '2', label: '2 uur', minutes: 120 },
-  { id: '3', label: '3 uur', minutes: 180 },
-  { id: 'evening', label: 'Hele avond', minutes: 240 },
-] as const
-
-const GUEST_RANGES = [
-  { id: '1-50', label: 'Tot 50', sub: 'huiskamer' },
-  { id: '50-150', label: '50–150', sub: 'kleine zaal' },
-  { id: '150-500', label: '150–500', sub: 'grote zaal' },
-  { id: '500+', label: '500+', sub: 'festival' },
-] as const
-
-function todayISO(): string {
-  const t = new Date()
-  const tz = t.getTimezoneOffset() * 60_000
-  return new Date(t.getTime() - tz).toISOString().slice(0, 10)
-}
-
-function combineToISO(date: string, time: string): string | undefined {
-  if (!date || !time) return undefined
-  const d = new Date(`${date}T${time}:00`)
-  if (Number.isNaN(d.getTime())) return undefined
-  return d.toISOString()
-}
-
-function addMinutesToTime(time: string, minutes: number): string {
-  const [h, m] = time.split(':').map(Number)
-  const total = (h ?? 0) * 60 + (m ?? 0) + minutes
-  const newH = Math.floor((total % 1440) / 60)
-  const newM = total % 60
-  return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`
-}
+type SetupType = '' | 'prikken' | 'opbouwen'
+type FloorLevel = '' | 'begane_grond' | 'verdieping'
+type PavedPath = '' | 'ja' | 'nee'
 
 export function SubmitBookingForm({
   onSuccess,
@@ -73,86 +29,73 @@ export function SubmitBookingForm({
   onSuccess: () => void
 }) {
   const [submitting, setSubmitting] = useState(false)
-  const [date, setDate] = useState('')
+
+  // Kernvelden in state, zodat we live kunnen valideren en de verzendknop
+  // disabled houden tot alles compleet is. Exact dezelfde set als het publieke
+  // /klus-doorgeven, maar zonder artiestennaam (die komt uit de login).
+  const [event, setEvent] = useState('')
+  const [eventDate, setEventDate] = useState('')
   const [startTime, setStartTime] = useState('')
-  const [customStart, setCustomStart] = useState('')
-  const [durationId, setDurationId] = useState<string | null>(null)
-  const [customDuration, setCustomDuration] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [location, setLocation] = useState('')
-  const [needs, setNeeds] = useState<Set<string>>(new Set())
-  const [guestRange, setGuestRange] = useState<string>('')
-  const [organiserName, setOrganiserName] = useState('')
-  const [organiserPhone, setOrganiserPhone] = useState('')
-  const [note, setNote] = useState('')
+  const [clientPhone, setClientPhone] = useState('')
+  const [setupType, setSetupType] = useState<SetupType>('')
+  const [floorLevel, setFloorLevel] = useState<FloorLevel>('')
+  const [pavedPath, setPavedPath] = useState<PavedPath>('')
+  const [notes, setNotes] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const minDate = useMemo(() => todayISO(), [])
-  const effectiveStart = startTime === 'custom' ? customStart : startTime
-  const effectiveDurationMin = useMemo(() => {
-    if (durationId === 'custom') return Number(customDuration) * 60 || 0
-    return DURATION_OPTIONS.find((d) => d.id === durationId)?.minutes ?? 0
-  }, [durationId, customDuration])
-  const endTimePreview = useMemo(() => {
-    if (!effectiveStart || !effectiveDurationMin) return null
-    return addMinutesToTime(effectiveStart, effectiveDurationMin)
-  }, [effectiveStart, effectiveDurationMin])
-
-  function toggleNeed(id: string) {
-    setNeeds((s) => {
-      const next = new Set(s)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
+  // Kernvelden verplicht: evenement, datum, showtijden (begin + eind), locatie,
+  // telefoon contactpersoon en prikken-of-opbouwen. Zonder deze mag het niet
+  // verzonden worden. Gelijk aan het publieke formulier.
+  const isComplete = useMemo(
+    () =>
+      event.trim().length > 0 &&
+      eventDate.trim().length > 0 &&
+      startTime.trim().length > 0 &&
+      endTime.trim().length > 0 &&
+      location.trim().length > 0 &&
+      clientPhone.trim().length > 0 &&
+      (setupType === 'prikken' || setupType === 'opbouwen'),
+    [event, eventDate, startTime, endTime, location, clientPhone, setupType]
+  )
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setErrors({})
 
-    const newErrors: Record<string, string> = {}
-    if (!date) newErrors.event_date = 'Vul de datum in.'
-    if (!location.trim()) newErrors.event_location = 'Vul de locatie in.'
-    if (startTime === 'custom' && !customStart) newErrors.event_start = 'Vul een tijd in.'
-    if (durationId === 'custom') {
-      const n = Number(customDuration)
-      if (!n || n < 0.5 || n > 12) newErrors.duration = 'Tussen 0.5 en 12 uur.'
-    }
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      toast.error('Vul de gemarkeerde velden in.')
+    if (!isComplete) {
+      setErrors({ form: 'Vul eerst alle verplichte velden in.' })
+      toast.error('Vul de verplichte velden in.')
       return
     }
 
     setSubmitting(true)
 
-    const eventStartISO = effectiveStart ? combineToISO(date, effectiveStart) : undefined
-    const eventEndISO =
-      effectiveStart && endTimePreview ? combineToISO(date, endTimePreview) : undefined
+    // Showtijden (begin + eind) naar ISO-datetime, gekoppeld aan de datum. Loopt
+    // het optreden door na middernacht? Dan schuift het eind een dag op.
+    let eventStartISO: string | undefined
+    const startD = new Date(`${eventDate}T${startTime}`)
+    if (!Number.isNaN(startD.getTime())) eventStartISO = startD.toISOString()
 
-    const needsLabels = Array.from(needs)
-      .map((id) => NEEDS.find((n) => n.id === id)?.label)
-      .filter(Boolean)
-
-    const compiledNotes = [
-      needsLabels.length > 0 && `Nodig: ${needsLabels.join(' · ')}`,
-      guestRange && `Gasten (geschat): ${GUEST_RANGES.find((g) => g.id === guestRange)?.label ?? guestRange}`,
-      !eventStartISO && 'Tijd: nog niet bekend',
-      organiserName &&
-        `Contact organisator: ${organiserName}${organiserPhone ? ` (${organiserPhone})` : ''}`,
-      note && `Bericht: ${note}`,
-    ]
-      .filter(Boolean)
-      .join('\n')
+    let eventEndISO: string | undefined
+    const endD = new Date(`${eventDate}T${endTime}`)
+    if (!Number.isNaN(endD.getTime())) {
+      if (eventStartISO && endD.toISOString() <= eventStartISO) endD.setDate(endD.getDate() + 1)
+      eventEndISO = endD.toISOString()
+    }
 
     const body = {
-      client_name: location,
-      client_phone: organiserPhone || undefined,
-      event_date: date,
+      event,
+      client_phone: clientPhone,
+      event_date: eventDate,
       event_start: eventStartISO,
       event_end: eventEndISO,
       event_location: location,
-      notes: compiledNotes || undefined,
+      setup_type: setupType,
+      floor_level: floorLevel || undefined,
+      paved_path: pavedPath === '' ? undefined : pavedPath === 'ja',
+      notes,
     }
 
     try {
@@ -185,7 +128,27 @@ export function SubmitBookingForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-7">
+    <form onSubmit={onSubmit} className="flex flex-col gap-7" noValidate>
+      {/* Sectie: Voor wie */}
+      <Section icon={<MessageSquare size={18} />} title="Voor wie / welk evenement?">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="event" className="text-[var(--color-fg)]">
+            Voor wie / welk evenement?
+          </Label>
+          <Input
+            id="event"
+            value={event}
+            onChange={(e) => setEvent(e.target.value)}
+            placeholder="Bijv. Bruiloft Jansen, Kermis Oss, Café De Kroeg"
+            required
+            className="h-12 text-base"
+            style={{ fontSize: '16px' }}
+            aria-invalid={!!errors.event}
+          />
+          {errors.event && <p className="text-xs text-red-600">{errors.event}</p>}
+        </div>
+      </Section>
+
       {/* Sectie: Wanneer */}
       <Section icon={<CalendarIcon size={18} />} title="Wanneer is de show?">
         <div className="flex flex-col gap-1.5">
@@ -195,9 +158,8 @@ export function SubmitBookingForm({
           <Input
             id="event_date"
             type="date"
-            value={date}
-            min={minDate}
-            onChange={(e) => setDate(e.target.value)}
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
             required
             className="h-12 text-base"
             style={{ fontSize: '16px' }}
@@ -206,98 +168,46 @@ export function SubmitBookingForm({
           {errors.event_date && <p className="text-xs text-red-600">{errors.event_date}</p>}
         </div>
 
-        <div className="mt-4 flex flex-col gap-2">
-          <Label className="text-[var(--color-fg)]">Hoe laat begint het?</Label>
-          <div role="group" aria-label="Begintijd" className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-            {QUICK_START_TIMES.map((t) => (
-              <ChipButton
-                key={t}
-                active={startTime === t}
-                onClick={() => {
-                  setStartTime(t)
-                  setCustomStart('')
-                }}
-              >
-                {t}
-              </ChipButton>
-            ))}
-            <ChipButton
-              active={startTime === 'custom'}
-              onClick={() => setStartTime('custom')}
-            >
-              Anders…
-            </ChipButton>
-            <ChipButton
-              active={startTime === ''}
-              onClick={() => {
-                setStartTime('')
-                setCustomStart('')
-              }}
-              variant="muted"
-            >
-              Weet ik nog niet
-            </ChipButton>
-          </div>
-          {startTime === 'custom' && (
-            <Input
-              type="time"
-              value={customStart}
-              onChange={(e) => setCustomStart(e.target.value)}
-              className="mt-1 h-12 text-base"
-              style={{ fontSize: '16px' }}
-              placeholder="bv. 20:30"
-            />
-          )}
-          {errors.event_start && <p className="text-xs text-red-600">{errors.event_start}</p>}
-        </div>
-
-        {effectiveStart && (
-          <div className="mt-4 flex flex-col gap-2">
-            <Label className="text-[var(--color-fg)]">Hoe lang duurt &apos;t?</Label>
-            <div role="group" aria-label="Duur" className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-              {DURATION_OPTIONS.map((d) => (
-                <ChipButton
-                  key={d.id}
-                  active={durationId === d.id}
-                  onClick={() => {
-                    setDurationId(d.id)
-                    setCustomDuration('')
-                  }}
-                >
-                  {d.label}
-                </ChipButton>
-              ))}
-              <ChipButton
-                active={durationId === 'custom'}
-                onClick={() => setDurationId('custom')}
-              >
-                Anders…
-              </ChipButton>
+        <div className="mt-4 flex flex-col gap-1.5">
+          <Label className="flex items-center gap-1.5 text-[var(--color-fg)]">
+            <Clock size={14} /> Showtijden
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="event_start_time" className="text-xs text-[var(--color-fg-muted)]">
+                Begin
+              </Label>
+              <Input
+                id="event_start_time"
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                required
+                className="h-12 text-base"
+                style={{ fontSize: '16px' }}
+                aria-invalid={!!errors.event_start}
+              />
             </div>
-            {durationId === 'custom' && (
-              <div className="mt-1 flex items-center gap-2">
-                <Input
-                  type="number"
-                  value={customDuration}
-                  onChange={(e) => setCustomDuration(e.target.value)}
-                  min={0.5}
-                  max={12}
-                  step={0.5}
-                  className="h-12 w-32 text-base"
-                  style={{ fontSize: '16px' }}
-                  placeholder="3.5"
-                />
-                <span className="text-sm text-[var(--color-fg-muted)]">uur</span>
-              </div>
-            )}
-            {errors.duration && <p className="text-xs text-red-600">{errors.duration}</p>}
-            {endTimePreview && durationId && durationId !== 'custom' && (
-              <p className="flex items-center gap-1.5 text-xs text-[var(--color-fg-muted)]">
-                <Clock size={12} /> Eindigt rond {endTimePreview}
-              </p>
-            )}
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="event_end_time" className="text-xs text-[var(--color-fg-muted)]">
+                Eind
+              </Label>
+              <Input
+                id="event_end_time"
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                required
+                className="h-12 text-base"
+                style={{ fontSize: '16px' }}
+                aria-invalid={!!errors.event_end}
+              />
+            </div>
           </div>
-        )}
+          {(errors.event_start || errors.event_end) && (
+            <p className="text-xs text-red-600">{errors.event_start ?? errors.event_end}</p>
+          )}
+        </div>
       </Section>
 
       {/* Sectie: Waar */}
@@ -306,121 +216,116 @@ export function SubmitBookingForm({
           <Label htmlFor="event_location" className="text-[var(--color-fg)]">
             Locatie
           </Label>
-          <Input
+          <LocationInput
             id="event_location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Bv. Café De Hoek, Eindhoven"
+            name="event_location"
+            placeholder="Adres / stad / venue"
+            defaultValue={location}
+            onValueChange={setLocation}
             required
-            className="h-12 text-base"
-            style={{ fontSize: '16px' }}
-            aria-invalid={!!errors.event_location}
+            className="flex h-12 w-full rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
           />
           {errors.event_location && (
             <p className="text-xs text-red-600">{errors.event_location}</p>
           )}
-          <p className="text-xs text-[var(--color-fg-muted)]">
-            Naam van de zaal/café/locatie + plaats.
-          </p>
         </div>
       </Section>
 
-      {/* Sectie: Wat heb je nodig */}
-      <Section icon={<Speaker size={18} />} title="Wat heb je nodig?" optional>
-        <div role="group" aria-label="Wat heb je nodig" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {NEEDS.map((n) => {
-            const Icon = n.icon
-            const checked = needs.has(n.id)
-            return (
-              <button
-                type="button"
-                key={n.id}
-                onClick={() => toggleNeed(n.id)}
-                aria-pressed={checked}
-                className={`flex min-h-[60px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                  checked
-                    ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
-                    : 'border-[var(--color-border)] bg-white text-[var(--color-fg)] hover:border-[var(--color-border-strong)]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon size={16} className="shrink-0" />
-                  <span className="text-sm font-medium">{n.label}</span>
-                </div>
-                {'sub' in n && n.sub && (
-                  <span className="text-[11px] text-[var(--color-fg-muted)]">{n.sub}</span>
-                )}
-              </button>
-            )
-          })}
+      {/* Sectie: Contactpersoon */}
+      <Section icon={<Phone size={18} />} title="Telefoon contactpersoon (klant)">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="client_phone" className="text-[var(--color-fg)]">
+            Telefoon contactpersoon (klant)
+          </Label>
+          <Input
+            id="client_phone"
+            type="tel"
+            inputMode="tel"
+            value={clientPhone}
+            onChange={(e) => setClientPhone(e.target.value)}
+            placeholder="Telefoonnummer van de contactpersoon"
+            required
+            className="h-12 text-base"
+            style={{ fontSize: '16px' }}
+            aria-invalid={!!errors.client_phone}
+          />
+          {errors.client_phone && <p className="text-xs text-red-600">{errors.client_phone}</p>}
         </div>
       </Section>
 
-      {/* Sectie: Hoeveel mensen */}
-      <Section icon={<Users size={18} />} title="Hoeveel bezoekers verwacht je?" optional>
-        <div role="group" aria-label="Aantal bezoekers" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {GUEST_RANGES.map((g) => (
-            <button
-              type="button"
-              key={g.id}
-              onClick={() => setGuestRange(guestRange === g.id ? '' : g.id)}
-              aria-pressed={guestRange === g.id}
-              className={`flex min-h-[60px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                guestRange === g.id
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
-                  : 'border-[var(--color-border)] bg-white text-[var(--color-fg)] hover:border-[var(--color-border-strong)]'
-              }`}
-            >
-              <span className="text-sm font-semibold">{g.label}</span>
-              <span className="text-[11px] text-[var(--color-fg-muted)]">{g.sub}</span>
-            </button>
-          ))}
+      {/* Sectie: Opbouw en toegankelijkheid */}
+      <Section icon={<Wrench size={18} />} title="Opbouw en toegankelijkheid">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="setup_type" className="text-[var(--color-fg)]">
+            Prikken of opbouwen?
+          </Label>
+          <select
+            id="setup_type"
+            value={setupType}
+            onChange={(e) => setSetupType(e.target.value as SetupType)}
+            required
+            aria-invalid={!!errors.setup_type}
+            className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
+            style={{ fontSize: '16px' }}
+          >
+            <option value="" disabled>
+              Maak een keuze
+            </option>
+            <option value="prikken">Prikken</option>
+            <option value="opbouwen">Opbouwen</option>
+          </select>
+          {errors.setup_type && <p className="text-xs text-red-600">{errors.setup_type}</p>}
+        </div>
+
+        <div className="mt-4 flex flex-col gap-1.5">
+          <Label htmlFor="floor_level" className="flex items-center gap-1.5 text-[var(--color-fg)]">
+            <Building2 size={14} /> Begane grond of verdieping?
+          </Label>
+          <select
+            id="floor_level"
+            value={floorLevel}
+            onChange={(e) => setFloorLevel(e.target.value as FloorLevel)}
+            className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
+            style={{ fontSize: '16px' }}
+          >
+            <option value="">Maak een keuze (optioneel)</option>
+            <option value="begane_grond">Begane grond</option>
+            <option value="verdieping">Verdieping</option>
+          </select>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-1.5">
+          <Label htmlFor="paved_path" className="flex items-center gap-1.5 text-[var(--color-fg)]">
+            <Route size={14} /> Is er een verhard pad naar het optreden?
+          </Label>
+          <select
+            id="paved_path"
+            value={pavedPath}
+            onChange={(e) => setPavedPath(e.target.value as PavedPath)}
+            className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
+            style={{ fontSize: '16px' }}
+          >
+            <option value="">Maak een keuze (optioneel)</option>
+            <option value="ja">Ja</option>
+            <option value="nee">Nee</option>
+          </select>
+          <p className="text-xs text-[var(--color-fg-muted)]">Geen grind, gras of zand.</p>
         </div>
       </Section>
 
-      {/* Sectie: Organisator + bericht */}
-      <Section icon={<MessageSquare size={18} />} title="Iets erbij?" optional>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="organiser_name" className="flex items-center gap-1.5 text-xs">
-              <UserIcon size={12} /> Contactpersoon
-            </Label>
-            <Input
-              id="organiser_name"
-              value={organiserName}
-              onChange={(e) => setOrganiserName(e.target.value)}
-              placeholder="Wie regelt het ter plekke?"
-              className="h-12 text-base"
-              style={{ fontSize: '16px' }}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="organiser_phone" className="flex items-center gap-1.5 text-xs">
-              <Phone size={12} /> Telefoon
-            </Label>
-            <Input
-              id="organiser_phone"
-              type="tel"
-              inputMode="tel"
-              value={organiserPhone}
-              onChange={(e) => setOrganiserPhone(e.target.value)}
-              placeholder="06-..."
-              className="h-12 text-base"
-              style={{ fontSize: '16px' }}
-            />
-          </div>
-        </div>
-        <div className="mt-3 flex flex-col gap-1.5">
-          <Label htmlFor="note" className="text-xs">
+      {/* Sectie: Bijzonderheden */}
+      <Section icon={<MessageSquare size={18} />} title="Bijzonderheden" optional>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="notes" className="text-xs">
             Bijzonderheden
           </Label>
           <Textarea
-            id="note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             rows={3}
             style={{ fontSize: '16px' }}
-            placeholder="Setlist, podiummaat, decoratie, dieet, taxi, etc."
+            placeholder="Bijv. line-up, boel inprikken op aanwezige installatie, wensen of aandachtspunten…"
           />
         </div>
       </Section>
@@ -430,7 +335,7 @@ export function SubmitBookingForm({
         <p className="text-xs text-[var(--color-fg-muted)]">
           We ontvangen je aanvraag direct. Reactie binnen 1 werkdag.
         </p>
-        <Button type="submit" disabled={submitting} className="h-12 text-base">
+        <Button type="submit" disabled={submitting || !isComplete} className="h-12 text-base">
           <Send size={16} /> {submitting ? 'Versturen…' : 'Aanvraag versturen'}
         </Button>
       </div>
@@ -466,36 +371,5 @@ function Section({
       </header>
       {children}
     </section>
-  )
-}
-
-function ChipButton({
-  active,
-  onClick,
-  children,
-  variant = 'primary',
-}: {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-  variant?: 'primary' | 'muted'
-}) {
-  const base =
-    'flex min-h-[44px] items-center justify-center rounded-full border px-3 text-sm font-medium transition-colors'
-  const activeClass =
-    variant === 'muted'
-      ? 'border-[var(--color-fg-muted)] bg-[var(--color-surface-1)] text-[var(--color-fg)]'
-      : 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)]'
-  const inactiveClass =
-    'border-[var(--color-border)] bg-white text-[var(--color-fg-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]'
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={`${base} ${active ? activeClass : inactiveClass}`}
-    >
-      {children}
-    </button>
   )
 }
