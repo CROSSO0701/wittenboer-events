@@ -333,7 +333,7 @@ export function SubmitBookingForm({
       </Section>
 
       {/* Submit */}
-      <div className="sticky bottom-0 -mx-2 flex flex-col gap-2 border-t border-[var(--color-border)] bg-white/95 px-2 pt-4 pb-2 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-6 flex flex-col gap-2 border-t border-[var(--color-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-[var(--color-fg-muted)]">
           We ontvangen je aanvraag direct. Reactie binnen 1 werkdag.
         </p>
