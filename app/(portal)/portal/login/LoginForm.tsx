@@ -33,8 +33,14 @@ export function LoginForm() {
   // Toon foutmelding na een mislukte inlog-link callback (server-side route geeft auth_error mee).
   useEffect(() => {
     const authError = params.get('auth_error')
-    if (!authError) return
-    toast.error(`Inloggen mislukt: ${authError}`)
+    if (authError) {
+      toast.error(`Inloggen mislukt: ${authError}`)
+      return
+    }
+    // Deelbare inloglink verlopen of ongeldig (?error=link).
+    if (params.get('error') === 'link') {
+      toast.error('Deze inloglink is verlopen, vraag een nieuwe.')
+    }
   }, [params])
 
   return (

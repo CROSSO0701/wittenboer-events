@@ -742,6 +742,8 @@ export type Database = {
           google_calendar_id: string | null
           has_password: boolean
           id: string
+          login_link_expires_at: string | null
+          login_link_token: string | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
@@ -754,6 +756,8 @@ export type Database = {
           google_calendar_id?: string | null
           has_password?: boolean
           id: string
+          login_link_expires_at?: string | null
+          login_link_token?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -766,6 +770,8 @@ export type Database = {
           google_calendar_id?: string | null
           has_password?: boolean
           id?: string
+          login_link_expires_at?: string | null
+          login_link_token?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string

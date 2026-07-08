@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus, Send, Copy, Users } from 'lucide-react'
+import { Pencil, UserPlus, Send, Copy, Users, Link2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,28 @@ export function StaffPanel() {
   const [editing, setEditing] = useState<StaffProfile | null>(null)
   const [inviting, setInviting] = useState(false)
   const [sendingLoginId, setSendingLoginId] = useState<string | null>(null)
+  const [copyingLoginId, setCopyingLoginId] = useState<string | null>(null)
   const [sendingAll, setSendingAll] = useState(false)
+
+  async function copyLoginLink(p: StaffProfile) {
+    setCopyingLoginId(p.id)
+    try {
+      const res = await fetch(`/api/admin/staff/${p.id}/login-link`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.url) {
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
+        return
+      }
+      await navigator.clipboard.writeText(data.url)
+      toast.success('Inloglink gekopieerd (24 uur geldig). Plak in WhatsApp.')
+    } catch {
+      toast.error('Kopiëren faalde.')
+    } finally {
+      setCopyingLoginId(null)
+    }
+  }
 
   async function sendLoginLink(p: StaffProfile) {
     if (!p.email) {
@@ -161,6 +182,15 @@ export function StaffPanel() {
                             <Copy size={14} /> Kopieer agenda-link
                           </Button>
                         )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyLoginLink(p)}
+                          disabled={copyingLoginId === p.id}
+                          title="Kopieer een 24 uur geldige inloglink om via WhatsApp te sturen"
+                        >
+                          <Link2 size={14} /> {copyingLoginId === p.id ? 'Bezig…' : 'Kopieer inloglink'}
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"

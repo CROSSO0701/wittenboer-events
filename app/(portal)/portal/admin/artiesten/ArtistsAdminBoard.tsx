@@ -40,6 +40,27 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
   const [editTarget, setEditTarget] = useState<ArtistRow | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<ArtistRow | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [copyingLoginId, setCopyingLoginId] = useState<string | null>(null)
+
+  async function copyLoginLink(artist: ArtistRow) {
+    setCopyingLoginId(artist.id)
+    try {
+      const res = await fetch(`/api/admin/artists/${artist.id}/login-link`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.url) {
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
+        return
+      }
+      await navigator.clipboard.writeText(data.url)
+      toast.success('Inloglink gekopieerd (24 uur geldig). Plak in WhatsApp.')
+    } catch {
+      toast.error('Kopiëren faalde.')
+    } finally {
+      setCopyingLoginId(null)
+    }
+  }
 
   const klusLink = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/klus-doorgeven`
   async function copyKlusLink() {
@@ -168,6 +189,17 @@ export function ArtistsAdminBoard({ artists }: { artists: ArtistRow[] }) {
                     <Button variant="ghost" size="sm" onClick={() => setEditTarget(a)} title="Bewerken">
                       <Pencil size={14} />
                     </Button>
+                    {a.profile_id && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyLoginLink(a)}
+                        disabled={copyingLoginId === a.id}
+                        title="Kopieer een 24 uur geldige inloglink om via WhatsApp te sturen"
+                      >
+                        <Link2 size={14} /> {copyingLoginId === a.id ? 'Bezig…' : 'Kopieer inloglink'}
+                      </Button>
+                    )}
                     {a.profile_id ? (
                       <Button variant="ghost" size="sm" onClick={() => setRevokeTarget(a)} title="Toegang intrekken">
                         <ShieldOff size={14} />
