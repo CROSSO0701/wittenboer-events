@@ -24,6 +24,7 @@ import {
 import { toast } from 'sonner'
 import { createSupabaseBrowserClient } from '../../../lib/db/client'
 import { cn } from '../../../lib/utils/cn'
+import { InstallAppButton } from './InstallAppButton'
 
 type Role = 'admin' | 'artist' | 'staff' | null
 type Session = { email: string | null; fullName: string | null; role: Role } | null
@@ -274,6 +275,11 @@ export function PortalShell({ children }: { children: ReactNode }) {
                 )
               })}
             </ul>
+            {/* Installeer-de-portal-als-app: zichtbaar voor alle rollen, rendert
+                zichzelf alleen als installeren daadwerkelijk kan. */}
+            <div className="mt-0.5">
+              <InstallAppButton />
+            </div>
           </div>
 
           {/* Account-identiteit + uitloggen. */}
