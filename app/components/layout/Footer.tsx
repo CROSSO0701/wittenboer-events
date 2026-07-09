@@ -71,7 +71,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer__bottom">
-          <p>© {year} Wittenboer Events · KVK 65834921</p>
+          <p>© {year} Wittenboer Events · KVK 66591015</p>
         </div>
       </div>
     </footer>

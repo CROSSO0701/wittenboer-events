@@ -22,11 +22,13 @@ export type StaffListItem = {
   email: string | null
   phone: string | null
   has_password: boolean
-  calendar_feed_token: string | null
 }
 
-// Eén ophaal-query selecteert alle kolommen die enige consumer nodig heeft.
-const SELECT = 'id, full_name, email, phone, has_password, calendar_feed_token'
+// Eén ophaal-query selecteert alle kolommen die enige consumer nodig heeft. Het
+// agenda-feed-token wordt bewust NIET meer meegehaald: de admin haalt de
+// agenda-link per crewlid op via de server-route /api/admin/staff/[id]/calendar-link
+// (service-role), zodat het bearer-token niet in de browser belandt.
+const SELECT = 'id, full_name, email, phone, has_password'
 
 type CacheEntry = {
   data: StaffListItem[] | null

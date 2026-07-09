@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus, Send, Copy, Users, Link2 } from 'lucide-react'
+import { Pencil, UserPlus, Send, Copy, Users, Link2, MoreHorizontal, RefreshCw } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../../components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../../../../components/ui/dropdown-menu'
 import { Button } from '../../../../components/ui/button'
 import { Input } from '../../../../components/ui/input'
 import { Label } from '../../../../components/ui/label'
@@ -26,6 +33,7 @@ export function StaffPanel() {
   const [inviting, setInviting] = useState(false)
   const [sendingLoginId, setSendingLoginId] = useState<string | null>(null)
   const [copyingLoginId, setCopyingLoginId] = useState<string | null>(null)
+  const [busyCalId, setBusyCalId] = useState<string | null>(null)
   const [sendingAll, setSendingAll] = useState(false)
 
   async function copyLoginLink(p: StaffProfile) {
@@ -70,14 +78,29 @@ export function StaffPanel() {
     }
   }
 
-  async function copyCalendarLink(p: StaffProfile) {
-    if (!p.calendar_feed_token) return
-    const feedUrl = `${window.location.origin}/api/calendar/${p.calendar_feed_token}.ics`
+  async function copyCalendarLink(p: StaffProfile, rotate = false) {
+    setBusyCalId(p.id)
     try {
-      await navigator.clipboard.writeText(feedUrl)
-      toast.success('Agenda-link gekopieerd.')
+      const res = await fetch(`/api/admin/staff/${p.id}/calendar-link`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rotate }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.url) {
+        toast.error(data.error ?? `Fout (${res.status})`)
+        return
+      }
+      await navigator.clipboard.writeText(data.url)
+      toast.success(
+        rotate
+          ? 'Nieuwe agenda-link gemaakt en gekopieerd. De oude link werkt niet meer.'
+          : 'Agenda-link gekopieerd.'
+      )
     } catch {
       toast.error('Kopiëren faalde.')
+    } finally {
+      setBusyCalId(null)
     }
   }
 
@@ -172,34 +195,40 @@ export function StaffPanel() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
-                        {p.calendar_feed_token && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyCalendarLink(p)}
-                            title="Kopieer de persoonlijke agenda-link van dit crewlid"
-                          >
-                            <Copy size={14} /> Kopieer agenda-link
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyLoginLink(p)}
-                          disabled={copyingLoginId === p.id}
-                          title="Kopieer een 24 uur geldige inloglink om via WhatsApp te sturen"
-                        >
-                          <Link2 size={14} /> {copyingLoginId === p.id ? 'Bezig…' : 'Kopieer inloglink'}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => sendLoginLink(p)}
-                          disabled={sendingLoginId === p.id || !p.email}
-                          title={p.email ? 'Stuur dit crewlid inlog + agenda' : 'Voeg eerst een e-mailadres toe'}
-                        >
-                          <Send size={14} /> {sendingLoginId === p.id ? 'Versturen…' : 'Stuur inlog + agenda'}
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={
+                                busyCalId === p.id ||
+                                copyingLoginId === p.id ||
+                                sendingLoginId === p.id
+                              }
+                              title="Inlog- en agenda-acties"
+                            >
+                              <MoreHorizontal size={16} /> Acties
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => copyCalendarLink(p)}>
+                              <Copy size={14} /> Kopieer agenda-link
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => copyCalendarLink(p, true)}>
+                              <RefreshCw size={14} /> Vernieuw agenda-link
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => copyLoginLink(p)}>
+                              <Link2 size={14} /> Kopieer inloglink
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              disabled={!p.email}
+                              onSelect={() => sendLoginLink(p)}
+                            >
+                              <Send size={14} /> Stuur inlog + agenda
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
                           <Pencil size={14} /> Bewerken
                         </Button>

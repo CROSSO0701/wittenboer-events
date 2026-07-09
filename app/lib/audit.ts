@@ -20,6 +20,7 @@ export type AuditAction =
   | 'staff.created'
   | 'staff.updated'
   | 'staff.login_link'
+  | 'staff.calendar_link'
   | 'klus.created'
   | 'klus.updated'
   | 'klus.deleted'

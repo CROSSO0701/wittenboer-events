@@ -164,7 +164,7 @@ export async function renderBrochurePdf(packages: Pkg[]): Promise<Buffer> {
               06 27 17 28 76{'\n'}info@wittenboerevents.nl
             </Text>
             <Text style={s.footCol}>
-              wittenboerevents.nl{'\n'}KVK 65834921
+              wittenboerevents.nl{'\n'}KVK 66591015
             </Text>
           </View>
         </View>
