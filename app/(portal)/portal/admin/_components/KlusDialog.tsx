@@ -63,11 +63,17 @@ export function KlusDialog({
   open,
   onOpenChange,
   onSaved,
+  defaultDate,
 }: {
   klus?: KlusRow | null
   open: boolean
   onOpenChange: (o: boolean) => void
   onSaved: () => void
+  /**
+   * Voorvul-datum (YYYY-MM-DD) voor een NIEUWE klus, bv. wanneer je in de
+   * kalender op een lege dagcel klikt. Wordt genegeerd bij bewerken (klus telt).
+   */
+  defaultDate?: string | null
 }) {
   const isEdit = !!klus
   const [staff, setStaff] = useState<Staff[]>([])
@@ -414,7 +420,13 @@ export function KlusDialog({
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="klus-date">Datum</Label>
-            <Input id="klus-date" name="event_date" type="date" defaultValue={klus?.event_date ?? ''} required />
+            <Input
+              id="klus-date"
+              name="event_date"
+              type="date"
+              defaultValue={klus?.event_date ?? defaultDate ?? ''}
+              required
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="klus-start">Aanvang</Label>
