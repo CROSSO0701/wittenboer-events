@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Pencil, UserPlus, Send, Copy, Users, Link2, MoreHorizontal, RefreshCw } from 'lucide-react'
+import { Pencil, UserPlus, Send, Copy, Users, Link2, MoreHorizontal, RefreshCw, Trash2, AlertTriangle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,7 @@ export function StaffPanel() {
   const [copyingLoginId, setCopyingLoginId] = useState<string | null>(null)
   const [busyCalId, setBusyCalId] = useState<string | null>(null)
   const [sendingAll, setSendingAll] = useState(false)
+  const [deleting, setDeleting] = useState<StaffProfile | null>(null)
 
   async function copyLoginLink(p: StaffProfile) {
     setCopyingLoginId(p.id)
@@ -227,6 +228,13 @@ export function StaffPanel() {
                             >
                               <Send size={14} /> Stuur inlog + agenda
                             </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onSelect={() => setDeleting(p)}
+                              className="text-[var(--color-danger)] focus:bg-red-50"
+                            >
+                              <Trash2 size={14} /> Crewlid verwijderen
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                         <Button variant="ghost" size="sm" onClick={() => setEditing(p)}>
@@ -260,7 +268,85 @@ export function StaffPanel() {
           void refresh()
         }}
       />
+
+      <DeleteStaffDialog
+        profile={deleting}
+        open={!!deleting}
+        onOpenChange={(o) => !o && setDeleting(null)}
+        onDeleted={() => {
+          setDeleting(null)
+          void refresh()
+        }}
+      />
     </>
+  )
+}
+
+function DeleteStaffDialog({
+  profile,
+  open,
+  onOpenChange,
+  onDeleted,
+}: {
+  profile: StaffProfile | null
+  open: boolean
+  onOpenChange: (o: boolean) => void
+  onDeleted: () => void
+}) {
+  const [submitting, setSubmitting] = useState(false)
+
+  async function confirmDelete() {
+    if (!profile) return
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/admin/staff/' + profile.id, { method: 'DELETE' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = data.error ?? `Fout (${res.status})`
+        const detail = data.detail && !msg.includes(data.detail) ? `\n${data.detail}` : ''
+        toast.error(msg + detail, { duration: 8000 })
+        return
+      }
+      toast.success(
+        `${profile.full_name ?? 'Crewlid'} verwijderd. Login ingetrokken en persoonlijke agenda opgeruimd.`
+      )
+      onDeleted()
+    } catch {
+      toast.error('Verwijderen faalde.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertTriangle size={18} className="text-[var(--color-danger)]" />
+            Crewlid verwijderen
+          </DialogTitle>
+          <DialogDescription>
+            Weet u zeker dat u <strong>{profile?.full_name ?? 'dit crewlid'}</strong> wilt verwijderen?
+          </DialogDescription>
+        </DialogHeader>
+        <ul className="flex flex-col gap-1.5 text-sm text-[var(--color-fg-secondary)]">
+          <li>· Verdwijnt uit de crew-lijst en de agenda.</li>
+          <li>· Kan niet meer inloggen (inlog- en agenda-link ingetrokken).</li>
+          <li>· Toekomstige toewijzingen worden verwijderd.</li>
+          <li>· De persoonlijke Google-agenda wordt verwijderd.</li>
+          <li>· Op afgeronde klussen blijft bewaard dat dit crewlid erbij was.</li>
+        </ul>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={submitting}>
+            Annuleren
+          </Button>
+          <Button variant="danger" onClick={confirmDelete} disabled={submitting}>
+            <Trash2 size={14} /> {submitting ? 'Verwijderen…' : 'Definitief verwijderen'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 

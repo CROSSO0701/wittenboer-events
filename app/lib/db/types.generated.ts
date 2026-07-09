@@ -735,6 +735,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          archived_at: string | null
           calendar_feed_token: string | null
           created_at: string
           email: string | null
@@ -749,6 +750,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
           calendar_feed_token?: string | null
           created_at?: string
           email?: string | null
@@ -763,6 +765,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
           calendar_feed_token?: string | null
           created_at?: string
           email?: string | null

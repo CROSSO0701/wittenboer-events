@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
 import { logAudit } from '../../../../lib/audit'
+import { deleteCalendar } from '../../../../lib/integrations/google-calendar'
 import type { Database } from '../../../../lib/db/types.generated'
 
 type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
@@ -138,4 +139,116 @@ export async function PATCH(request: Request, context: RouteContext) {
   })
 
   return NextResponse.json({ ok: true })
+}
+
+// Archiveert een crewlid: het verdwijnt uit de crew-lijst, agenda en toekomstige
+// toewijzingen, zijn login wordt geblokkeerd en zijn persoonlijke Google-agenda
+// wordt verwijderd. Op AFGERONDE (verleden) klussen blijft de toewijzing staan,
+// zodat het archief bewaart wie erbij was. Onomkeerbaar voor de Google-agenda.
+export async function DELETE(_request: Request, context: RouteContext) {
+  let admin
+  try {
+    admin = await requireAdmin()
+  } catch (err) {
+    if (err instanceof AuthError) return NextResponse.json({ error: err.message }, { status: err.status })
+    throw err
+  }
+
+  const { id } = await context.params
+  if (!/^[0-9a-f-]{36}$/i.test(id)) {
+    return NextResponse.json({ error: 'Ongeldige crew-ID.' }, { status: 400 })
+  }
+
+  const supabase = createSupabaseAdminClient()
+
+  const { data: target, error: targetErr } = await supabase
+    .from('profiles')
+    .select('id, role, google_calendar_id, archived_at')
+    .eq('id', id)
+    .maybeSingle()
+  if (targetErr) {
+    return NextResponse.json({ error: 'Ophalen faalde.', detail: targetErr.message }, { status: 500 })
+  }
+  if (!target) {
+    return NextResponse.json({ error: 'Crewlid niet gevonden.' }, { status: 404 })
+  }
+  if (target.role !== 'staff') {
+    return NextResponse.json({ error: 'Dit account is geen crewlid.' }, { status: 403 })
+  }
+  if (target.archived_at) {
+    return NextResponse.json({ ok: true, alreadyArchived: true })
+  }
+
+  const today = new Date().toISOString().slice(0, 10)
+
+  // Toekomstige toewijzingen van dit crewlid verwijderen; strikt verleden blijft
+  // staan voor het archief. We halen de toekomstige boekingen/klussen los op en
+  // snijden die met de toewijzingen van dit crewlid (voorkomt afhankelijkheid van
+  // geneste-relatie-typing).
+  const [futureBookings, futureKlussen, myBookingAssigns, myKlusAssigns] = await Promise.all([
+    supabase.from('bookings').select('id').gte('event_date', today),
+    supabase.from('klussen').select('id').gte('event_date', today),
+    supabase.from('booking_assignments').select('booking_id').eq('staff_id', id),
+    supabase.from('klus_assignments').select('klus_id').eq('staff_id', id),
+  ])
+
+  const futureBookingSet = new Set((futureBookings.data ?? []).map((r) => r.id))
+  const futureKlusSet = new Set((futureKlussen.data ?? []).map((r) => r.id))
+  const futureBookingIds = (myBookingAssigns.data ?? [])
+    .map((r) => r.booking_id)
+    .filter((bid) => futureBookingSet.has(bid))
+  const futureKlusIds = (myKlusAssigns.data ?? [])
+    .map((r) => r.klus_id)
+    .filter((kid) => futureKlusSet.has(kid))
+
+  if (futureBookingIds.length > 0) {
+    await supabase.from('booking_assignments').delete().eq('staff_id', id).in('booking_id', futureBookingIds)
+  }
+  if (futureKlusIds.length > 0) {
+    await supabase.from('klus_assignments').delete().eq('staff_id', id).in('klus_id', futureKlusIds)
+  }
+
+  // Persoonlijke Google-agenda ("Wittenboer · naam") verwijderen (best-effort:
+  // een 404/410 telt als opgeruimd). Dit haalt meteen alle crew-events weg.
+  let calendarRemoved = false
+  if (target.google_calendar_id) {
+    const res = await deleteCalendar(target.google_calendar_id)
+    calendarRemoved = res.ok
+  }
+
+  // Profiel markeren als gearchiveerd en alle tokens/koppelingen wissen.
+  const { error: updateErr } = await supabase
+    .from('profiles')
+    .update({
+      archived_at: new Date().toISOString(),
+      google_calendar_id: null,
+      calendar_feed_token: null,
+      login_link_token: null,
+      login_link_expires_at: null,
+    })
+    .eq('id', id)
+  if (updateErr) {
+    return NextResponse.json({ error: 'Archiveren faalde.', detail: updateErr.message }, { status: 500 })
+  }
+
+  // Login blokkeren: de auth-user bannen zodat inloggen (link of wachtwoord) faalt.
+  try {
+    await supabase.auth.admin.updateUserById(id, { ban_duration: '876000h' })
+  } catch (err) {
+    console.error('[staff.archived] ban faalde', err instanceof Error ? err.message : err)
+  }
+
+  await logAudit({
+    actorId: admin.id,
+    action: 'staff.archived',
+    entity: 'profile',
+    entityId: id,
+    metadata: {
+      removedBookingAssignments: futureBookingIds.length,
+      removedKlusAssignments: futureKlusIds.length,
+      calendarRemoved,
+    },
+  })
+
+  return NextResponse.json({ ok: true, calendarRemoved })
 }

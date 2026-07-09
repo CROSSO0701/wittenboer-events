@@ -51,7 +51,7 @@ const subscribers: Record<'ordered' | 'unordered', Set<(rows: StaffListItem[]) =
 async function fetchStaff(ordered: boolean): Promise<StaffListItem[]> {
   try {
     const supabase = createSupabaseBrowserClient()
-    let query = supabase.from('profiles').select(SELECT).eq('role', 'staff')
+    let query = supabase.from('profiles').select(SELECT).eq('role', 'staff').is('archived_at', null)
     if (ordered) query = query.order('full_name', { ascending: true })
     const { data } = await query
     return (data as StaffListItem[] | null) ?? []
