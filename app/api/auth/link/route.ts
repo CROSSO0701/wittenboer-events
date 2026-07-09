@@ -35,6 +35,12 @@ export async function GET(request: NextRequest) {
     return redirectTo('/portal/login?error=link')
   }
 
+  // Admins loggen uitsluitend met wachtwoord in; deelbare inloglinks zijn alleen
+  // voor crew en artiesten (defense-in-depth tegen een gelekte admin-link).
+  if (profile.role === 'admin') {
+    return redirectTo('/portal/login?error=link')
+  }
+
   const expires = profile.login_link_expires_at
   if (!expires || new Date(expires).getTime() <= Date.now()) {
     return redirectTo('/portal/login?error=link')
@@ -81,12 +87,8 @@ export async function GET(request: NextRequest) {
 
   // Token blijft staan: 24 uur herbruikbaar.
 
-  const target =
-    profile.role === 'admin'
-      ? '/portal/admin'
-      : profile.role === 'artist'
-        ? '/portal/artiest'
-        : '/portal/crew'
+  // Admins zijn hierboven al geweigerd; alleen crew/artiest komen hier.
+  const target = profile.role === 'artist' ? '/portal/artiest' : '/portal/crew'
 
   // De verifyOtp hierboven schreef de auth-cookies via next/headers; die worden
   // automatisch aan deze redirect-response gehangen zodat de sessie meteen actief is.

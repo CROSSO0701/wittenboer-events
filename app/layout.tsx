@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: '%s | Wittenboer Events',
   },
   description:
-    'Van drive-in show tot volledige productie. Licht, geluid, stroom en artiesten door Marnix Wittenboer in Sint-Michielsgestel.',
+    'Van drive-in show tot volledige productie. Licht, geluid, stroom en artiesten door Marnix Wittenboer in Den Dungen.',
   openGraph: {
     type: 'website',
     locale: 'nl_NL',

@@ -19,5 +19,6 @@ export default async function PortalIndex() {
     .maybeSingle()
   if (profile?.role === 'admin') redirect('/portal/admin')
   if (profile?.role === 'artist') redirect('/portal/artiest')
+  if (profile?.role === 'staff') redirect('/portal/crew')
   redirect('/')
 }

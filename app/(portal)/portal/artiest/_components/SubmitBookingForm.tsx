@@ -45,6 +45,9 @@ export function SubmitBookingForm({
   const [notes, setNotes] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  // Geen datum in het verleden.
+  const today = new Date().toISOString().slice(0, 10)
+
   // Kernvelden verplicht: evenement, datum, showtijden (begin + eind), locatie,
   // telefoon contactpersoon en prikken-of-opbouwen. Zonder deze mag het niet
   // verzonden worden. Gelijk aan het publieke formulier.
@@ -160,6 +163,7 @@ export function SubmitBookingForm({
           <Input
             id="event_date"
             type="date"
+            min={today}
             value={eventDate}
             onChange={(e) => setEventDate(e.target.value)}
             required
@@ -287,10 +291,14 @@ export function SubmitBookingForm({
             id="floor_level"
             value={floorLevel}
             onChange={(e) => setFloorLevel(e.target.value as FloorLevel)}
+            required
+            aria-invalid={!!errors.floor_level}
             className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
             style={{ fontSize: '16px' }}
           >
-            <option value="">Maak een keuze</option>
+            <option value="" disabled>
+              Maak een keuze
+            </option>
             <option value="begane_grond">Begane grond</option>
             <option value="verdieping">Verdieping</option>
           </select>
@@ -304,10 +312,14 @@ export function SubmitBookingForm({
             id="paved_path"
             value={pavedPath}
             onChange={(e) => setPavedPath(e.target.value as PavedPath)}
+            required
+            aria-invalid={!!errors.paved_path}
             className="h-12 rounded-md border border-[var(--color-border)] bg-white px-3 text-base text-[var(--color-fg)] outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary-soft)]"
             style={{ fontSize: '16px' }}
           >
-            <option value="">Maak een keuze</option>
+            <option value="" disabled>
+              Maak een keuze
+            </option>
             <option value="ja">Ja</option>
             <option value="nee">Nee</option>
           </select>

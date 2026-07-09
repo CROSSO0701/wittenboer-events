@@ -24,6 +24,9 @@ export const artistSubmitBookingSchema = z.object({
   floor_level: floorLevelSchema,
   paved_path: z.boolean({ message: 'Geef aan of er een verhard pad is' }),
   notes: z.string().trim().max(5000).optional().or(z.literal('').transform(() => undefined)),
+}).refine((d) => new Date(d.event_start) < new Date(d.event_end), {
+  message: 'De eindtijd moet na de begintijd liggen',
+  path: ['event_end'],
 })
 
 export const acceptBookingSchema = z.object({

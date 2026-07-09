@@ -330,7 +330,7 @@ export default function ShowPakkettenPage() {
                 </svg>
               </div>
               <h3>Transport</h3>
-              <p>We brengen alles in onze eigen bus. Aanrijden vanuit &lsquo;s-Hertogenbosch e.o. binnen 50 km gratis.</p>
+              <p>We brengen alles in onze eigen bus. Transport: &euro;0,50 per km vanuit &lsquo;s-Hertogenbosch e.o.</p>
             </div>
             <div className="incl__item">
               <div className="incl__icon">

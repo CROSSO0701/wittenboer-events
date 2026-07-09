@@ -48,6 +48,16 @@ export async function POST(_request: Request, context: RouteContext) {
     )
   }
 
+  // Nooit een deelbare inloglink voor een admin-account (defense-in-depth).
+  const { data: linkedProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', artist.profile_id)
+    .maybeSingle()
+  if (linkedProfile?.role === 'admin') {
+    return NextResponse.json({ error: 'Kan geen inloglink maken voor een admin-account.' }, { status: 403 })
+  }
+
   const token = randomBytes(24).toString('hex')
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 

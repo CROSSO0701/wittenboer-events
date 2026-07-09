@@ -26,6 +26,9 @@ export function KlusForm() {
   const [pavedPath, setPavedPath] = useState<PavedPath>('')
   const [notes, setNotes] = useState('')
 
+  // Geen datum in het verleden.
+  const today = new Date().toISOString().slice(0, 10)
+
   // Kernvelden verplicht: artiest/naam, datum, adres, showtijden (begin + eind),
   // telefoon contactpersoon en prikken-of-opbouwen. Zonder deze mag het niet
   // verzonden worden.
@@ -158,6 +161,7 @@ export function KlusForm() {
           id="event_date"
           name="event_date"
           type="date"
+          min={today}
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
           required
@@ -245,8 +249,11 @@ export function KlusForm() {
           name="floor_level"
           value={floorLevel}
           onChange={(e) => setFloorLevel(e.target.value as FloorLevel)}
+          required
         >
-          <option value="">Maak een keuze</option>
+          <option value="" disabled>
+            Maak een keuze
+          </option>
           <option value="begane_grond">Begane grond</option>
           <option value="verdieping">Verdieping</option>
         </select>
@@ -259,8 +266,11 @@ export function KlusForm() {
           name="paved_path"
           value={pavedPath}
           onChange={(e) => setPavedPath(e.target.value as PavedPath)}
+          required
         >
-          <option value="">Maak een keuze</option>
+          <option value="" disabled>
+            Maak een keuze
+          </option>
           <option value="ja">Ja</option>
           <option value="nee">Nee</option>
         </select>
