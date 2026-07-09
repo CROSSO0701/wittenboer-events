@@ -43,7 +43,7 @@ export default async function AccountPage() {
           Account
         </p>
         <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl uppercase tracking-wide text-[var(--color-fg)]">
-          Profiel
+          Account
         </h1>
         <dl className="mt-4 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--color-border)] bg-white p-4 text-sm">
           <Field label="Naam" value={profile?.full_name ?? '-'} />

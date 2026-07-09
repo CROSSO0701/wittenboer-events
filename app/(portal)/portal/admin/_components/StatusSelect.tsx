@@ -22,9 +22,10 @@ export function StatusSelect({
 }) {
   return (
     <select
+      aria-label="Status wijzigen"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-8 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs"
+      className="h-8 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] outline-none"
     >
       {options.map((o) => (
         <option key={o} value={o}>

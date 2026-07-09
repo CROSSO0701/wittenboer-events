@@ -99,8 +99,9 @@ export async function POST(request: Request) {
     .maybeSingle()
 
   if (insertErr || !created) {
+    console.error('[booking insert]', insertErr)
     return NextResponse.json(
-      { error: 'Het lukte niet om je klus op te slaan. Probeer het opnieuw.', detail: insertErr?.message },
+      { error: 'Het lukte niet om je klus op te slaan. Probeer het opnieuw.' },
       { status: 500 }
     )
   }

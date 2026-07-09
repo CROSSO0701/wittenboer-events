@@ -246,7 +246,8 @@ export function ArtistDashboard({
 
         {bookings && bookings.length > 0 && (
           <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-1)] text-left text-[11px] uppercase tracking-wider text-[var(--color-fg-muted)]">
                   <th className="px-4 py-2">Datum show</th>
@@ -314,6 +315,7 @@ export function ArtistDashboard({
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </section>

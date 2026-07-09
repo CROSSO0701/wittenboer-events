@@ -186,7 +186,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ token: 
     status: 200,
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
-      'Cache-Control': 'public, max-age=300',
+      'Cache-Control': 'private, no-store',
       'Content-Disposition': 'inline; filename="wittenboer.ics"',
     },
   })

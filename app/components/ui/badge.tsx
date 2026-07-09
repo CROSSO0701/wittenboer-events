@@ -5,7 +5,8 @@ type Tone = 'pending' | 'accepted' | 'declined' | 'done' | 'cancelled' | 'neutra
 const TONES: Record<Tone, string> = {
   pending: 'bg-amber-100 text-amber-800 border-amber-200',
   accepted: 'bg-[var(--color-primary-soft)] text-[var(--color-primary-deep)] border-[var(--color-primary)]/30',
-  declined: 'bg-red-100 text-red-800 border-red-200',
+  declined:
+    'bg-[color-mix(in_oklch,var(--color-danger)_12%,white)] text-[var(--color-danger)] border-[color-mix(in_oklch,var(--color-danger)_35%,white)]',
   done: 'bg-[var(--color-surface-2)] text-[var(--color-fg-secondary)] border-[var(--color-border)]',
   cancelled: 'bg-[var(--color-surface-1)] text-[var(--color-fg-muted)] border-[var(--color-border)]',
   neutral: 'bg-[var(--color-surface-1)] text-[var(--color-fg)] border-[var(--color-border)]',

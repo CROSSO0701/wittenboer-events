@@ -131,8 +131,9 @@ export async function POST(request: Request) {
     .maybeSingle()
 
   if (insertErr || !created) {
+    console.error('[booking insert]', insertErr)
     return NextResponse.json(
-      { error: 'Boeking kon niet worden opgeslagen.', detail: insertErr?.message },
+      { error: 'Boeking kon niet worden opgeslagen.' },
       { status: 500 }
     )
   }
