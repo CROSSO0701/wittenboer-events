@@ -80,7 +80,8 @@ export async function POST(request: Request) {
   }
 
   // Markeer profile.has_password = true
-  const { error: profErr } = await supabaseSrv
+  const admin = createSupabaseAdminClient()
+  const { error: profErr } = await admin
     .from('profiles')
     .update({ has_password: true })
     .eq('id', user.id)

@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { cancelBookingSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { deleteEvent } from '../../../../lib/integrations/google-calendar'
+import { deleteEvent, deleteEventFrom } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { BookingCancelledMail } from '../../../../lib/email/templates/booking-cancelled'
@@ -52,12 +52,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'Boeking is al geannuleerd.' }, { status: 409 })
   }
 
-  // Verwijder Google event indien aanwezig
-  let googleResult: { ok: boolean; error?: string } = { ok: true }
-  if (booking.google_event_id) {
-    googleResult = await deleteEvent(booking.google_event_id)
-  }
-
   const { data: updated, error: updErr } = await supabase
     .from('bookings')
     .update({
@@ -65,13 +59,51 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       decline_reason: input.reason ?? booking.decline_reason,
       decided_at: new Date().toISOString(),
       decided_by: admin.id,
-      google_event_id: googleResult.ok ? null : booking.google_event_id,
     })
     .eq('id', id)
+    .neq('status', 'cancelled')
     .select()
     .maybeSingle()
   if (updErr || !updated) {
+    if (!updErr) {
+      return NextResponse.json({ error: 'De boeking is intussen al geannuleerd.' }, { status: 409 })
+    }
     return NextResponse.json({ error: 'Annuleren faalde.', detail: updErr?.message }, { status: 500 })
+  }
+
+  // Ruim agenda-items pas op nadat de database de annulering heeft vastgelegd.
+  let googleResult: { ok: boolean; error?: string } = { ok: true }
+  if (booking.google_event_id) {
+    googleResult = await deleteEvent(booking.google_event_id)
+    if (googleResult.ok) {
+      await supabase.from('bookings').update({ google_event_id: null }).eq('id', id)
+    }
+  }
+
+  const { data: assignments } = await supabase
+    .from('booking_assignments')
+    .select('staff_id, google_event_id')
+    .eq('booking_id', id)
+    .not('google_event_id', 'is', null)
+  const staffIds = (assignments ?? []).map((a) => a.staff_id)
+  if (staffIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, google_calendar_id')
+      .in('id', staffIds)
+    const calendarByStaff = new Map((profiles ?? []).map((p) => [p.id, p.google_calendar_id]))
+    for (const assignment of assignments ?? []) {
+      const calendarId = calendarByStaff.get(assignment.staff_id)
+      if (!calendarId || !assignment.google_event_id) continue
+      const deleted = await deleteEventFrom(calendarId, assignment.google_event_id)
+      if (deleted.ok) {
+        await supabase
+          .from('booking_assignments')
+          .update({ google_event_id: null })
+          .eq('booking_id', id)
+          .eq('staff_id', assignment.staff_id)
+      }
+    }
   }
 
   // Mail naar artiest (eigen mail-template) + klant

@@ -173,7 +173,7 @@ function MagicPanel({ next, onSent }: { next: string; onSent: () => void }) {
       }`
       const { error } = await supabase.auth.signInWithOtp({
         email: values.email,
-        options: { emailRedirectTo: redirectTo },
+        options: { emailRedirectTo: redirectTo, shouldCreateUser: false },
       })
       if (error) throw error
       onSent()

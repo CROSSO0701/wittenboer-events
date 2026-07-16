@@ -68,8 +68,6 @@ export async function POST(request: Request) {
     throw err
   }
 
-  const supabase = await createSupabaseServerClient()
-
   // current_artist_id() RLS-helper bepaalt welk artist_id; we vragen het apart op
   // zodat we het in de insert kunnen meegeven (RLS check valideert).
   const admin = createSupabaseAdminClient()
@@ -112,7 +110,7 @@ export async function POST(request: Request) {
     .filter((part): part is string => Boolean(part))
     .join('\n\n')
 
-  const { data: created, error: insertErr } = await supabase
+  const { data: created, error: insertErr } = await admin
     .from('bookings')
     .insert({
       source: 'artist',

@@ -38,6 +38,13 @@ export const acceptBookingSchema = z.object({
   event_end: isoDateTime.optional().or(z.literal('').transform(() => undefined)),
   event_location: z.string().trim().min(1).max(500).optional(),
   notes: z.string().trim().max(5000).optional().or(z.literal('').transform(() => undefined)),
+}).superRefine((data, ctx) => {
+  if ((data.event_start && !data.event_end) || (!data.event_start && data.event_end)) {
+    ctx.addIssue({ code: 'custom', message: 'Vul zowel een begin- als eindtijd in', path: ['event_end'] })
+  }
+  if (data.event_start && data.event_end && new Date(data.event_start) >= new Date(data.event_end)) {
+    ctx.addIssue({ code: 'custom', message: 'De eindtijd moet na de begintijd liggen', path: ['event_end'] })
+  }
 })
 
 export const declineBookingSchema = z.object({

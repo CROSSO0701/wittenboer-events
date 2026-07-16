@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true })
   }
 
-  // Insert in juiste tabel (best effort — als Supabase niet beschikbaar is, log en ga door)
+  // Sla de aanvraag eerst duurzaam op. Zonder opslag tonen we geen succes.
   let inserted: { ok: boolean; error?: string } = { ok: false, error: 'skipped' }
   const extra: { packageName?: string; artistName?: string } = {}
   try {
@@ -69,6 +69,9 @@ export async function POST(request: Request) {
           .maybeSingle()
         packageId = pkg?.id ?? null
         extra.packageName = pkg?.name ?? parsed.package_slug
+        if (!pkg) {
+          return NextResponse.json({ error: 'Het gekozen pakket bestaat niet meer.' }, { status: 400 })
+        }
       }
       const { error } = await supabase.from('disco_inquiries').insert({
         package_id: packageId,
@@ -89,6 +92,9 @@ export async function POST(request: Request) {
         .eq('slug', parsed.artist_slug)
         .maybeSingle()
       extra.artistName = artist?.stage_name ?? parsed.artist_slug
+      if (!artist) {
+        return NextResponse.json({ error: 'De gekozen artiest bestaat niet meer.' }, { status: 400 })
+      }
       const { error } = await supabase.from('artist_booking_inquiries').insert({
         artist_id: artist?.id ?? null,
         name: parsed.name,
@@ -106,6 +112,14 @@ export async function POST(request: Request) {
       console.log('[inquiry:dev] Supabase niet beschikbaar:', err instanceof Error ? err.message : err)
     }
     inserted = { ok: false, error: 'supabase-unavailable' }
+  }
+
+  if (!inserted.ok) {
+    console.error('[inquiry] Opslaan faalde:', inserted.error)
+    return NextResponse.json(
+      { error: 'Je aanvraag kon niet worden opgeslagen. Probeer het later opnieuw.' },
+      { status: 503 }
+    )
   }
 
   // Mails — admin notificatie + klant bevestiging. Beide best-effort.
@@ -154,5 +168,5 @@ export async function POST(request: Request) {
     }),
   ])
 
-  return NextResponse.json({ ok: true, stored: inserted.ok })
+  return NextResponse.json({ ok: true, stored: true })
 }

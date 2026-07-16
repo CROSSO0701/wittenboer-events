@@ -62,10 +62,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       decided_by: admin.id,
     })
     .eq('id', id)
+    .eq('status', 'pending')
     .select()
     .maybeSingle()
 
   if (updateErr || !updated) {
+    if (!updateErr) {
+      return NextResponse.json({ error: 'De boeking is intussen al verwerkt.' }, { status: 409 })
+    }
     return NextResponse.json({ error: 'Booking-update faalde.' }, { status: 500 })
   }
 

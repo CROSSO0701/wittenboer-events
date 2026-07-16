@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Wittenboer Events',
     short_name: 'Wittenboer',
     description: 'De portal van Wittenboer Events: aanvragen, agenda en planning op zak.',
-    start_url: '/portal/admin',
+    start_url: '/portal',
     scope: '/portal',
     display: 'standalone',
     lang: 'nl',

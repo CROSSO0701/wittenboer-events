@@ -7,6 +7,7 @@ import {
   patchEvent,
   calendarTitle,
   createEventIn,
+  deleteEventFrom,
 } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
@@ -68,6 +69,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (fetchErr) return NextResponse.json({ error: 'Database-fout.' }, { status: 500 })
   if (!booking) return NextResponse.json({ error: 'Boeking niet gevonden.' }, { status: 404 })
+  if (booking.status !== 'accepted') {
+    return NextResponse.json(
+      { error: 'Crew kan alleen aan een geaccepteerde boeking worden toegewezen.' },
+      { status: 409 }
+    )
+  }
 
   // Dubbelboeking-check: staat een gekozen schuiver die dag al op een andere klus?
   const conflicts = await findBookingConflicts(supabase, {
@@ -91,6 +98,31 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const priorEventByStaff = new Map<string, string | null>(
     (priorAssigns ?? []).map((a) => [a.staff_id, a.google_event_id])
   )
+
+  const requestedStaffIds = new Set(input.assignments.map((a) => a.staff_id))
+  const removedAssignments = (priorAssigns ?? []).filter((a) => !requestedStaffIds.has(a.staff_id))
+  if (removedAssignments.length > 0) {
+    const removedIds = removedAssignments.map((a) => a.staff_id)
+    const { data: removedProfiles } = await supabase
+      .from('profiles')
+      .select('id, google_calendar_id')
+      .in('id', removedIds)
+    const calendars = new Map((removedProfiles ?? []).map((p) => [p.id, p.google_calendar_id]))
+    for (const removed of removedAssignments) {
+      const calendarId = calendars.get(removed.staff_id)
+      if (calendarId && removed.google_event_id) {
+        await deleteEventFrom(calendarId, removed.google_event_id)
+      }
+    }
+    const { error: deleteErr } = await supabase
+      .from('booking_assignments')
+      .delete()
+      .eq('booking_id', id)
+      .in('staff_id', removedIds)
+    if (deleteErr) {
+      return NextResponse.json({ error: 'Oude toewijzingen verwijderen faalde.' }, { status: 500 })
+    }
+  }
 
   // Upsert assignments
   const rows = input.assignments.map((a) => ({
@@ -187,7 +219,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       notifyResults.push({ staff_id: a.staff_id, ok: false, channel: a.notification_channel, error: 'profile-not-found' })
       continue
     }
-    const portalUrl = `${SITE_URL}/portal/staff`
+    const portalUrl = `${SITE_URL}/portal/crew`
     if (a.notification_channel === 'email' && profile.email) {
       const html = await renderEmail(
         StaffAssignedMail({

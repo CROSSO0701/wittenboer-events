@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { acceptBookingSchema } from '../../../../lib/schemas/booking'
 import { AuthError, requireAdmin } from '../../../../lib/auth/helpers'
 import { createSupabaseAdminClient } from '../../../../lib/db/server'
-import { createEvent, patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
+import { createEvent, deleteEvent, patchEvent, calendarTitle } from '../../../../lib/integrations/google-calendar'
 import { sendResend } from '../../../../lib/integrations/resend'
 import { renderEmail } from '../../../../lib/email/render'
 import { BookingAcceptedMail } from '../../../../lib/email/templates/booking-accepted'
@@ -62,11 +62,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     )
   }
 
-  // Dubbelboeking-check (database, niet de volle agenda): is de artiest of een
-  // gekozen schuiver al bezet op die dag? Marnix kan met override_overlap toch door.
+  const finalEventDate = input.event_date !== undefined ? input.event_date : booking.event_date
+  const finalEventStart = input.event_start !== undefined ? input.event_start : booking.event_start
+  const finalEventEnd = input.event_end !== undefined ? input.event_end : booking.event_end
+  const finalEventLocation =
+    input.event_location !== undefined ? input.event_location : booking.event_location
+  const finalNotes = input.notes !== undefined ? input.notes : booking.notes
+
+  // Controleer de definitieve datum die in dezelfde aanvraag wordt opgeslagen.
   const conflicts = await findBookingConflicts(supabase, {
     bookingId: id,
-    eventDate: booking.event_date,
+    eventDate: finalEventDate,
     artistId: booking.artist_id,
     artistName: booking.artist?.stage_name ?? null,
     staffIds: input.staff_ids,
@@ -78,15 +84,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       { status: 409 }
     )
   }
-
-  // Pas (optioneel) aangepaste details toe op de definitieve booking-waarden.
-  // Deze gaan zowel naar de booking-update als naar het Google-event.
-  const finalEventDate = input.event_date !== undefined ? input.event_date : booking.event_date
-  const finalEventStart = input.event_start !== undefined ? input.event_start : booking.event_start
-  const finalEventEnd = input.event_end !== undefined ? input.event_end : booking.event_end
-  const finalEventLocation =
-    input.event_location !== undefined ? input.event_location : booking.event_location
-  const finalNotes = input.notes !== undefined ? input.notes : booking.notes
 
   // Maak Google event (best effort) van de definitieve booking-waarden.
   let googleEventId: string | null = null
@@ -142,10 +139,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       notes: finalNotes,
     })
     .eq('id', id)
+    .eq('status', 'pending')
     .select()
     .maybeSingle()
 
   if (updateErr || !updated) {
+    if (googleEventId) await deleteEvent(googleEventId)
+    if (!updateErr) {
+      return NextResponse.json({ error: 'De boeking is intussen al verwerkt.' }, { status: 409 })
+    }
     return NextResponse.json({ error: 'Booking-update faalde.' }, { status: 500 })
   }
 
@@ -190,16 +192,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         BookingAcceptedMail({
           artistName: artistProfile.full_name || booking.artist.stage_name,
           clientName: booking.client_name ?? '(geen naam)',
-          eventDate: booking.event_date ?? 'n.t.b.',
-          eventLocation: booking.event_location ?? 'n.t.b.',
+          eventDate: finalEventDate ?? 'n.t.b.',
+          eventLocation: finalEventLocation ?? 'n.t.b.',
           feeFormatted: formatEUR(booking.fee_cents),
-          notes: booking.notes ?? undefined,
+          notes: finalNotes ?? undefined,
           portalUrl: `${SITE_URL}/portal/artiest`,
         })
       )
       await sendResend({
         to: artistProfile.email,
-        subject: `Klus geaccepteerd · ${booking.event_date ?? ''}`,
+        subject: `Klus geaccepteerd · ${finalEventDate ?? ''}`,
         html: html.html,
         text: html.text,
       })
